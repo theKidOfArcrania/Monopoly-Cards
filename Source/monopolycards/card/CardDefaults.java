@@ -26,9 +26,6 @@ import monopolycards.ResourceDefaults;
 //Card Prop-set:
 //[card].image --> this is the image filepath of the card.
 //
-//Cash Prop-set (extends from Card):
-//[card].name --> this is the name of this card.
-//
 //Action Card Prop-set (extends from Card):
 //[card].sellValue --> this defines the sell value.
 //[card].description --> this specifies a detailed description of the card.
