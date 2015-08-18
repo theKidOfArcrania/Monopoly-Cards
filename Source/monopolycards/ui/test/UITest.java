@@ -65,6 +65,7 @@ public class UITest extends Application {
 		}
 		System.out.println(pivot.getX());
 		setting = !setting;
+		//yo
 
 	}
 
