@@ -29,7 +29,7 @@ public abstract class Player {
 	}
 
 	private final String name;
-	private final ArrayList<Card> bank;
+	private final ArrayList<Cash> bank;
 	private Board game = null;
 	// this is all the cards a player has in his/her hand.
 	private final ArrayList<Card> hand;
@@ -65,7 +65,7 @@ public abstract class Player {
 		return bank.indexOf(c);
 	}
 
-	public Stream<Card> bankStream() {
+	public Stream<Cash> bankStream() {
 		return bank.stream();
 	}
 
@@ -97,8 +97,9 @@ public abstract class Player {
 	}
 
 	public int getCash() {
-		// TO DO: this method.
-		return 0;
+		return bank.parallelStream()
+				.mapToInt(Cash::getValue)
+				.sum();
 	}
 
 	public CardDefaults getDefaults() {
