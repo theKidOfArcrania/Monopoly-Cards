@@ -9,6 +9,7 @@ import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Box;
 import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 import monopolycards.impl.Player;
@@ -61,5 +62,8 @@ public class PlayerUI extends Application {
 				.addAll(cameraRX, cameraRY);
 		scene.setCamera(cameraView);
 		primaryStage.show();
+
+		Box board = new Box(displayRes.getWidth(), displayRes.getHeight(), 100.0);
+
 	}
 }
