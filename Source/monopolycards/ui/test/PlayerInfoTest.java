@@ -4,10 +4,12 @@ import java.awt.Dimension;
 import java.awt.DisplayMode;
 
 import javafx.application.Application;
-import javafx.scene.Group;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -40,8 +42,14 @@ public class PlayerInfoTest extends Application {
 
 	private void init(Stage primaryStage) {
 		primaryStage.initStyle(StageStyle.TRANSPARENT);
-		Group root = new Group();
+		AnchorPane root = new AnchorPane();
+		Text txt = new Text("hello");
+		AnchorPane.setTopAnchor(txt, 0.0);
+		txt.setFill(Color.BLUE);
+		txt.setTextAlignment(TextAlignment.RIGHT);
 		Scene scene = new Scene(root, 380, 240);
+		root.getChildren()
+				.add(txt);
 		scene.setFill(Color.color(.7, .7, .7, .4));
 		primaryStage.setScene(scene);
 		scene.setCamera(cameraView);
