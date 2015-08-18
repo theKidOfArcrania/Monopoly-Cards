@@ -96,6 +96,11 @@ public abstract class Player {
 		return bank.size();
 	}
 
+	public int getCash() {
+		// TO DO: this method.
+		return 0;
+	}
+
 	public CardDefaults getDefaults() {
 		return defs;
 	}

@@ -175,9 +175,9 @@ public class Payment {
 	}
 
 	public void finishPay() {
-		if (!metPayment()) {
-			throw new IllegalStateException("Debt has not been fully met");
-		}
+		// if (!metPayment()) {
+		// throw new IllegalStateException("Debt has not been fully met");
+		// }
 
 		propRequested.forEach(this::takeProp0);
 		propSetsRequested.forEach(this::takeProp0);
