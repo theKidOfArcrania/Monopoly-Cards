@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.DisplayMode;
 
 import javafx.application.Application;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.Group;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
@@ -47,17 +48,35 @@ public class PlayerInfoTest extends Application {
 		primaryStage.initStyle(StageStyle.TRANSPARENT);
 		AnchorPane root = new AnchorPane();
 		
-		Text txt = new Text("Player Name");
-		txt.setFill(Color.BLACK);
-		AnchorPane.setTopAnchor(txt, 10.0);
+		Text name = new Text("Player Name");
+		name.textProperty().bind(new SimpleStringProperty("Player Name"));
+		name.setFill(Color.BLACK);
+		name.setFont(Font.loadFont(PlayerInfoTest.class.getResource("KabaleMedium-Normal.ttf").toExternalForm(), 32));
+		AnchorPane.setTopAnchor(name, 10.0);
+	
+		Text money = new Text("Money Amount:");
+		money.setFill(Color.BLACK);
+		money.setFont(Font.loadFont(PlayerInfoTest.class.getResource("KabaleMedium-Normal.ttf").toExternalForm(), 13));
+		AnchorPane.setTopAnchor(money, 55.0);
+		AnchorPane.setLeftAnchor(money, 10.0);
 		
-		txt.setFont(Font.loadFont(PlayerInfoTest.class.getResource("KabaleMedium-Normal.ttf").toExternalForm(), 40));
+		Text properties = new Text("Full Sets:");
+		properties.setFill(Color.BLACK);
+		properties.setFont(Font.loadFont(PlayerInfoTest.class.getResource("KabaleMedium-Normal.ttf").toExternalForm(), 13));
+		AnchorPane.setTopAnchor(properties, 110.0);
+		AnchorPane.setLeftAnchor(properties, 10.0);
 		
-		root.getChildren().add(txt);
-		Scene scene = new Scene(root, dispWidth/5, dispHeight/4);
+		
+	
+		
+		
+		root.getChildren().addAll(name, properties, money);
+		Scene scene = new Scene(root, dispWidth/6, dispHeight/5);
 		scene.setFill(Color.color(.95, .95, .95, .8));
-		txt.setWrappingWidth(scene.getWidth());
-		txt.setTextAlignment(TextAlignment.CENTER);
+		
+		name.setWrappingWidth(scene.getWidth());
+		name.setTextAlignment(TextAlignment.CENTER);
+		
 		primaryStage.setX(dispWidth/2-scene.getWidth()/2);
 		primaryStage.setY(0);
 		
