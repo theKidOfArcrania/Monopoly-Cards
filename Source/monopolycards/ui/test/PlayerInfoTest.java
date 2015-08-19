@@ -72,38 +72,49 @@ public class PlayerInfoTest extends Application {
 		
 		AnchorPane root = new AnchorPane();
 		
+		InnerShadow shader = new InnerShadow();
+		shader.setRadius(2.0);
+		InnerShadow smallShade = new InnerShadow();
+		smallShade.setRadius(2);
+		smallShade.setColor(Color.DARKGREEN.darker());
+		
 		Text name = new Text("Player Name");
 		//name.textProperty().bind(playerName);
-		name.setFill(Color.BLACK);
+		name.setFill(Color.GRAY);
 		name.setFont(Font.loadFont(PlayerInfoTest.class.getResource("KabaleMedium-Normal.ttf").toExternalForm(), 34));
 		AnchorPane.setTopAnchor(name, 30.0);
 		AnchorPane.setLeftAnchor(name,90.0);
+		name.setEffect(shader);
 	
 		Text money = new Text("Money:");
-		money.setFill(Color.BLACK);
+		money.setFill(Color.GREEN.brighter());
 		money.setFont(Font.loadFont(PlayerInfoTest.class.getResource("KabaleMedium-Normal.ttf").toExternalForm(), 20));
-		AnchorPane.setTopAnchor(money, 90.0);
+		AnchorPane.setTopAnchor(money, 95.0);
 		AnchorPane.setLeftAnchor(money, 75.0);
+		money.setEffect(smallShade);
 		
 		Text properties = new Text("Full Sets:");
-		properties.setFill(Color.BLACK);
+		properties.setFill(Color.GREEN.brighter());
 		properties.setFont(Font.loadFont(PlayerInfoTest.class.getResource("KabaleMedium-Normal.ttf").toExternalForm(), 20));
-		AnchorPane.setTopAnchor(properties, 145.0);
+		AnchorPane.setTopAnchor(properties, 150.0);
 		AnchorPane.setLeftAnchor(properties, 75.0);
+		properties.setEffect(smallShade);
 		
 		Text moneyDisplay = new Text("0");
 		//moneyDisplay.textProperty().bind(new SimpleStringProperty(moneyValue.getValue()+""));
-		moneyDisplay.setFill(Color.BLACK);
+		moneyDisplay.setFill(Color.GRAY);
 		moneyDisplay.setFont(Font.loadFont(PlayerInfoTest.class.getResource("KabaleMedium-Normal.ttf").toExternalForm(), 20));
-		AnchorPane.setTopAnchor(moneyDisplay, 90.0);
+		AnchorPane.setTopAnchor(moneyDisplay, 95.0);
 		AnchorPane.setLeftAnchor(moneyDisplay, 150.0);
+		moneyDisplay.setEffect(shader);
 		
 		Text setDisplay = new Text("0");
 		//setDisplay.textProperty().bind(new SimpleStringProperty(setNumber.getValue()+""));
-		setDisplay.setFill(Color.BLACK);
+		setDisplay.setFill(Color.GRAY);
 		setDisplay.setFont(Font.loadFont(PlayerInfoTest.class.getResource("KabaleMedium-Normal.ttf").toExternalForm(), 20));
-		AnchorPane.setTopAnchor(setDisplay, 145.0);
-		AnchorPane.setLeftAnchor(setDisplay, 160.0);
+		AnchorPane.setTopAnchor(setDisplay, 150.0);
+		AnchorPane.setLeftAnchor(setDisplay, 155.0);
+		setDisplay.setEffect(shader);
 		
 		Image profileImage = new Image((PlayerInfoTest.class.getResource("blank-profile.jpg").toExternalForm()));
 		ImageView profileView = new ImageView();
@@ -130,7 +141,7 @@ public class PlayerInfoTest extends Application {
         moneyView.setSmooth(true);
         moneyView.setCache(true);
         AnchorPane.setTopAnchor(moneyView, 80.0);
-        AnchorPane.setLeftAnchor(moneyView, 25.0);
+        AnchorPane.setLeftAnchor(moneyView, 30.0);
         
         //fullsets pic
         Image cardPic = new Image((PlayerInfoTest.class.getResource("fullset.png").toExternalForm()));
@@ -142,15 +153,16 @@ public class PlayerInfoTest extends Application {
         cardView.setSmooth(true);
         cardView.setCache(true);
         DropShadow shade = new DropShadow();
-        shade.setRadius(2.0);
-        shade.setOffsetX(-1.0);
-        shade.setOffsetY(1.0);
+        shade.setRadius(1.75);
+        shade.setOffsetX(-.5);
+        shade.setOffsetY(1.5);
+        shade.setColor(Color.DARKGRAY.darker().darker().darker());
         cardView.setEffect(shade);
         AnchorPane.setTopAnchor(cardView, 135.0);
         AnchorPane.setLeftAnchor(cardView, 15.0);
         
         Scene scene = new Scene(root, dispWidth/5.5, dispHeight/4.5);
-		scene.setFill(Color.color(.90, .90, .90,.4));
+		scene.setFill(Color.color(.85, .85, .85,.4));
 		
 	    
 		root.getChildren().addAll(name, properties, money, moneyView, moneyDisplay, setDisplay, cardView, profileView);
@@ -158,6 +170,7 @@ public class PlayerInfoTest extends Application {
    
 		scene.setOnMouseEntered(e->trans(true));
 		scene.setOnMouseExited(e->trans(false));
+		
 		root.setId("ROOTNODE");
 		
 		scene.getStylesheets().add("/monopolycards/ui/test/border.css");
@@ -172,18 +185,18 @@ public class PlayerInfoTest extends Application {
 		//start
 		solid.getKeyFrames()
 		.add(new KeyFrame(Duration.ZERO, new KeyValue(alph, .4),
-				new KeyValue(scene.fillProperty(), Color.color(.90, .90, .90,.4))));
+				new KeyValue(scene.fillProperty(), Color.color(.85, .85, .85,.4))));
 		
 		solid.getKeyFrames()
 		.add(new KeyFrame(Duration.seconds(.05), new KeyValue(alph, .6), 
-				new KeyValue(scene.fillProperty(), Color.color(.90, .90, .90,.6))));
+				new KeyValue(scene.fillProperty(), Color.color(.85, .85, .85,.6))));
 		
 		solid.getKeyFrames()
 		.add(new KeyFrame(Duration.seconds(.1), new KeyValue(alph, .8),
-				new KeyValue(scene.fillProperty(), Color.color(.90, .90, .90,.8))));
+				new KeyValue(scene.fillProperty(), Color.color(.85, .85, .85,.8))));
 		solid.getKeyFrames()
 		.add(new KeyFrame(Duration.seconds(.15), new KeyValue(alph, 1.0),
-				new KeyValue(scene.fillProperty(), Color.color(.90, .90, .90,1.0))));
+				new KeyValue(scene.fillProperty(), Color.color(.85, .85, .85,1.0))));
 	}
 	public void trans(boolean status){
 		if (solid.getStatus() == Status.RUNNING) {
