@@ -178,7 +178,7 @@ public class PlayerInfoTest extends Application {
 		primaryStage.setScene(scene);
 		scene.setCamera(cameraView);
 		primaryStage.show();
-		
+		// Timeline
 		
 		//start
 		solid.getKeyFrames()
