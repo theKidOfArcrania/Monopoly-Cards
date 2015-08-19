@@ -27,7 +27,7 @@ public abstract class Player {
 				.parallel()
 				.anyMatch((prop) -> prop == card);
 	}
-
+	
 	private final String name;
 	private final ArrayList<Cash> bank;
 	private Board game = null;
