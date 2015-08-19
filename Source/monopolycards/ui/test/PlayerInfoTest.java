@@ -124,10 +124,8 @@ public class PlayerInfoTest extends Application {
 		profileView.setPreserveRatio(true);
         profileView.setSmooth(true);
         profileView.setCache(true);
-        DropShadow shade1 = new DropShadow();
-        shade1.setRadius(4.0);
         
-        profileView.setEffect(shade1);
+        profileView.setEffect(shader);
         AnchorPane.setTopAnchor(profileView, 10.0);
         AnchorPane.setLeftAnchor(profileView, 15.0);
         
