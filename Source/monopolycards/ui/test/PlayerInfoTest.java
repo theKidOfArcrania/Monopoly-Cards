@@ -35,7 +35,7 @@ import static java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment;
 public class PlayerInfoTest extends Application {
 
 	private static final double ANCHOR = 10.0;
-	
+	//test
 	
 	public static void main(String[] args) {
 		launch(args);
