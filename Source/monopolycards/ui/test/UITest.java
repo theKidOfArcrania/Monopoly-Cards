@@ -57,7 +57,7 @@ public class UITest extends Application {
 			return;
 		}
 		if (!setting) {
-			// enlarge.setCycleCount(2);
+			
 			enlarge.playFromStart();
 		} else {
 			enlarge.setRate(-1);
