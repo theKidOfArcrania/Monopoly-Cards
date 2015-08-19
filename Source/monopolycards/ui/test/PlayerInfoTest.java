@@ -7,6 +7,10 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.animation.Animation.Status;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
+import javafx.animation.Animation.Status;
 import javafx.application.Application;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -36,6 +40,10 @@ public class PlayerInfoTest extends Application {
 
 	private static final double ANCHOR = 10.0;
 	
+	
+	
+
+	//test
 	
 	public static void main(String[] args) {
 		launch(args);
