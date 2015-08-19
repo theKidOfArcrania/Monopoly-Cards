@@ -51,13 +51,14 @@ public class PlayerInfoTest extends Application {
 		Text name = new Text("Player Name");
 		name.textProperty().bind(new SimpleStringProperty("Player Name"));
 		name.setFill(Color.BLACK);
-		name.setFont(Font.loadFont(PlayerInfoTest.class.getResource("KabaleMedium-Normal.ttf").toExternalForm(), 32));
+		name.setFont(Font.loadFont(PlayerInfoTest.class.getResource("KabaleMedium-Normal.ttf").toExternalForm(), 40));
 		AnchorPane.setTopAnchor(name, 10.0);
+		AnchorPane.setRightAnchor(name,10.0);
 	
 		Text money = new Text("Money Amount:");
 		money.setFill(Color.BLACK);
 		money.setFont(Font.loadFont(PlayerInfoTest.class.getResource("KabaleMedium-Normal.ttf").toExternalForm(), 13));
-		AnchorPane.setTopAnchor(money, 55.0);
+		AnchorPane.setTopAnchor(money, 70.0);
 		AnchorPane.setLeftAnchor(money, 10.0);
 		
 		Text properties = new Text("Full Sets:");
@@ -72,10 +73,8 @@ public class PlayerInfoTest extends Application {
 		
 		root.getChildren().addAll(name, properties, money);
 		Scene scene = new Scene(root, dispWidth/6, dispHeight/5);
-		scene.setFill(Color.color(.95, .95, .95, .8));
+		scene.setFill(Color.color(.90, .90, .90, .7));
 		
-		name.setWrappingWidth(scene.getWidth());
-		name.setTextAlignment(TextAlignment.CENTER);
 		
 		primaryStage.setX(dispWidth/2-scene.getWidth()/2);
 		primaryStage.setY(0);

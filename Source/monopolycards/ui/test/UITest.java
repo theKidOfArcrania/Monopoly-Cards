@@ -31,6 +31,7 @@ import static java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment;
 public class UITest extends Application {
 
 	private static final double ANCHOR = 10.0;
+	private static final double SHIFT_RATE = .25;
 
 	public static void main(String[] args) {
 		launch(args);
@@ -63,9 +64,9 @@ public class UITest extends Application {
 			enlarge.jumpTo("end");
 			enlarge.play();
 		}
-		System.out.println(pivot.getX());
+		
 		setting = !setting;
-		//yo
+	
 
 	}
 
@@ -85,12 +86,15 @@ public class UITest extends Application {
 		Label t = new Label("Monopoly!");
 		t.setId("label1");
 		InnerShadow is = new InnerShadow();
-		GaussianBlur br = new GaussianBlur();
-		br.setRadius(5);
 		is.setOffsetX(4.0);
 		is.setOffsetY(4.0);
+		
+		GaussianBlur br = new GaussianBlur();
+		br.setRadius(5);
+		
 		is.setInput(br);
 		t.setEffect(is);
+		
 		GaussianBlur br3 = new GaussianBlur();
 		br3.setRadius(5.0);
 		rect.setEffect(br3);
@@ -106,7 +110,7 @@ public class UITest extends Application {
 
 		button.setOnMouseClicked(e -> popUp(button));
 		Scene scene = new Scene(root, displayRes.getWidth(), displayRes.getHeight(), true, SceneAntialiasing.BALANCED);
-		scene.setFill(Color.LIGHTGRAY);
+		scene.setFill(Color.WHITE);
 
 		scene.getStylesheets()
 				.add("/monopolycards/ui/test/ui.css");
@@ -121,21 +125,36 @@ public class UITest extends Application {
 
 		double finalWidth = displayRes.getWidth() - ANCHOR * 2;
 		double finalHeight = displayRes.getHeight() - ANCHOR * 2;
-		// Timelines
+		
+		// Timeline
+		
+		// position one
 		enlarge.getKeyFrames()
 				.add(new KeyFrame(Duration.ZERO, new KeyValue(big.yProperty(), 1.0), new KeyValue(t.visibleProperty(), true),
 						new KeyValue(pivot.yProperty(), 0), new KeyValue(br3.radiusProperty(), 5.0)));
 		enlarge.getKeyFrames()
+		.add(new KeyFrame(Duration.ZERO, new KeyValue(big.xProperty(), 1.0), new KeyValue(pivot.xProperty(), 0)));
+		
+		//Text set position
+		enlarge.getKeyFrames()
 				.add(new KeyFrame(Duration.seconds(0.001), new KeyValue(t.visibleProperty(), false)));
+		
+		//slight delay at end of transform (modifies speed)
 		enlarge.getKeyFrames()
-				.add(new KeyFrame(Duration.seconds(.4), new KeyValue(big.yProperty(), finalHeight / button.getHeight()),
-						new KeyValue(pivot.yProperty(), -finalHeight + button.getHeight()),
-						new KeyValue(br3.radiusProperty(), 5.0 * button.getHeight() / finalHeight)));
+		.add(new KeyFrame(Duration.seconds(.2), new KeyValue(big.yProperty(), finalHeight / button.getHeight()-SHIFT_RATE),
+				new KeyValue(pivot.yProperty(), -finalHeight + button.getHeight()+button.getHeight()*SHIFT_RATE)));
 		enlarge.getKeyFrames()
-				.add(new KeyFrame(Duration.ZERO, new KeyValue(big.xProperty(), 1.0), new KeyValue(pivot.xProperty(), 0)));
+		.add(new KeyFrame(Duration.seconds(.2), new KeyValue(big.xProperty(), finalWidth / button.getWidth()-SHIFT_RATE),
+				new KeyValue(pivot.xProperty(), -finalWidth + button.getWidth()+button.getWidth()*SHIFT_RATE)));
+		
+		//position two
 		enlarge.getKeyFrames()
-				.add(new KeyFrame(Duration.seconds(.4), new KeyValue(big.xProperty(), finalWidth / button.getWidth()),
+				.add(new KeyFrame(Duration.seconds(.3), new KeyValue(big.xProperty(), finalWidth / button.getWidth()),
 						new KeyValue(pivot.xProperty(), -finalWidth + button.getWidth())));
-		// enlarge.setAutoReverse(true);
+		enlarge.getKeyFrames()
+		.add(new KeyFrame(Duration.seconds(.3), new KeyValue(big.yProperty(), finalHeight / button.getHeight()),
+				new KeyValue(pivot.yProperty(), -finalHeight + button.getHeight()),
+				new KeyValue(br3.radiusProperty(), 5.0 * button.getHeight() / finalHeight)));
+		
 	}
 }
