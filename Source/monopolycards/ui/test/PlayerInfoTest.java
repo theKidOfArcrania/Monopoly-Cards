@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 package monopolycards.ui.test;
 
 import java.awt.Dimension;
@@ -92,6 +93,8 @@ public class PlayerInfoTest extends Application {
 	}
 }
 =======
+=======
+>>>>>>> origin/master
 package monopolycards.ui.test;
 
 import java.awt.Dimension;
@@ -294,4 +297,7 @@ public class PlayerInfoTest extends Application {
 
 	}
 }
+<<<<<<< HEAD
+>>>>>>> origin/master
+=======
 >>>>>>> origin/master
