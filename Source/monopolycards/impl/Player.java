@@ -1,11 +1,15 @@
 package monopolycards.impl;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import javafx.beans.property.ReadOnlyIntegerProperty;
+import javafx.beans.property.ReadOnlyIntegerPropertyBase;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import monopolycards.card.Card;
 import monopolycards.card.CardDefaults;
 import monopolycards.card.Cash;
@@ -27,24 +31,113 @@ public abstract class Player {
 				.parallel()
 				.anyMatch((prop) -> prop == card);
 	}
-	
+
+	private final ReadOnlyIntegerProperty cashAmount;
+	private final CardDefaults defs;
 	private final String name;
-	private final ArrayList<Cash> bank;
+	private final ObservableList<Cash> bank;
+	private int cashCache = -1;
+	private int setCache = -1;
 	private Board game = null;
 	// this is all the cards a player has in his/her hand.
-	private final ArrayList<Card> hand;
+	private final ObservableList<Card> hand;
 	private int moves = 0;
-	private final ArrayList<PropertyColumn> propertyColumn;
-
-	private final CardDefaults defs;
+	private final ObservableList<PropertyColumn> propertyColumn;
+	private final ReadOnlyIntegerProperty propertySets;
 
 	public Player(CardDefaults defs, String name) {
 		this.name = name;
 		this.defs = defs;
-		bank = new ArrayList<>(20);
-		propertyColumn = new ArrayList<>(8);
-		// a player will not exceed 13 cards at any one point, so use that as the array list capacity.
-		hand = new ArrayList<>(13);
+		bank = FXCollections.observableArrayList();
+		propertyColumn = FXCollections.observableArrayList();
+		hand = FXCollections.observableArrayList();
+
+		cashAmount = new ReadOnlyIntegerPropertyBase() {
+			{
+				bank.addListener((ListChangeListener<Cash>) event -> {
+
+					if (event.wasPermutated()) {
+						// no change needed to fire.
+						return;
+					} else if (event.wasUpdated()) {
+						cashCache = -1;
+					} else {
+						cashCache += event.getAddedSubList()
+								.parallelStream()
+								.mapToInt(Cash::getValue)
+								.sum();
+						cashCache -= event.getRemoved()
+								.parallelStream()
+								.mapToInt(Cash::getValue)
+								.sum();
+					}
+
+					this.fireValueChangedEvent();
+				});
+			}
+
+			@Override
+			public int get() {
+
+				if (cashCache == -1) { // invalidated
+					return cashCache = bank.parallelStream()
+							.mapToInt(Cash::getValue)
+							.sum();
+				}
+				return cashCache;
+			}
+
+			@Override
+			public Object getBean() {
+				return this;
+			}
+
+			@Override
+			public String getName() {
+				return "cashAmount";
+			}
+
+		};
+
+		propertySets = new ReadOnlyIntegerPropertyBase() {
+			{
+				ListChangeListener<Card> columnList = event -> {
+					setCache = -1;
+					this.fireValueChangedEvent();
+				};
+				propertyColumn.addListener((ListChangeListener<PropertyColumn>) event -> {
+					if (event.wasAdded()) {
+						event.getAddedSubList()
+								.parallelStream()
+								.forEach(column -> column.addListener(columnList));
+					}
+
+					setCache = -1;
+					this.fireValueChangedEvent();
+				});
+			}
+
+			@Override
+			public int get() {
+				if (setCache == -1) { // invalidated
+					return setCache = (int) propertyColumn.parallelStream()
+							.filter(PropertyColumn::isFullSet)
+							.count();
+				}
+				return setCache;
+			}
+
+			@Override
+			public Object getBean() {
+				return this;
+			}
+
+			@Override
+			public String getName() {
+				return "propertySets";
+			}
+
+		};
 	}
 
 	public void addBill(Cash card) {
@@ -67,6 +160,10 @@ public abstract class Player {
 
 	public Stream<Cash> bankStream() {
 		return bank.stream();
+	}
+
+	public ReadOnlyIntegerProperty cashAmountProperty() {
+		return cashAmount;
 	}
 
 	public boolean checkWin() {
@@ -96,10 +193,8 @@ public abstract class Player {
 		return bank.size();
 	}
 
-	public int getCash() {
-		return bank.parallelStream()
-				.mapToInt(Cash::getValue)
-				.sum();
+	public int getCashAmount() {
+		return cashAmount.get();
 	}
 
 	public CardDefaults getDefaults() {
@@ -152,6 +247,10 @@ public abstract class Player {
 		return propertyColumn.size();
 	}
 
+	public int getPropertySets() {
+		return propertySets.get();
+	}
+
 	public Stream<Card> handStream() {
 		return hand.stream();
 	}
@@ -196,6 +295,10 @@ public abstract class Player {
 			moves++;
 		}
 		return true;
+	}
+
+	public ReadOnlyIntegerProperty propertySetsProperty() {
+		return propertySets;
 	}
 
 	public void registerGame(Board game) {

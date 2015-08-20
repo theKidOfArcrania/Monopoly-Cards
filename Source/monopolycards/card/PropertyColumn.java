@@ -14,6 +14,12 @@ import java.util.Iterator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+
 import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
 
@@ -21,7 +27,7 @@ import static java.util.Objects.requireNonNull;
  *
  * @author HW
  */
-public class PropertyColumn implements Iterable<Card>, Serializable {
+public class PropertyColumn implements Iterable<Card>, Serializable, Observable {
 
 	private static final long serialVersionUID = 5264125689357215996L;
 
@@ -32,7 +38,7 @@ public class PropertyColumn implements Iterable<Card>, Serializable {
 		return card.getSellValue();
 	}
 
-	private final ArrayList<Card> properties = new ArrayList<>(6);
+	private final ObservableList<Card> properties = FXCollections.observableArrayList();
 
 	private final CardDefaults defs;
 	private final PropertyColor propertyColor;
@@ -76,6 +82,15 @@ public class PropertyColumn implements Iterable<Card>, Serializable {
 		checkCard(prop);
 		properties.add(prop);
 		sort();
+	}
+
+	@Override
+	public void addListener(InvalidationListener listener) {
+		properties.addListener(listener);
+	}
+
+	public void addListener(ListChangeListener<? super Card> listener) {
+		properties.addListener(listener);
 	}
 
 	public void clear() {
@@ -230,6 +245,15 @@ public class PropertyColumn implements Iterable<Card>, Serializable {
 		set.sort();
 
 		return set;
+	}
+
+	@Override
+	public void removeListener(InvalidationListener listener) {
+		properties.removeListener(listener);
+	}
+
+	public void removeListener(ListChangeListener<? super Card> listener) {
+		properties.removeListener(listener);
 	}
 
 	public int size() {
