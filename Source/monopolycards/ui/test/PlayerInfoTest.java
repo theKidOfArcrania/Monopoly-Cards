@@ -88,14 +88,14 @@ public class PlayerInfoTest extends Application {
 	
 		Text money = new Text("Money:");
 		money.setFill(Color.GREEN.brighter());
-		money.setFont(Font.loadFont(PlayerInfoTest.class.getResource("KabaleMedium-Normal.ttf").toExternalForm(), 20));
+		money.setFont(Font.loadFont(PlayerInfoTest.class.getResource("KabaleMedium-Normal.ttf").toExternalForm(), 24));
 		AnchorPane.setTopAnchor(money, 95.0);
 		AnchorPane.setLeftAnchor(money, 75.0);
 		money.setEffect(smallShade);
 		
 		Text properties = new Text("Full Sets:");
 		properties.setFill(Color.GREEN.brighter());
-		properties.setFont(Font.loadFont(PlayerInfoTest.class.getResource("KabaleMedium-Normal.ttf").toExternalForm(), 20));
+		properties.setFont(Font.loadFont(PlayerInfoTest.class.getResource("KabaleMedium-Normal.ttf").toExternalForm(), 24));
 		AnchorPane.setTopAnchor(properties, 150.0);
 		AnchorPane.setLeftAnchor(properties, 75.0);
 		properties.setEffect(smallShade);
@@ -103,17 +103,17 @@ public class PlayerInfoTest extends Application {
 		Text moneyDisplay = new Text("0");
 		//moneyDisplay.textProperty().bind(new SimpleStringProperty(moneyValue.getValue()+""));
 		moneyDisplay.setFill(Color.GRAY);
-		moneyDisplay.setFont(Font.loadFont(PlayerInfoTest.class.getResource("KabaleMedium-Normal.ttf").toExternalForm(), 20));
+		moneyDisplay.setFont(Font.loadFont(PlayerInfoTest.class.getResource("KabaleMedium-Normal.ttf").toExternalForm(), 24));
 		AnchorPane.setTopAnchor(moneyDisplay, 95.0);
-		AnchorPane.setLeftAnchor(moneyDisplay, 150.0);
+		AnchorPane.setLeftAnchor(moneyDisplay, 160.0);
 		moneyDisplay.setEffect(shader);
 		
 		Text setDisplay = new Text("0");
 		//setDisplay.textProperty().bind(new SimpleStringProperty(setNumber.getValue()+""));
 		setDisplay.setFill(Color.GRAY);
-		setDisplay.setFont(Font.loadFont(PlayerInfoTest.class.getResource("KabaleMedium-Normal.ttf").toExternalForm(), 20));
+		setDisplay.setFont(Font.loadFont(PlayerInfoTest.class.getResource("KabaleMedium-Normal.ttf").toExternalForm(), 24));
 		AnchorPane.setTopAnchor(setDisplay, 150.0);
-		AnchorPane.setLeftAnchor(setDisplay, 155.0);
+		AnchorPane.setLeftAnchor(setDisplay, 170.0);
 		setDisplay.setEffect(shader);
 		
 		Image profileImage = new Image((PlayerInfoTest.class.getResource("blank-profile.jpg").toExternalForm()));
@@ -160,6 +160,7 @@ public class PlayerInfoTest extends Application {
         AnchorPane.setLeftAnchor(cardView, 15.0);
         
         Scene scene = new Scene(root, dispWidth/5.5, dispHeight/4.5);
+        
 		scene.setFill(Color.color(.85, .85, .85,.4));
 		
 	    
@@ -168,7 +169,12 @@ public class PlayerInfoTest extends Application {
    
 		scene.setOnMouseEntered(e->trans(true));
 		scene.setOnMouseExited(e->trans(false));
-		
+		//white background
+		AnchorPane secLayout = new AnchorPane();		
+		Stage secondStage = new Stage();
+		secondStage.initStyle(StageStyle.TRANSPARENT);
+		secondStage.setScene(new Scene(secLayout, dispWidth,dispHeight));
+		secondStage.show();
 		root.setId("ROOTNODE");
 		
 		scene.getStylesheets().add("/monopolycards/ui/test/border.css");
@@ -178,6 +184,9 @@ public class PlayerInfoTest extends Application {
 		primaryStage.setScene(scene);
 		scene.setCamera(cameraView);
 		primaryStage.show();
+		
+		
+		
 		// Timeline
 		
 		//start

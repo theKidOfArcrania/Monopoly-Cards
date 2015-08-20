@@ -16,6 +16,7 @@ import javafx.scene.Group;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.Effect;
 import javafx.scene.effect.InnerShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -48,14 +49,14 @@ public class MoveCounter extends Application {
 	public final double dispHeight = displayRes.getHeight();
 	
 	private static final double ANCHOR = 10.0;
-	private SimpleIntegerProperty moveCount;
+	private static int count;
 	private SimpleDoubleProperty alph;
 
 	private final Timeline solid = new Timeline();
 	
 	public MoveCounter() {
 		alph = new SimpleDoubleProperty(1.0);
-		moveCount = new SimpleIntegerProperty(3);
+		count = 3;
 		
 	}
 
@@ -90,7 +91,7 @@ public class MoveCounter extends Application {
 		AnchorPane.setBottomAnchor(panel, 25.0);
 		AnchorPane.setLeftAnchor(panel, 22.0);
 		panel.setFill(Color.DARKGRAY.darker().darker());
-		panel.setEffect(out);
+		panel.setEffect(largeShade);
 		
 		//label
 		Text name = new Text("Moves Left");
@@ -106,86 +107,35 @@ public class MoveCounter extends Application {
 		
 		ArrayList<ImageView> lightList = new ArrayList<ImageView>();
 		
-		Image turn1 = new Image((PlayerInfoTest.class.getResource("Greenlight.png").toExternalForm()));
-		ImageView light1 = new ImageView();
-		light1.setImage(turn1);
-		light1.setFitHeight(dispHeight/16);
-		light1.setFitWidth(dispWidth/16);
-		light1.setPreserveRatio(true);
-        light1.setSmooth(true);
-        light1.setCache(true);
-        light1.setEffect(mediumShade);
+		ImageView light1 = createLight(mediumShade);
         AnchorPane.setBottomAnchor(light1, panel.getHeight()/2);
         AnchorPane.setLeftAnchor(light1, panel.getWidth()/6);
-        light1.setOnMouseClicked(e->genAnimation(light1));
         lightList.add(light1);
         
-        Image turn2 = new Image((PlayerInfoTest.class.getResource("Greenlight.png").toExternalForm()));
-		ImageView light2 = new ImageView();
-		light2.setImage(turn2);
-		light2.setFitHeight(dispHeight/16);
-		light2.setFitWidth(dispWidth/16);
-		light2.setPreserveRatio(true);
-        light2.setSmooth(true);
-        light2.setCache(true);
-        light2.setEffect(mediumShade);
+		ImageView light2 = createLight(mediumShade);
         AnchorPane.setBottomAnchor(light2, panel.getHeight()/2);
         AnchorPane.setLeftAnchor(light2, scene.getWidth()/2-light2.getFitHeight()/2-3);
-        light2.setOnMouseClicked(e->genAnimation(light2));
         lightList.add(light2);
         
-        Image turn3 = new Image((PlayerInfoTest.class.getResource("Greenlight.png").toExternalForm()));
-		ImageView light3 = new ImageView();
-		light3.setImage(turn3);
-		light3.setFitHeight(dispHeight/16);
-		light3.setFitWidth(dispWidth/16);
-		light3.setPreserveRatio(true);
-        light3.setSmooth(true);
-        light3.setCache(true);
-        light3.setEffect(mediumShade);
+		ImageView light3 = createLight(mediumShade);
         AnchorPane.setBottomAnchor(light3, panel.getHeight()/2);
         AnchorPane.setRightAnchor(light3, panel.getWidth()/6);
-        light3.setOnMouseClicked(e->genAnimation(light3));
         lightList.add(light3);
         
-        Image turn1off = new Image((PlayerInfoTest.class.getResource("lightoff.png").toExternalForm()));
-		ImageView light1off = new ImageView();
-		light1off.setImage(turn1off);
-		light1off.setFitHeight(dispHeight/16);
-		light1off.setFitWidth(dispWidth/16);
-		light1off.setPreserveRatio(true);
-        light1off.setSmooth(true);
-        light1off.setCache(true);
-        light1off.setEffect(largeShade);
+		ImageView light1off = createLightOff(largeShade);
         AnchorPane.setBottomAnchor(light1off, panel.getHeight()/2);
         AnchorPane.setLeftAnchor(light1off, panel.getWidth()/6);
         
-        Image turn2off = new Image((PlayerInfoTest.class.getResource("lightoff.png").toExternalForm()));
-		ImageView light2off = new ImageView();
-		light2off.setImage(turn1off);
-		light2off.setFitHeight(dispHeight/16);
-		light2off.setFitWidth(dispWidth/16);
-		light2off.setPreserveRatio(true);
-        light2off.setSmooth(true);
-        light2off.setCache(true);
-        light2off.setEffect(largeShade);
+        ImageView light2off = createLightOff(largeShade);
         AnchorPane.setBottomAnchor(light2off, panel.getHeight()/2);
         AnchorPane.setLeftAnchor(light2off, scene.getWidth()/2-light2.getFitHeight()/2-3);
         
-        Image turn3off = new Image((PlayerInfoTest.class.getResource("lightoff.png").toExternalForm()));
-		ImageView light3off = new ImageView();
-		light3off.setImage(turn1off);
-		light3off.setFitHeight(dispHeight/16);
-		light3off.setFitWidth(dispWidth/16);
-		light3off.setPreserveRatio(true);
-        light3off.setSmooth(true);
-        light3off.setCache(true);
-        light3off.setEffect(largeShade);
+        ImageView light3off = createLightOff(largeShade);
         AnchorPane.setBottomAnchor(light3off, panel.getHeight()/2);
         AnchorPane.setRightAnchor(light3off, panel.getWidth()/6);
         
 		root.getChildren().addAll(name, panel, light1off, light2off, light3off, light1, light2, light3);
-		
+		root.setOnMouseClicked(e->lightOff(lightList));
    
 		
 		root.setId("ROOTNODE");
@@ -198,7 +148,18 @@ public class MoveCounter extends Application {
 		primaryStage.show();
 
 	}
-	
+	public void lightOff(ArrayList<ImageView> lightList)
+	{
+		count--;
+		if(count<0)
+		{
+			resetMoves(lightList);
+		}
+		else
+		{
+			genAnimation(lightList.get(count));
+		}
+	}
 	public void genAnimation(ImageView light)
 	{
 		
@@ -222,9 +183,43 @@ public class MoveCounter extends Application {
 		
 	}
 	
-	public void resetMoves()
+	public void resetMoves(ArrayList<ImageView> lightList)
 	{
-		moveCount = new SimpleIntegerProperty(3);
+		count = 3;
+		for(ImageView light: lightList)
+		{
+			light.setOpacity(1.0);
+		}
 	}
+	
+	public ImageView createLight(Effect g)
+	{
+		Image turn1 = new Image((PlayerInfoTest.class.getResource("Greenlight.png").toExternalForm()));
+		ImageView light1 = new ImageView();
+		light1.setImage(turn1);
+		light1.setFitHeight(dispHeight/16);
+		light1.setFitWidth(dispWidth/16);
+		light1.setPreserveRatio(true);
+        light1.setSmooth(true);
+        light1.setCache(true);
+        light1.setEffect(g);
 
+        
+        return light1;
+
+	}
+	public ImageView createLightOff(Effect g)
+	{
+		Image turnoff = new Image((PlayerInfoTest.class.getResource("lightoff.png").toExternalForm()));
+		ImageView lightoff = new ImageView();
+		lightoff.setImage(turnoff);
+		lightoff.setFitHeight(dispHeight/16);
+		lightoff.setFitWidth(dispWidth/16);
+		lightoff.setPreserveRatio(true);
+        lightoff.setSmooth(true);
+        lightoff.setCache(true);
+        lightoff.setEffect(g);
+        
+        return lightoff;
+	}
 }
