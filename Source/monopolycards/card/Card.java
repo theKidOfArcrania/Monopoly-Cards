@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.io.Serializable;
 
 import monopolycards.impl.CardActionType;
+import monopolycards.impl.CardActionType.Likeness;
 import monopolycards.impl.Player;
+import monopolycards.impl.SupportedActions;
 
 public interface Card extends Serializable {
 
@@ -63,9 +65,12 @@ public interface Card extends Serializable {
 	 *
 	 * @return The supported actions in an array.
 	 */
-	default CardActionType[] getSupportedTypes() {
-		return new CardActionType[] { CardActionType.TYPE_ACTION, CardActionType.TYPE_DISCARD };
+	default SupportedActions getSupportedTypes() {
+		SupportedActions actions = new SupportedActions();
+		actions.addAction(new CardActionType("Play " + getCardName(), "move.action"));
+		actions.addAction(new CardActionType("Discard", "move.discard"));
+		return actions;
 	}
 
-	boolean isEnabled(Player self, CardActionType action);
+	boolean isEnabled(Player self, Likeness action);
 }

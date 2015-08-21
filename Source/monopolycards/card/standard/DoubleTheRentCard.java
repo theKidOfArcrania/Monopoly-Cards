@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 import monopolycards.card.PropertyColumn;
 import monopolycards.impl.CardAction;
-import monopolycards.impl.CardActionType;
+import monopolycards.impl.CardActionType.Likeness;
 import monopolycards.impl.CenterPlay;
 import monopolycards.impl.Player;
 
@@ -35,7 +35,7 @@ public class DoubleTheRentCard extends ActionCard {
 			played = self
 					.selectHand("Select a rent card to rent others with.",
 							card -> ((!self.isLastTurn() && card instanceof DoubleTheRentCard)
-									|| (card instanceof RentCard && card.isEnabled(self, typeAction))),
+									|| (card instanceof RentCard && card.isEnabled(self, Likeness.Action))),
 							cardAction -> cardAction.getInternalType()
 									.equals("move.action"));
 
@@ -61,7 +61,7 @@ public class DoubleTheRentCard extends ActionCard {
 
 		if (payRequest(self, rentCard.isGlobal(), rent * multiplier, "rent")) {
 			extraDoubles.forEach((doubling) -> {
-				self.pushTurn(new CardAction(doubling, typeAction));
+				self.pushTurn(new CardAction(doubling, getSupportedTypes().getActionType(Likeness.Action)));
 				centerPlay.discard(doubling);
 			});
 			centerPlay.discard(rentCard);
@@ -77,9 +77,8 @@ public class DoubleTheRentCard extends ActionCard {
 	}
 
 	@Override
-	public boolean isEnabled(Player self, CardActionType action) {
-		if (action.getInternalType()
-				.equals("move.action")) {
+	public boolean isEnabled(Player self, Likeness action) {
+		if (action == Likeness.Action) {
 			if (self.isLastTurn()) {
 				return false;
 			}
@@ -87,7 +86,7 @@ public class DoubleTheRentCard extends ActionCard {
 			return self.handStream()
 					.parallel()
 					.filter(card -> card instanceof RentCard)
-					.anyMatch(rent -> rent.isEnabled(self, typeAction));
+					.anyMatch(rent -> rent.isEnabled(self, Likeness.Action));
 		}
 		return true;
 	}

@@ -6,7 +6,7 @@
 package monopolycards.card.standard;
 
 import monopolycards.card.PropertyColumn;
-import monopolycards.impl.CardActionType;
+import monopolycards.impl.CardActionType.Likeness;
 import monopolycards.impl.Payment;
 import monopolycards.impl.Player;
 
@@ -16,7 +16,7 @@ import monopolycards.impl.Player;
  */
 public class DealBreakerCard extends ActionCard {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 4190593954097839138L;
 
@@ -46,10 +46,9 @@ public class DealBreakerCard extends ActionCard {
 	}
 
 	@Override
-	public boolean isEnabled(Player self, CardActionType action) {
-		if (action.getInternalType()
-				.equals("move.action")) {
-			self.getGame()
+	public boolean isEnabled(Player self, Likeness action) {
+		if (action == Likeness.Action) {
+			return self.getGame()
 					.playerStream()
 					.parallel()
 					.anyMatch(Player::hasCompleteSet);

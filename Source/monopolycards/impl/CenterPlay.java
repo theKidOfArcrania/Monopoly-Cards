@@ -6,6 +6,7 @@
 package monopolycards.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import monopolycards.card.Card;
 import monopolycards.card.Deck;
@@ -117,7 +118,7 @@ public class CenterPlay {
 	}
 
 	private void shuffle() {
-
+		Collections.shuffle(drawPile);
 	}
 
 }

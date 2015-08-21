@@ -2,12 +2,11 @@ package monopolycards.card.standard;
 
 import monopolycards.card.Response;
 import monopolycards.impl.CardActionType;
+import monopolycards.impl.CardActionType.Likeness;
 import monopolycards.impl.Player;
+import monopolycards.impl.SupportedActions;
 
 public class JustSayNoCard extends ActionCard implements Response {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -1356787074424595137L;
 
 	@Override
@@ -21,12 +20,14 @@ public class JustSayNoCard extends ActionCard implements Response {
 	}
 
 	@Override
-	public CardActionType[] getSupportedTypes() {
-		return new CardActionType[] { ActionCard.TYPE_CASH_IN, CardActionType.TYPE_DISCARD };
+	public SupportedActions getSupportedTypes() {
+		SupportedActions actions = super.getSupportedTypes();
+		actions.removeAction(CardActionType.Likeness.Action);
+		return actions;
 	}
 
 	@Override
-	public boolean isEnabled(Player self, CardActionType action) {
+	public boolean isEnabled(Player self, Likeness action) {
 		return true;
 	}
 

@@ -33,6 +33,21 @@ public class ResourceDefaults extends Properties {
 
 	private int scale = 1;
 
+	public <T extends Enum<T>> T getEnumProperty(String name, Class<T> enumClass, T defaultValue) {
+		if (!enumClass.isEnum()) {
+			// Shouldn't happen because of typesafe check.
+			throw new InternalError("Class must be a enum");
+		}
+		int index = getIntProperty(name, -1);
+
+		T[] constants = enumClass.getEnumConstants();
+		if (index < 0 || index >= constants.length) {
+			return defaultValue;
+		}
+
+		return constants[index];
+	}
+
 	public BufferedImage getImageProperty(String imageProp) throws IOException {
 		String imageFile = getProperty(imageProp, null);
 		if (imageFile == null) {

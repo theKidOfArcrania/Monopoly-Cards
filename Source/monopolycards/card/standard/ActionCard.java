@@ -5,10 +5,7 @@
  */
 package monopolycards.card.standard;
 
-import common.util.Lambdas;
 import monopolycards.card.Action;
-import monopolycards.card.Cash;
-import monopolycards.impl.CardActionType;
 import monopolycards.impl.Player;
 
 /**
@@ -19,15 +16,9 @@ import monopolycards.impl.Player;
  */
 public abstract class ActionCard extends StandardCard implements Action {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -8876027487042225439L;
-
-	public static final CardActionType TYPE_CASH_IN = new CardActionType("Cash-in", Lambdas.convertType(ActionCard.class)
-			.andThen(ActionCard::convertToCash)
-			.filterReturn(Cash::actionPlayed), "move.cashin");
-
-	final CardActionType typeAction = new CardActionType(getActionName(), CardActionType.TYPE_ACTION, "move.action");
 
 	ActionCard() {
 	}
@@ -45,8 +36,13 @@ public abstract class ActionCard extends StandardCard implements Action {
 	}
 
 	@Override
+	public String getActionInternalType() {
+		return this.getInternalProperty("actionInternalType", "move.action");
+	}
+
+	@Override
 	public String getActionName() {
-		return this.getInternalProperty("actionName", getCardName());
+		return this.getInternalProperty("actionName", "Play " + getCardName());
 	}
 
 	@Override
@@ -62,11 +58,6 @@ public abstract class ActionCard extends StandardCard implements Action {
 	@Override
 	public int getSellValue() {
 		return getInternalIntProperty("sellValue", 0);
-	}
-
-	@Override
-	public CardActionType[] getSupportedTypes() {
-		return new CardActionType[] { TYPE_CASH_IN, typeAction, CardActionType.TYPE_DISCARD };
 	}
 
 }

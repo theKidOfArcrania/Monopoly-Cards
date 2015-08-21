@@ -8,7 +8,7 @@ package monopolycards.card.standard;
 import monopolycards.card.DualColor;
 import monopolycards.card.Property;
 import monopolycards.card.PropertyColor;
-import monopolycards.impl.CardActionType;
+import monopolycards.impl.CardActionType.Likeness;
 import monopolycards.impl.Player;
 
 import static java.util.Objects.requireNonNull;
@@ -25,7 +25,7 @@ import static java.util.Objects.requireNonNull;
 public final class PropertyCard extends StandardCard implements Property {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -4847169645075457537L;
 	private int propNumber = 0;
@@ -140,7 +140,7 @@ public final class PropertyCard extends StandardCard implements Property {
 	}
 
 	@Override
-	public boolean isEnabled(Player self, CardActionType action) {
+	public boolean isEnabled(Player self, Likeness action) {
 		return true;
 	}
 

@@ -2,13 +2,13 @@ package monopolycards.card.standard;
 
 import monopolycards.card.Action;
 import monopolycards.card.Cash;
-import monopolycards.impl.CardActionType;
+import monopolycards.impl.CardActionType.Likeness;
 import monopolycards.impl.Player;
 
 public final class CashCard extends StandardCard implements Cash {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 4350231484759060230L;
 	private final int value;
@@ -60,7 +60,7 @@ public final class CashCard extends StandardCard implements Cash {
 
 	@SuppressWarnings("unused")
 	@Override
-	public boolean isEnabled(Player self, CardActionType action) {
+	public boolean isEnabled(Player self, Likeness action) {
 		return true;
 	}
 }

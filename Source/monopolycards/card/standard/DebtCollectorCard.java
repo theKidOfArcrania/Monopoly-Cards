@@ -5,7 +5,7 @@
  */
 package monopolycards.card.standard;
 
-import monopolycards.impl.CardActionType;
+import monopolycards.impl.CardActionType.Likeness;
 import monopolycards.impl.Player;
 
 /**
@@ -14,7 +14,7 @@ import monopolycards.impl.Player;
  */
 public class DebtCollectorCard extends ActionCard {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -882780157673704376L;
 
@@ -33,7 +33,7 @@ public class DebtCollectorCard extends ActionCard {
 	}
 
 	@Override
-	public boolean isEnabled(Player self, CardActionType action) {
+	public boolean isEnabled(Player self, Likeness action) {
 		return true;
 	}
 

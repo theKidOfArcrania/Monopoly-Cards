@@ -2,9 +2,9 @@ package monopolycards.card;
 
 import monopolycards.impl.CardActionType;
 import monopolycards.impl.Player;
+import monopolycards.impl.SupportedActions;
 
 public interface Cash extends Valuable {
-	public static final CardActionType TYPE_BANK = new CardActionType("Add to bank", Card::actionPlayed, "move.cash");
 
 	static String moneyString(int amount, boolean shortString) {
 		double figure;
@@ -34,10 +34,11 @@ public interface Cash extends Valuable {
 	}
 
 	@Override
-	default CardActionType[] getSupportedTypes() {
-		return new CardActionType[] { TYPE_BANK, CardActionType.TYPE_DISCARD };
+	default SupportedActions getSupportedTypes() {
+		SupportedActions actions = new SupportedActions();
+		actions.addAction(new CardActionType("Add to bank", "move.cash"));
+		actions.addAction(new CardActionType("Discard", "move.discard"));
+		return actions;
 	}
-
-	// This is a marker interface that indicates a cash interface.
 
 }

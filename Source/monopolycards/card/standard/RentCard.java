@@ -8,7 +8,7 @@ package monopolycards.card.standard;
 import monopolycards.card.DualColor;
 import monopolycards.card.PropertyColor;
 import monopolycards.card.PropertyColumn;
-import monopolycards.impl.CardActionType;
+import monopolycards.impl.CardActionType.Likeness;
 import monopolycards.impl.Player;
 
 import static java.util.Objects.requireNonNull;
@@ -20,7 +20,7 @@ import static java.util.Objects.requireNonNull;
 public class RentCard extends ActionCard {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 9126449081012411183L;
 	private final DualColor propertyColors;
@@ -95,9 +95,8 @@ public class RentCard extends ActionCard {
 	}
 
 	@Override
-	public boolean isEnabled(Player self, CardActionType action) {
-		if (action.getInternalType()
-				.equals("move.action")) {
+	public boolean isEnabled(Player self, Likeness action) {
+		if (action == Likeness.Action) {
 			return self.columnStream()
 					.parallel()
 					.anyMatch(this::isValidRent);

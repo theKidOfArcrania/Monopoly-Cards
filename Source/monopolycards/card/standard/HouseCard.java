@@ -7,7 +7,7 @@ package monopolycards.card.standard;
 
 import monopolycards.card.PropertyColumn;
 import monopolycards.card.PropertyRaise;
-import monopolycards.impl.CardActionType;
+import monopolycards.impl.CardActionType.Likeness;
 import monopolycards.impl.Player;
 
 /**
@@ -17,7 +17,7 @@ import monopolycards.impl.Player;
 public class HouseCard extends ActionCard implements PropertyRaise {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -8732210588821915468L;
 
@@ -44,9 +44,8 @@ public class HouseCard extends ActionCard implements PropertyRaise {
 
 	// TO DO: implement support type for building
 	@Override
-	public boolean isEnabled(Player self, CardActionType action) {
-		if (action.getInternalType()
-				.equals("move.action")) {
+	public boolean isEnabled(Player self, Likeness action) {
+		if (action == Likeness.Action) {
 			// must have at least a full set in order to have build action type.
 			return self.columnStream()
 					.anyMatch(PropertyColumn::isFullSet);

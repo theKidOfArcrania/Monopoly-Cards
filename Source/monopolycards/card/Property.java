@@ -2,10 +2,11 @@ package monopolycards.card;
 
 import monopolycards.impl.CardActionType;
 import monopolycards.impl.Player;
+import monopolycards.impl.SupportedActions;
 
 public interface Property extends Valuable {
 
-	public static final CardActionType Property = new CardActionType("Add Property", Card::actionPlayed, "move.property");
+	public static final CardActionType Property = new CardActionType("Add Property", "move.property");
 
 	@Override
 	default boolean actionPlayed(Player self) {
@@ -43,8 +44,11 @@ public interface Property extends Valuable {
 	String getPropertyName();
 
 	@Override
-	default CardActionType[] getSupportedTypes() {
-		return new CardActionType[] { Property, CardActionType.TYPE_DISCARD };
+	default SupportedActions getSupportedTypes() {
+		SupportedActions actions = new SupportedActions();
+		actions.addAction(new CardActionType("Add property", "move.property"));
+		actions.addAction(new CardActionType("Discard", "move.discard"));
+		return actions;
 	}
 
 	/**
