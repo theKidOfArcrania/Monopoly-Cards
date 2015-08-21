@@ -96,10 +96,10 @@ public class MoveCounter extends Application {
 		//label
 		Text name = new Text("Moves Left");
 		name.setFill(Color.GRAY);
-		name.setFont(Font.loadFont(PlayerInfoTest.class.getResource("KabaleMedium-Normal.ttf").toExternalForm(), 30));
+		name.setFont(Font.loadFont(PlayerInfoTest.class.getResource("Xolonium-Bold.otf").toExternalForm(), 30));
 		name.setWrappingWidth(dispWidth/6);
 		name.setTextAlignment(TextAlignment.CENTER);
-		AnchorPane.setTopAnchor(name, 10.0);
+		AnchorPane.setTopAnchor(name, 15.0);
 		name.setEffect(smallShade);
 		
 		Scene scene = new Scene(root, dispWidth/6, dispHeight/4);
@@ -134,7 +134,23 @@ public class MoveCounter extends Application {
         AnchorPane.setBottomAnchor(light3off, panel.getHeight()/2);
         AnchorPane.setRightAnchor(light3off, panel.getWidth()/6);
         
-		root.getChildren().addAll(name, panel, light1off, light2off, light3off, light1, light2, light3);
+        ImageView nut1 = createScrew(out);
+        AnchorPane.setTopAnchor(nut1, 0.0);
+        AnchorPane.setLeftAnchor(nut1, 0.0);
+        
+        ImageView nut2 = createScrew(out);
+        AnchorPane.setTopAnchor(nut2, 0.0);
+        AnchorPane.setLeftAnchor(nut2, scene.getWidth()-21);
+        
+        ImageView nut3 = createScrew(out);
+        AnchorPane.setTopAnchor(nut3, scene.getHeight()-20);
+        AnchorPane.setLeftAnchor(nut3, 0.0);
+        
+        ImageView nut4 = createScrew(out);
+        AnchorPane.setTopAnchor(nut4, scene.getHeight()-20);
+        AnchorPane.setLeftAnchor(nut4, scene.getWidth()-21);
+		root.getChildren().addAll(name, panel, light1off, light2off, light3off, light1, 
+				light2, light3,nut1,nut2,nut3,nut4);
 		root.setOnMouseClicked(e->lightOff(lightList));
    
 		
@@ -215,6 +231,20 @@ public class MoveCounter extends Application {
 		lightoff.setImage(turnoff);
 		lightoff.setFitHeight(dispHeight/16);
 		lightoff.setFitWidth(dispWidth/16);
+		lightoff.setPreserveRatio(true);
+        lightoff.setSmooth(true);
+        lightoff.setCache(true);
+        lightoff.setEffect(g);
+        
+        return lightoff;
+	}
+	public ImageView createScrew(Effect g)
+	{
+		Image turnoff = new Image((PlayerInfoTest.class.getResource("screw.png").toExternalForm()));
+		ImageView lightoff = new ImageView();
+		lightoff.setImage(turnoff);
+		lightoff.setFitHeight(15);
+		lightoff.setFitWidth(15);
 		lightoff.setPreserveRatio(true);
         lightoff.setSmooth(true);
         lightoff.setCache(true);

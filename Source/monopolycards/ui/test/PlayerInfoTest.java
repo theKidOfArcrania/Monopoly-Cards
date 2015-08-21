@@ -11,14 +11,17 @@ import javafx.application.Application;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.Effect;
 import javafx.scene.effect.InnerShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -49,6 +52,8 @@ public class PlayerInfoTest extends Application {
 	private final Rotate cameraRY = new Rotate(0, displayRes.getWidth() / 2, displayRes.getHeight() / 2, 0, Rotate.Y_AXIS);
 	public final double dispWidth = displayRes.getWidth();
 	public final double dispHeight = displayRes.getHeight();
+	public double wRatio = dispWidth/1600;
+	public double hRatio = dispHeight/900;
 	//user variables
 	private SimpleIntegerProperty moneyValue;
 	private SimpleStringProperty playerName;
@@ -68,78 +73,92 @@ public class PlayerInfoTest extends Application {
 	}
 
 	private void init(Stage primaryStage) {
+		
 		primaryStage.initStyle(StageStyle.TRANSPARENT);
 		
 		AnchorPane root = new AnchorPane();
 		
-		InnerShadow shader = new InnerShadow();
-		shader.setRadius(2.0);
 		InnerShadow smallShade = new InnerShadow();
-		smallShade.setRadius(2);
-		smallShade.setColor(Color.DARKGREEN.darker());
+		smallShade.setRadius(2.0);
 		
-		Text name = new Text("Player Name");
+		InnerShadow mediumShade = new InnerShadow();
+		mediumShade.setRadius(3.0);
+		
+		InnerShadow largeShade = new InnerShadow();
+		mediumShade.setRadius(5.0);
+		
+		InnerShadow greenShade = new InnerShadow();
+		greenShade.setRadius(2);
+		greenShade.setColor(Color.DARKGREEN.darker());
+		
+		DropShadow out = new DropShadow();
+		out.setRadius(2.0);
+		
+		
+		Text name = new Text("MyUsername");
 		//name.textProperty().bind(playerName);
 		name.setFill(Color.GRAY);
-		name.setFont(Font.loadFont(PlayerInfoTest.class.getResource("KabaleMedium-Normal.ttf").toExternalForm(), 34));
-		AnchorPane.setTopAnchor(name, 30.0);
-		AnchorPane.setLeftAnchor(name,90.0);
-		name.setEffect(shader);
+		name.setFont(Font.loadFont(PlayerInfoTest.class.getResource("Xolonium-Bold.otf").toExternalForm(), 24));
+		AnchorPane.setTopAnchor(name, 15.0);
+		AnchorPane.setLeftAnchor(name,80.0);
+		name.setEffect(smallShade);
 	
 		Text money = new Text("Money:");
 		money.setFill(Color.GREEN.brighter());
-		money.setFont(Font.loadFont(PlayerInfoTest.class.getResource("KabaleMedium-Normal.ttf").toExternalForm(), 24));
-		AnchorPane.setTopAnchor(money, 95.0);
-		AnchorPane.setLeftAnchor(money, 75.0);
-		money.setEffect(smallShade);
+		money.setFont(Font.loadFont(PlayerInfoTest.class.getResource("Xolonium-Regular.otf").toExternalForm(), 16));
+		AnchorPane.setTopAnchor(money, 85.0);
+		AnchorPane.setLeftAnchor(money, 15.0);
+		money.setEffect(greenShade);
 		
-		Text properties = new Text("Full Sets:");
-		properties.setFill(Color.GREEN.brighter());
-		properties.setFont(Font.loadFont(PlayerInfoTest.class.getResource("KabaleMedium-Normal.ttf").toExternalForm(), 24));
-		AnchorPane.setTopAnchor(properties, 150.0);
-		AnchorPane.setLeftAnchor(properties, 75.0);
-		properties.setEffect(smallShade);
-		
-		Text moneyDisplay = new Text("0");
+		Text moneyDisplay = new Text("$1000M");
 		//moneyDisplay.textProperty().bind(new SimpleStringProperty(moneyValue.getValue()+""));
 		moneyDisplay.setFill(Color.GRAY);
-		moneyDisplay.setFont(Font.loadFont(PlayerInfoTest.class.getResource("KabaleMedium-Normal.ttf").toExternalForm(), 24));
-		AnchorPane.setTopAnchor(moneyDisplay, 95.0);
-		AnchorPane.setLeftAnchor(moneyDisplay, 160.0);
-		moneyDisplay.setEffect(shader);
+		moneyDisplay.setFont(Font.loadFont(PlayerInfoTest.class.getResource("Xolonium-Regular.otf").toExternalForm(), 16));
+		AnchorPane.setTopAnchor(moneyDisplay, 85.0);
+		AnchorPane.setLeftAnchor(moneyDisplay, 85.0);
+		moneyDisplay.setEffect(smallShade);
 		
-		Text setDisplay = new Text("0");
+		Text properties = new Text("Full Set Count:");
+		properties.setFill(Color.GREEN.brighter());
+		properties.setFont(Font.loadFont(PlayerInfoTest.class.getResource("Xolonium-Regular.otf").toExternalForm(), 16));
+		AnchorPane.setTopAnchor(properties, 112.0);
+		AnchorPane.setLeftAnchor(properties, 15.0);
+		properties.setEffect(greenShade);
+		
+		Text setDisplay = new Text("0 Sets");
 		//setDisplay.textProperty().bind(new SimpleStringProperty(setNumber.getValue()+""));
 		setDisplay.setFill(Color.GRAY);
-		setDisplay.setFont(Font.loadFont(PlayerInfoTest.class.getResource("KabaleMedium-Normal.ttf").toExternalForm(), 24));
-		AnchorPane.setTopAnchor(setDisplay, 150.0);
-		AnchorPane.setLeftAnchor(setDisplay, 170.0);
-		setDisplay.setEffect(shader);
+		setDisplay.setFont(Font.loadFont(PlayerInfoTest.class.getResource("Xolonium-Regular.otf").toExternalForm(), 16));
+		AnchorPane.setTopAnchor(setDisplay, 112.0);
+		AnchorPane.setLeftAnchor(setDisplay, 150.0);
+		setDisplay.setEffect(smallShade);
 		
 		Image profileImage = new Image((PlayerInfoTest.class.getResource("blank-profile.jpg").toExternalForm()));
 		ImageView profileView = new ImageView();
 		profileView.setImage(profileImage);
 		profileView.setFitHeight(60);
 		profileView.setFitWidth(60);
-		profileView.setPreserveRatio(true);
         profileView.setSmooth(true);
         profileView.setCache(true);
+        profileView.setEffect(smallShade);
+        AnchorPane.setTopAnchor(profileView, 15.0);
+        AnchorPane.setLeftAnchor(profileView, 10.0);
         
-        profileView.setEffect(shader);
-        AnchorPane.setTopAnchor(profileView, 10.0);
-        AnchorPane.setLeftAnchor(profileView, 15.0);
+        
+        
         
 		//moneypic
-		Image moneyPic = new Image((PlayerInfoTest.class.getResource("Dollar Sign.png").toExternalForm()));
+		/*Image moneyPic = new Image((PlayerInfoTest.class.getResource("Dollar Sign.png").toExternalForm()));
 		ImageView moneyView = new ImageView();
 		moneyView.setImage(moneyPic);
-		moneyView.setFitHeight(50);
-		moneyView.setFitWidth(50);
+		moneyView.setFitHeight(20);
+		moneyView.setFitWidth(20);
 		moneyView.setPreserveRatio(true);
         moneyView.setSmooth(true);
         moneyView.setCache(true);
-        AnchorPane.setTopAnchor(moneyView, 80.0);
-        AnchorPane.setLeftAnchor(moneyView, 30.0);
+        AnchorPane.setTopAnchor(moneyView, 65.0);
+        AnchorPane.setLeftAnchor(moneyView, 90.0);
+        moneyView.setEffect(shader);
         
         //fullsets pic
         Image cardPic = new Image((PlayerInfoTest.class.getResource("fullset.png").toExternalForm()));
@@ -150,21 +169,56 @@ public class PlayerInfoTest extends Application {
 		cardView.setPreserveRatio(true);
         cardView.setSmooth(true);
         cardView.setCache(true);
-        DropShadow shade = new DropShadow();
-        shade.setRadius(1.75);
-        shade.setOffsetX(-.5);
-        shade.setOffsetY(1.5);
-        shade.setColor(Color.DARKGRAY.darker().darker().darker());
-        cardView.setEffect(shade);
-        AnchorPane.setTopAnchor(cardView, 135.0);
-        AnchorPane.setLeftAnchor(cardView, 15.0);
         
-        Scene scene = new Scene(root, dispWidth/5.5, dispHeight/4.5);
+        cardView.setEffect(shader);
+        AnchorPane.setTopAnchor(cardView, 85.0);
+        AnchorPane.setLeftAnchor(cardView, 15.0);*/
+        
+        Scene scene = new Scene(root, dispWidth/5.5, dispHeight/6);
         
 		scene.setFill(Color.color(.85, .85, .85,.4));
 		
-	    
-		root.getChildren().addAll(name, properties, money, moneyView, moneyDisplay, setDisplay, cardView, profileView);
+		ImageView nut1 = createScrew(out);
+        AnchorPane.setTopAnchor(nut1, 0.0);
+        AnchorPane.setLeftAnchor(nut1, 0.0);
+        
+        ImageView nut2 = createScrew(out);
+        AnchorPane.setTopAnchor(nut2, 0.0);
+        AnchorPane.setLeftAnchor(nut2, scene.getWidth()-21);
+        
+        ImageView nut3 = createScrew(out);
+        AnchorPane.setTopAnchor(nut3, scene.getHeight()-20);
+        AnchorPane.setLeftAnchor(nut3, 0.0);
+        
+        ImageView nut4 = createScrew(out);
+        AnchorPane.setTopAnchor(nut4, scene.getHeight()-20);
+        AnchorPane.setLeftAnchor(nut4, scene.getWidth()-21);
+        
+        Rectangle panel = new Rectangle(scene.getWidth()-100, 25);
+		panel.setArcHeight(5.0);
+		panel.setArcWidth(5.0);
+		AnchorPane.setTopAnchor(panel, 50.0);
+		AnchorPane.setLeftAnchor(panel,80.0);
+		panel.setFill(Color.DARKGRAY.darker().darker());
+		panel.setEffect(largeShade);
+		
+		
+		Text playerRank = new Text("Rank:");
+		playerRank.setFill(Color.WHITE);
+		playerRank.setFont(Font.loadFont(PlayerInfoTest.class.getResource("Xolonium-Regular.otf").toExternalForm(), 10));
+		AnchorPane.setTopAnchor(playerRank, 57.0);
+		AnchorPane.setLeftAnchor(playerRank,85.0);
+		playerRank.setEffect(out);
+		
+		Text playerGames = new Text("Games:");
+		playerGames.setFill(Color.WHITE);
+		playerGames.setFont(Font.loadFont(PlayerInfoTest.class.getResource("Xolonium-Regular.otf").toExternalForm(), 10));
+		AnchorPane.setTopAnchor(playerGames, 57.0);
+		AnchorPane.setRightAnchor(playerGames,50.0);
+		playerGames.setEffect(out);
+		
+		root.getChildren().addAll(name, properties, money, moneyDisplay, setDisplay,  profileView, nut1
+				,nut2, nut3,nut4, panel, playerRank, playerGames);
 		root.opacityProperty().bind(alph);
    
 		scene.setOnMouseEntered(e->trans(true));
@@ -174,7 +228,7 @@ public class PlayerInfoTest extends Application {
 		Stage secondStage = new Stage();
 		secondStage.initStyle(StageStyle.TRANSPARENT);
 		secondStage.setScene(new Scene(secLayout, dispWidth,dispHeight));
-		secondStage.show();
+		//secondStage.show();
 		root.setId("ROOTNODE");
 		
 		scene.getStylesheets().add("/monopolycards/ui/test/border.css");
@@ -218,5 +272,19 @@ public class PlayerInfoTest extends Application {
 			solid.play();
 		}
 
+	}
+	public ImageView createScrew(Effect g)
+	{
+		Image turnoff = new Image((PlayerInfoTest.class.getResource("screw.png").toExternalForm()));
+		ImageView lightoff = new ImageView();
+		lightoff.setImage(turnoff);
+		lightoff.setFitHeight(15);
+		lightoff.setFitWidth(15);
+		lightoff.setPreserveRatio(true);
+        lightoff.setSmooth(true);
+        lightoff.setCache(true);
+        lightoff.setEffect(g);
+        
+        return lightoff;
 	}
 }
