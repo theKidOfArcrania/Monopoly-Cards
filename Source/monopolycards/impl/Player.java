@@ -43,6 +43,7 @@ public abstract class Player {
 	private final ObservableList<Card> hand;
 	private int moves = 0;
 	private final ObservableList<PropertyColumn> propertyColumn;
+	private final ObservableList<CardAction> playerHistory;
 	private final ReadOnlyIntegerProperty propertySets;
 
 	public Player(CardDefaults defs, String name) {
@@ -51,7 +52,7 @@ public abstract class Player {
 		bank = FXCollections.observableArrayList();
 		propertyColumn = FXCollections.observableArrayList();
 		hand = FXCollections.observableArrayList();
-
+		playerHistory = FXCollections.observableArrayList();
 		cashAmount = new ReadOnlyIntegerPropertyBase() {
 			{
 				bank.addListener((ListChangeListener<Cash>) event -> {
@@ -185,6 +186,10 @@ public abstract class Player {
 		hand.addAll(Arrays.asList(cards));
 	}
 
+	public ObservableList<Cash> getBankAccount() {
+		return FXCollections.unmodifiableObservableList(bank);
+	}
+
 	public Card getBankCard(int index) {
 		return bank.get(index);
 	}
@@ -199,6 +204,10 @@ public abstract class Player {
 
 	public CardDefaults getDefaults() {
 		return defs;
+	}
+
+	public ObservableList<Card> getFullHand() {
+		return FXCollections.unmodifiableObservableList(hand);
 	}
 
 	public Board getGame() {
@@ -219,6 +228,14 @@ public abstract class Player {
 
 	public String getName() {
 		return name;
+	}
+
+	public ObservableList<CardAction> getPlayerHistory() {
+		return FXCollections.unmodifiableObservableList(playerHistory);
+	}
+
+	public ObservableList<PropertyColumn> getPropColumns() {
+		return FXCollections.unmodifiableObservableList(propertyColumn);
 	}
 
 	public PropertyColumn getPropertyColumn(int index) {
@@ -273,10 +290,6 @@ public abstract class Player {
 		return moves >= 3;
 	}
 
-	public void moved() {
-		moves++;
-	}
-
 	// player makes one move.
 	@SuppressWarnings("FinalMethod")
 	public final boolean playAction(CardAction move) {
@@ -292,13 +305,18 @@ public abstract class Player {
 		if (move.getActionType()
 				.getAction()
 				.apply(played, this)) {
-			moves++;
+			pushTurn(move);
 		}
 		return true;
 	}
 
 	public ReadOnlyIntegerProperty propertySetsProperty() {
 		return propertySets;
+	}
+
+	public void pushTurn(CardAction move) {
+		moves++;
+		playerHistory.add(move);
 	}
 
 	public void registerGame(Board game) {

@@ -19,7 +19,7 @@ import monopolycards.impl.Player;
  */
 public class DoubleTheRentCard extends ActionCard {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -5163764459341688966L;
 
@@ -61,10 +61,9 @@ public class DoubleTheRentCard extends ActionCard {
 
 		if (payRequest(self, rentCard.isGlobal(), rent * multiplier, "rent")) {
 			extraDoubles.forEach((doubling) -> {
-				self.moved();
+				self.pushTurn(new CardAction(doubling, typeAction));
 				centerPlay.discard(doubling);
 			});
-			self.moved();
 			centerPlay.discard(rentCard);
 			return true;
 		} else {

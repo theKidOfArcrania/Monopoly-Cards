@@ -49,15 +49,10 @@ public class Board {
 		}
 	}
 
-	public Player checkWin() {
-		players.parallelStream()
-				.anyMatch(Player::checkWin);
-		for (Player player : players) {
-			if (player.checkWin()) {
-				return player;
-			}
-		}
-		return null;
+	public Player[] checkWin() {
+		return players.parallelStream()
+				.filter(Player::checkWin)
+				.toArray(Player[]::new);
 	}
 
 	public CenterPlay getCenterPlay() {
@@ -115,13 +110,13 @@ public class Board {
 	 */
 	public void start() {
 		@SuppressWarnings("unused")
-		Player winner = null;
+		Player[] winner;
 		checkStarted();
 		started = true;
 
 		// start game!
 		int playerIndex = 0;
-		while ((winner = checkWin()) != null) {
+		while ((winner = checkWin()).length == 0) {
 			current = players.get(playerIndex);
 			current.drawCards();
 			current.selectTurn();
@@ -131,6 +126,10 @@ public class Board {
 				CardAction action = current.selectHand();
 				if (!current.playAction(action)) {
 					throw new AssertionError();
+				}
+				// check winner.
+				if ((winner = checkWin()).length > 0) {
+					break;
 				}
 			}
 
