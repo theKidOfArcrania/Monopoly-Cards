@@ -5,8 +5,8 @@
  */
 package monopolycards.impl;
 
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 
 import monopolycards.card.Card;
 import monopolycards.card.Deck;
@@ -20,14 +20,15 @@ import monopolycards.card.Deck;
 public class CenterPlay {
 
 	private final Deck deck;
-	private final ArrayList<Card> playedCards;
-	private final ArrayList<Card> drawPile;
+	private final LinkedList<Card> playedCards;
+	private final LinkedList<Card> drawPile;
 
 	public CenterPlay(Deck deck) {
-		this.playedCards = new ArrayList<>(deck.size());
-		this.drawPile = new ArrayList<>(deck.size());
+		this.playedCards = new LinkedList<>();
+		this.drawPile = new LinkedList<>();
 		this.deck = deck;
-
+		
+		drawPile.addAll(deck);
 	}
 
 	public void discard(Card card) {
@@ -46,7 +47,7 @@ public class CenterPlay {
 	public Card[] drawCards(int count) {
 		Card[] drawn = new Card[count];
 		for (int i = 0; i < count; i++) {
-			drawn[i] = drawPile.remove(0);
+			drawn[i] = drawPile.removeFirst();
 			if (drawPile.isEmpty()) {
 				// refill.
 				if (playedCards.isEmpty()) {

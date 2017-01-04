@@ -24,7 +24,7 @@ public abstract class StandardCard extends AbstractCard {
 	protected StandardCard() {
 	}
 
-	@SuppressWarnings("static-method")
+	@Override
 	public CardDefaults getDefaults() {
 		return getCardDefaults();
 	}

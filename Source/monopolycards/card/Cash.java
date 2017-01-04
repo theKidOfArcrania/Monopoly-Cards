@@ -24,7 +24,10 @@ public interface Cash extends Valuable {
 			unit = "";
 		}
 
-		return String.format("%f1%s", figure, unit);
+		if (shortString)
+			return String.format("$%.0f%s", figure, unit);
+		else
+			return String.format("%.0f%s", figure, unit);
 	}
 
 	@Override
@@ -36,8 +39,8 @@ public interface Cash extends Valuable {
 	@Override
 	default SupportedActions getSupportedTypes() {
 		SupportedActions actions = new SupportedActions();
-		actions.addAction(new CardActionType("Add to bank", "move.cash"));
-		actions.addAction(new CardActionType("Discard", "move.discard"));
+		actions.addAction(new CardActionType("Add to bank", "move.cash", getDefaults()));
+		actions.addAction(new CardActionType("Discard", "move.discard", getDefaults()));
 		return actions;
 	}
 

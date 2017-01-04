@@ -106,13 +106,16 @@ public abstract class Player {
 					this.fireValueChangedEvent();
 				};
 				propertyColumn.addListener((ListChangeListener<PropertyColumn>) event -> {
-					if (event.wasAdded()) {
-						event.getAddedSubList()
-								.parallelStream()
-								.forEach(column -> column.addListener(columnList));
+					while (event.next())
+					{
+						if (event.wasAdded()) {
+							event.getAddedSubList()
+									.parallelStream()
+									.forEach(column -> column.addListener(columnList));
+						}
+	
+						setCache = -1;
 					}
-
-					setCache = -1;
 					this.fireValueChangedEvent();
 				});
 			}

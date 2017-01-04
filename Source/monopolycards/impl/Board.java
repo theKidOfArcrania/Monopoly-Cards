@@ -118,8 +118,8 @@ public class Board {
 		int playerIndex = 0;
 		while ((winner = checkWin()).length == 0) {
 			current = players.get(playerIndex);
-			current.drawCards();
 			current.selectTurn();
+			current.drawCards();
 
 			// three turns.
 			for (; !current.isTurnDone();) {

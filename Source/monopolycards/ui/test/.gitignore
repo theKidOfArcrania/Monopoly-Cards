@@ -5,3 +5,5 @@
 /BoardTest.class
 /CardTest.class
 /CardTest$PlayerImpl.class
+/GameTest$PlayerImpl.class
+/GameTest.class

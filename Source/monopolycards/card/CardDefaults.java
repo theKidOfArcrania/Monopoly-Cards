@@ -67,14 +67,15 @@ public abstract class CardDefaults extends ResourceDefaults {
 				if (className == null) {
 					throw new DeckInitializationFailureException("Class name is omitted.");
 				}
-
+				
+				Class<?> cardCls = Class.forName(className);
+				if (!AbstractCard.class.isAssignableFrom(cardCls))
+					throw new DeckInitializationFailureException(className + " is not an instance of AbstractCard");
+				
 				if (subType == null) {
-					Class.forName(className)
-							.newInstance();
+					generated.add((AbstractCard)cardCls.newInstance());
 				} else {
-					Class.forName(className)
-							.getConstructor(String.class)
-							.newInstance(subType);
+					generated.add((AbstractCard)cardCls.getConstructor(String.class).newInstance(subType));
 				}
 			}
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {

@@ -1,5 +1,7 @@
 package monopolycards;
 
+import static java.lang.ClassLoader.getSystemResource;
+
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Properties;
@@ -7,8 +9,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
-
-import static java.lang.ClassLoader.getSystemResource;
 
 public class ResourceDefaults extends Properties {
 	private static final long serialVersionUID = 761446494739060039L;
@@ -19,8 +19,6 @@ public class ResourceDefaults extends Properties {
 		defs = new ResourceDefaults();
 		try {
 			defs.load(ClassLoader.getSystemResourceAsStream("res.properties"));
-			defs.scale = defs.getIntProperty("scale", 1);
-
 		} catch (IOException e) {
 			LOG.log(Level.SEVERE, "Unable to load resource 'res.properties'. Crashing now.", e);
 			System.exit(1);
@@ -31,8 +29,11 @@ public class ResourceDefaults extends Properties {
 		return defs;
 	}
 
-	private int scale = 1;
-
+	private boolean loadedScale = false;
+	private int scale;
+	
+	
+	
 	public <T extends Enum<T>> T getEnumProperty(String name, Class<T> enumClass, T defaultValue) {
 		if (!enumClass.isEnum()) {
 			// Shouldn't happen because of typesafe check.
@@ -58,15 +59,27 @@ public class ResourceDefaults extends Properties {
 
 	public int getIntProperty(String name, int defaultValue) {
 		String num = getProperty(name, Integer.toString(defaultValue));
-		if (num.startsWith("$")) {
-			return Integer.parseInt(num.substring(1)) * scale;
-		} else {
-			return Integer.parseInt(num);
+		try
+		{
+			if (num.startsWith("$")) {
+				return Integer.parseInt(num.substring(1)) * scale;
+			} else {
+				return Integer.parseInt(num);
+			}
 		}
-
+		catch (NumberFormatException e)
+		{
+			e.printStackTrace();
+			return defaultValue;
+		}
 	}
 
 	public int getScale() {
+		if (!loadedScale)
+		{
+			scale = getIntProperty("scale", 1);
+			loadedScale = true;
+		}
 		return scale;
 	}
 }

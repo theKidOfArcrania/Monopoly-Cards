@@ -14,8 +14,8 @@ public interface Action extends Card {
 	@Override
 	default SupportedActions getSupportedTypes() {
 		SupportedActions actions = new SupportedActions();
-		actions.addAction(new CardActionType(getActionName(), getActionInternalType()));
-		actions.addAction(new CardActionType("Discard", "move.discard"));
+		actions.addAction(new CardActionType(getActionName(), getActionInternalType(), getDefaults()));
+		actions.addAction(new CardActionType("Discard", "move.discard", getDefaults()));
 		return actions;
 	}
 }

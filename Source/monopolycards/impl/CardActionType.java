@@ -52,15 +52,11 @@ public class CardActionType {
 	private final ResourceDefaults defs;
 	private final Likeness likeness;
 
-	public CardActionType(String name, String internalType) {
-		this(name, internalType, null);
+	public CardActionType(String name, String internalType, ResourceDefaults defs) {
+		this(name, internalType, defs, null);
 	}
 
-	public CardActionType(String name, String internalType, BiFunction<? super Card, ? super Player, ? extends Boolean> actionOverride) {
-		this(name, internalType, actionOverride, ResourceDefaults.getDefaults());
-	}
-
-	public CardActionType(String name, String internalType, BiFunction<? super Card, ? super Player, ? extends Boolean> actionOverride, ResourceDefaults defs) {
+	public CardActionType(String name, String internalType, ResourceDefaults defs, BiFunction<? super Card, ? super Player, ? extends Boolean> actionOverride) {
 		this.name = name;
 		this.internalType = internalType;
 		this.defs = defs;
@@ -95,5 +91,11 @@ public class CardActionType {
 
 	public String getName() {
 		return name;
+	}
+	
+	@Override
+	public String toString()
+	{
+		return getName();
 	}
 }

@@ -5,13 +5,13 @@
  */
 package monopolycards.card.standard;
 
+import static java.util.Objects.requireNonNull;
+
 import monopolycards.card.DualColor;
 import monopolycards.card.Property;
 import monopolycards.card.PropertyColor;
 import monopolycards.impl.CardActionType.Likeness;
 import monopolycards.impl.Player;
-
-import static java.util.Objects.requireNonNull;
 
 /**
  * This class encapsulates a property card, used for winning, and also for renting from. This also has implementation for wild cards, based on the two properties that determine the color type of a property: <code>propertyColors</code> and <code>propertyColor2</code>. In a regular property card, you
@@ -121,7 +121,7 @@ public final class PropertyCard extends StandardCard implements Property {
 		if (isWildCard()) {
 			return propertyColors.getColorName() + " Wild";
 		}
-		return getInternalProperty("name") + "#" + propNumber;
+		return getInternalProperty("name"); //+ "#" + propNumber;
 	}
 
 	@Override

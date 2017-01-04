@@ -5,12 +5,6 @@
  */
 package monopolycards.card;
 
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.function.UnaryOperator;
-import java.util.stream.Collectors;
-
 import static java.util.Objects.requireNonNull;
 import static monopolycards.card.PropertyColor.Beige;
 import static monopolycards.card.PropertyColor.Black;
@@ -22,6 +16,12 @@ import static monopolycards.card.PropertyColor.Megenta;
 import static monopolycards.card.PropertyColor.Orange;
 import static monopolycards.card.PropertyColor.Red;
 import static monopolycards.card.PropertyColor.Yellow;
+
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -35,20 +35,19 @@ public class DualColor implements Serializable {
 	static {
 		DualColor[] availableWildColors = new DualColor[] { new DualColor(), // rainbow
 				// wild rent/wild card properties
-				new DualColor(LightBlue, Brown), new DualColor(Orange, Megenta), new DualColor(Red, Yellow), new DualColor(Blue, Green),
+				new DualColor(Brown, LightBlue), new DualColor(Megenta, Orange), new DualColor(Red, Yellow), 
+				new DualColor(Green, Blue),
 				new DualColor(Beige, Black),
 				// wild-card properties only.
 				new DualColor(Black, Green), new DualColor(Black, LightBlue) };
-		DualColor[] singleColorEnum = Arrays.stream(PropertyColor.class.getEnumConstants())
-				.parallel()
-				.map(DualColor::new)
-				.toArray(DualColor[]::new);
-		DualColor[] availableColors = new DualColor[availableWildColors.length + singleColorEnum.length];
-
-		System.arraycopy(singleColorEnum, 0, availableColors, 0, singleColorEnum.length);
-		System.arraycopy(availableWildColors, 0, availableColors, singleColorEnum.length, availableWildColors.length);
-
-		internalTypingColors = Arrays.stream(availableWildColors)
+		PropertyColor[] colors = PropertyColor.class.getEnumConstants();
+		DualColor[] availableColors = new DualColor[availableWildColors.length + colors.length];
+		for (int i = 0; i < colors.length; i++)
+			availableColors[i] = new DualColor(colors[i]);
+		for (int i = 0; i < availableWildColors.length; i++)
+			availableColors[i + colors.length] = availableWildColors[i];
+		
+		internalTypingColors = Arrays.stream(availableColors)
 				.collect(Collectors.toConcurrentMap(DualColor::getInternalType, UnaryOperator.identity()));
 
 	}
@@ -125,6 +124,8 @@ public class DualColor implements Serializable {
 	public DualColor(String internalType) {
 		DualColor colors = internalTypingColors.get(internalType);
 		if (colors == null) {
+			System.out.println(internalTypingColors);
+			System.out.println(internalType);
 			throw new IllegalArgumentException();
 		}
 

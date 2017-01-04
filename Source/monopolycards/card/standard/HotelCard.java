@@ -15,4 +15,6 @@ public class HotelCard extends HouseCard {
 	public String getInternalType() {
 		return "action.hotel";
 	}
+	
+	//TODO: disallow building hotels if there are no full sets.
 }

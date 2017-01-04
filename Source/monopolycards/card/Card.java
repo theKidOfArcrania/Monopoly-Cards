@@ -67,10 +67,12 @@ public interface Card extends Serializable {
 	 */
 	default SupportedActions getSupportedTypes() {
 		SupportedActions actions = new SupportedActions();
-		actions.addAction(new CardActionType("Play " + getCardName(), "move.action"));
-		actions.addAction(new CardActionType("Discard", "move.discard"));
+		actions.addAction(new CardActionType("Play " + getCardName(), "move.action", getDefaults()));
+		actions.addAction(new CardActionType("Discard", "move.discard", getDefaults()));
 		return actions;
 	}
 
 	boolean isEnabled(Player self, Likeness action);
+	
+	CardDefaults getDefaults();
 }

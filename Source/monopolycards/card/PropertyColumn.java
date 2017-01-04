@@ -5,12 +5,16 @@
  */
 package monopolycards.card;
 
+import static java.util.Comparator.comparing;
+import static java.util.Objects.requireNonNull;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -19,9 +23,6 @@ import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-
-import static java.util.Comparator.comparing;
-import static java.util.Objects.requireNonNull;
 
 /**
  *
@@ -44,6 +45,8 @@ public class PropertyColumn implements Iterable<Card>, Serializable, Observable 
 	private final PropertyColor propertyColor;
 
 	public PropertyColumn(CardDefaults defs, PropertyColor propertyColor) {
+		Objects.requireNonNull(defs);
+		Objects.requireNonNull(propertyColor);
 		this.defs = defs;
 		this.propertyColor = propertyColor;
 	}

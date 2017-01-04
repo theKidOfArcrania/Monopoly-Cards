@@ -18,7 +18,7 @@ import monopolycards.impl.CenterPlay;
 import monopolycards.impl.Payment;
 import monopolycards.impl.Player;
 
-public class CardTest
+public class GameTest
 {
 	public static class PlayerImpl extends Player {
 		private Scanner in;
@@ -31,15 +31,14 @@ public class CardTest
 		@Override
 		public void alert(String prompt)
 		{
-			System.out.println(getName() + ">" + prompt);
+			System.out.println(getName() + "> " + prompt);
 		}
 
 		@Override
 		public CardAction selectHand(String prompt, Predicate<Card> filter,
 				Predicate<CardActionType> actionFilter)
 		{
-			
-			System.out.println(getName() + ">" + prompt);
+			System.out.println(getName() + "> " + prompt);
 			CardAction action = null;
 			
 			while (action == null)
@@ -48,8 +47,9 @@ public class CardTest
 				List<Card> cards = filter != null ? getFullHand().filtered(filter) : getFullHand();
 				for (int i = 0; i < cards.size(); i++)
 					System.out.println("  " + i + " -- " + cards.get(i));
+				System.out.println();
 				
-				int cardInd = readNumber(0, cards.size() - 1);
+				int cardInd = readNumber("Choose a card: ", 0, cards.size() - 1);
 				Card selected = cards.get(cardInd);
 				
 				CardActionType[] actions = selected.getSupportedTypes().parallelStream()
@@ -60,7 +60,7 @@ public class CardTest
 				for (int i = 0; i < actions.length; i++)
 					System.out.println("  " + (i + 1) + " -- " + actions[i]);
 				
-				int actionInd = readNumber(0, actions.length);
+				int actionInd = readNumber("Choose an action for " + selected + ": ", 0, actions.length);
 				if (actionInd != 0)
 					action = new CardAction(selected, actions[actionInd - 1]);
 			}
@@ -100,29 +100,42 @@ public class CardTest
 		@Override
 		public boolean selectRequest(String prompt)
 		{
-			// TODO Auto-generated method stub
-			return false;
+			return readResponse(prompt);
 		}
 
 		@Override
 		public Response selectResponse(String prompt)
 		{
-			// TODO Auto-generated method stub
+			System.out.println(prompt);
+			System.out.println("TODO: select Just-say-no?");
 			return null;
 		}
 
 		@Override
 		public void selectTurn()
 		{
-			// TODO Auto-generated method stub
-			
+			System.out.println(getName() + "'s turn!");
 		}
 		
-		private int readNumber(int min, int max)
+		private boolean readResponse(String prompt)
+		{
+			System.out.println(prompt);
+			while (true)
+			{
+				System.out.println("(Y or N) ");
+				String resp = in.nextLine().toUpperCase();
+				if (resp.charAt(0) == 'Y')
+					return true;
+				else if (resp.charAt(0) == 'N')
+					return false;
+			}
+		}
+		
+		private int readNumber(String prompt, int min, int max)
 		{
 			while (true)
 			{
-				System.out.print("Choose a card: ");
+				System.out.print(prompt);
 				if (!in.hasNextInt())
 					System.out.println("Invalid number. ");
 				else
@@ -150,6 +163,8 @@ public class CardTest
 		for (int i = 1; i <= 4; i++)
 			b.addPlayer(new PlayerImpl(defs, "Player " + i));
 		
+		System.out.println("Starting game....");
+		System.out.println("-------------------------------");
 		b.start();
 		System.out.println("We have a winner!");
 		System.out.print("Congratulations ");
