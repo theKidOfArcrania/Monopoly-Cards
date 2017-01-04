@@ -32,8 +32,7 @@ public class DoubleTheRentCard extends ActionCard {
 		int multiplier = 2;
 
 		do {
-			played = self
-					.selectHand("Select a rent card to rent others with.",
+			played = self.selectHand("Select a rent card to rent others with.",
 							card -> ((!self.isLastTurn() && card instanceof DoubleTheRentCard)
 									|| (card instanceof RentCard && card.isEnabled(self, Likeness.Action))),
 							cardAction -> cardAction.getInternalType()

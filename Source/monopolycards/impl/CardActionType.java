@@ -67,6 +67,7 @@ public class CardActionType {
 		this.likeness = defs.getEnumProperty(internalType + ".like", Likeness.class, null);
 
 		if (likeness == null) {
+			System.out.println(internalType);
 			throw new IllegalArgumentException("Invalid action type for internal type");
 		}
 		if (actionOverride == null) {

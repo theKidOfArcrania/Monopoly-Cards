@@ -2,6 +2,8 @@ package monopolycards.impl;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import monopolycards.impl.CardActionType.Likeness;
 
@@ -26,6 +28,14 @@ public class SupportedActions implements Iterable<CardActionType> {
 				.iterator();
 	}
 
+	public Stream<CardActionType> stream() {
+		return StreamSupport.stream(spliterator(), false);
+	}
+	
+	public Stream<CardActionType> parallelStream() {
+		return StreamSupport.stream(spliterator(), true);
+	}
+	
 	public void removeAction(CardActionType type) {
 		supported.remove(type.getLikeness(), type);
 	}

@@ -1,17 +1,13 @@
 package monopolycards.card.standard;
 
+import static monopolycards.card.standard.StandardCardDefaults.getCardDefaults;
+
 import java.awt.Image;
 import java.io.IOException;
 
 import monopolycards.card.AbstractCard;
 import monopolycards.card.CardDefaults;
 
-import static monopolycards.card.standard.StandardCardDefaults.getCardDefaults;
-
-/*
- * To change this license header, choose License Headers in Project Properties. To change
- * this template file, choose Tools | Templates and open the template in the editor.
- */
 /**
  * This is the top abstract class of cards for all monopoly cards. (Classic and Millionare)
  * <p>

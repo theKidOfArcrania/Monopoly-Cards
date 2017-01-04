@@ -1,7 +1,6 @@
 package monopolycards.impl;
 
 import java.util.Arrays;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -383,7 +382,7 @@ public abstract class Player {
 	 *            filter for the actions for the card.
 	 * @return the card the player selected.
 	 */
-	public abstract CardAction selectHand(String prompt, Predicate<Card> filter, Function<CardActionType, Boolean> actionFilter);
+	public abstract CardAction selectHand(String prompt, Predicate<Card> filter, Predicate<CardActionType> actionFilter);
 
 	/**
 	 * This prompts the player of a payment that must be made.

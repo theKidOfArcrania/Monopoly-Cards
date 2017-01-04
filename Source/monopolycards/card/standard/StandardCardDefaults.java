@@ -26,6 +26,6 @@ public class StandardCardDefaults extends CardDefaults {
 	}
 
 	private StandardCardDefaults() throws IOException {
-		super("monopolycards\\cardstandard\\carddefs.properties");
+		super("monopolycards/card/standard/carddefs.properties");
 	}
 }
