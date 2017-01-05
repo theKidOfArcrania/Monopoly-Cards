@@ -59,5 +59,4 @@ public abstract class ActionCard extends StandardCard implements Action {
 	public int getSellValue() {
 		return getInternalIntProperty("sellValue", 0);
 	}
-
 }

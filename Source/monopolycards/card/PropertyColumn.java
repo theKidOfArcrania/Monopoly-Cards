@@ -46,7 +46,6 @@ public class PropertyColumn implements Iterable<Card>, Serializable, Observable 
 
 	public PropertyColumn(CardDefaults defs, PropertyColor propertyColor) {
 		Objects.requireNonNull(defs);
-		Objects.requireNonNull(propertyColor);
 		this.defs = defs;
 		this.propertyColor = propertyColor;
 	}
@@ -110,7 +109,7 @@ public class PropertyColumn implements Iterable<Card>, Serializable, Observable 
 	 * @return an array of cash that was the former houses/ hotels.
 	 */
 	public Cash[] downgrade() {
-		if (isMoveable()) {
+		if (!isFullSet()) {
 			return new Cash[0];
 		}
 		Action[] houses = properties.parallelStream()
@@ -148,6 +147,8 @@ public class PropertyColumn implements Iterable<Card>, Serializable, Observable 
 	}
 
 	public int getRent() {
+		if (propertyColor == null)
+			return 0;
 		if (isRentable()) {
 			int base = defs.getRent(propertyColor, getPropertyCount());
 			int additional = properties.parallelStream()
@@ -165,6 +166,8 @@ public class PropertyColumn implements Iterable<Card>, Serializable, Observable 
 	 * @return true if column has loose properties, false otherwise.
 	 */
 	public boolean hasIncompleteSet() {
+		if (propertyColor == null)
+			return true;
 		return getPropertyCount() != 0 && getPropertyCount() != defs.getPropertyFullSet(propertyColor);
 	}
 
@@ -183,16 +186,8 @@ public class PropertyColumn implements Iterable<Card>, Serializable, Observable 
 	 * @return true for full sets, false otherwise.
 	 */
 	public boolean isFullSet() {
-		return getPropertyCount() >= defs.getPropertyFullSet(propertyColor);
-	}
-
-	/**
-	 * Describes whether if this column can downgrade from a full set.
-	 * <p>
-	 *
-	 * @return true for full sets, false otherwise.
-	 */
-	public boolean isMoveable() {
+		if (propertyColor == null)
+			return false;
 		return getPropertyCount() >= defs.getPropertyFullSet(propertyColor);
 	}
 
@@ -202,6 +197,8 @@ public class PropertyColumn implements Iterable<Card>, Serializable, Observable 
 	 * @return true if it is rentable, false otherwise.
 	 */
 	public boolean isRentable() {
+		if (propertyColor == null)
+			return false;
 		return properties.parallelStream()
 				.filter((card) -> (card instanceof Property))
 				.anyMatch(card -> ((Property) card).canStandAlone());

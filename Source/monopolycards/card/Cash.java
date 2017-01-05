@@ -21,7 +21,7 @@ public interface Cash extends Valuable {
 			unit = shortString ? "K" : " thousand dollars";
 		} else {
 			figure = amount;
-			unit = "";
+			unit = " dollars";
 		}
 
 		if (shortString)
@@ -37,10 +37,11 @@ public interface Cash extends Valuable {
 	}
 
 	@Override
-	default SupportedActions getSupportedTypes() {
+	default SupportedActions getSupportedTypes(Player self) {
 		SupportedActions actions = new SupportedActions();
 		actions.addAction(new CardActionType("Add to bank", "move.cash", getDefaults()));
 		actions.addAction(new CardActionType("Discard", "move.discard", getDefaults()));
+		filterSupportedTypes(self, actions);
 		return actions;
 	}
 

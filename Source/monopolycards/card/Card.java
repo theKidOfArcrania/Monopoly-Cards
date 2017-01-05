@@ -3,6 +3,7 @@ package monopolycards.card;
 import java.awt.Image;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Iterator;
 
 import monopolycards.impl.CardActionType;
 import monopolycards.impl.CardActionType.Likeness;
@@ -65,13 +66,24 @@ public interface Card extends Serializable {
 	 *
 	 * @return The supported actions in an array.
 	 */
-	default SupportedActions getSupportedTypes() {
+	default SupportedActions getSupportedTypes(Player self) {
 		SupportedActions actions = new SupportedActions();
 		actions.addAction(new CardActionType("Play " + getCardName(), "move.action", getDefaults()));
 		actions.addAction(new CardActionType("Discard", "move.discard", getDefaults()));
+		filterSupportedTypes(self, actions);
 		return actions;
 	}
 
+	default void filterSupportedTypes(Player self, SupportedActions actions)
+	{
+		Iterator<CardActionType> itr = actions.iterator();
+		while (itr.hasNext())
+		{
+			if (!isEnabled(self, itr.next().getLikeness()))
+				itr.remove();
+		}
+	}
+	
 	boolean isEnabled(Player self, Likeness action);
 	
 	CardDefaults getDefaults();

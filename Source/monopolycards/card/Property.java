@@ -44,10 +44,11 @@ public interface Property extends Valuable {
 	String getPropertyName();
 
 	@Override
-	default SupportedActions getSupportedTypes() {
+	default SupportedActions getSupportedTypes(Player self) {
 		SupportedActions actions = new SupportedActions();
 		actions.addAction(new CardActionType("Add property", "move.property", getDefaults()));
 		actions.addAction(new CardActionType("Discard", "move.discard", getDefaults()));
+		filterSupportedTypes(self, actions);
 		return actions;
 	}
 

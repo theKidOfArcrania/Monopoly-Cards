@@ -55,23 +55,24 @@ public abstract class Player {
 		cashAmount = new ReadOnlyIntegerPropertyBase() {
 			{
 				bank.addListener((ListChangeListener<Cash>) event -> {
-
-					if (event.wasPermutated()) {
-						// no change needed to fire.
-						return;
-					} else if (event.wasUpdated()) {
-						cashCache = -1;
-					} else {
-						cashCache += event.getAddedSubList()
-								.parallelStream()
-								.mapToInt(Cash::getValue)
-								.sum();
-						cashCache -= event.getRemoved()
-								.parallelStream()
-								.mapToInt(Cash::getValue)
-								.sum();
+					while (event.next())
+					{
+						if (event.wasPermutated()) {
+							// no change needed to fire.
+							return;
+						} else if (event.wasUpdated()) {
+							cashCache = -1;
+						} else {
+							cashCache += event.getAddedSubList()
+									.parallelStream()
+									.mapToInt(Cash::getValue)
+									.sum();
+							cashCache -= event.getRemoved()
+									.parallelStream()
+									.mapToInt(Cash::getValue)
+									.sum();
+						}
 					}
-
 					this.fireValueChangedEvent();
 				});
 			}
@@ -188,6 +189,11 @@ public abstract class Player {
 		hand.addAll(Arrays.asList(cards));
 	}
 
+	public void endTurn()
+	{
+		moves = 4;
+	}
+	
 	public ObservableList<Cash> getBankAccount() {
 		return FXCollections.unmodifiableObservableList(bank);
 	}
@@ -288,6 +294,10 @@ public abstract class Player {
 		return moves == 2;
 	}
 
+	public final boolean isTurnEnd() {
+		return moves >= 4;
+	}
+	
 	public final boolean isTurnDone() {
 		return moves >= 3;
 	}
@@ -301,13 +311,10 @@ public abstract class Player {
 			return false;
 		}
 
-		hand.remove(played);
-
 		// TO DO: checkReference(current, played);
-		if (move.getActionType()
-				.getAction()
-				.apply(played, this)) {
+		if (move.getActionType().getAction().apply(played, this)) {
 			pushTurn(move);
+			hand.remove(played);
 		}
 		return true;
 	}
@@ -337,6 +344,11 @@ public abstract class Player {
 		moves = 0;
 	}
 
+	/**
+	 * Prompts the player to end the turn.
+	 */
+	public abstract void selectEndTurn();
+	
 	/**
 	 * This prompts the player to select a card to play (convenience method)
 	 * <p>
@@ -375,6 +387,8 @@ public abstract class Player {
 
 	/**
 	 * This prompts the player to select a card to play
+	 * This method must acknowledge whether if the card has any valid supported actions
+	 * by calling {@link Card#getSupportedTypes(Player)}. 
 	 * <p>
 	 *
 	 * @param prompt
@@ -554,4 +568,10 @@ public abstract class Player {
 	 * This method allows for a pause before player starts a turn... ie if player needs to be prompted to start turn and draw cards.
 	 */
 	public abstract void selectTurn();
+	
+	@Override
+	public String toString()
+	{
+		return getName();
+	}
 }

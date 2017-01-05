@@ -5,6 +5,8 @@
  */
 package monopolycards.impl;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -16,8 +18,6 @@ import monopolycards.card.PropertyColor;
 import monopolycards.card.PropertyColumn;
 import monopolycards.card.Response;
 import monopolycards.card.Valuable;
-
-import static java.util.Objects.requireNonNull;
 
 /**
  * This is a collection of cash cards and property cards used as a payment.
@@ -58,7 +58,7 @@ public class Payment {
 		PropertyColumn columnGiver = giver.getPropertyColumn(prop);
 		PropertyColumn columnReciever = reciever.getPropertyColumn(columnGiver.getPropertyColor());
 
-		if (!columnGiver.isMoveable()) {
+		if (columnGiver.isFullSet()) {
 			throw new AssertionError();
 		}
 

@@ -22,6 +22,11 @@ public class SupportedActions implements Iterable<CardActionType> {
 		return supported.get(likeness);
 	}
 
+	public boolean isEmpty()
+	{
+		return supported.isEmpty();
+	}
+	
 	@Override
 	public Iterator<CardActionType> iterator() {
 		return supported.values()
@@ -36,12 +41,12 @@ public class SupportedActions implements Iterable<CardActionType> {
 		return StreamSupport.stream(spliterator(), true);
 	}
 	
-	public void removeAction(CardActionType type) {
-		supported.remove(type.getLikeness(), type);
+	public boolean removeAction(CardActionType type) {
+		return supported.remove(type.getLikeness(), type);
 	}
 
-	public void removeAction(Likeness likeness) {
-		supported.remove(likeness);
+	public CardActionType removeAction(Likeness likeness) {
+		return supported.remove(likeness);
 	}
 
 	public CardActionType replaceAction(CardActionType type) {

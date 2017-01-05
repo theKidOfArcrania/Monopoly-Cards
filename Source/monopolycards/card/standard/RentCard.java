@@ -5,13 +5,13 @@
  */
 package monopolycards.card.standard;
 
+import static java.util.Objects.requireNonNull;
+
 import monopolycards.card.DualColor;
 import monopolycards.card.PropertyColor;
 import monopolycards.card.PropertyColumn;
 import monopolycards.impl.CardActionType.Likeness;
 import monopolycards.impl.Player;
-
-import static java.util.Objects.requireNonNull;
 
 /**
  *
@@ -72,15 +72,14 @@ public class RentCard extends ActionCard {
 
 	@Override
 	public boolean actionPlayed(Player self) {
-		int rent = self.columnStream()
-				.parallel()
-				.filter(this::isValidRent)
-				.mapToInt(PropertyColumn::getRent)
-				.max()
-				.orElse(0);
-		if (rent == 0) {
-			return false;
+		int rent = 0;
+		for (PropertyColumn column : self.getPropColumns())
+		{
+			if (isValidRent(column)) 
+				rent = Math.max(rent, column.getRent());
 		}
+		if (rent == 0)
+			return false;
 		return payRequest(self, isGlobal(), rent, "rent");
 	}
 

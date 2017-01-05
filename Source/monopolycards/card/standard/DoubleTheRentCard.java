@@ -60,7 +60,7 @@ public class DoubleTheRentCard extends ActionCard {
 
 		if (payRequest(self, rentCard.isGlobal(), rent * multiplier, "rent")) {
 			extraDoubles.forEach((doubling) -> {
-				self.pushTurn(new CardAction(doubling, getSupportedTypes().getActionType(Likeness.Action)));
+				self.pushTurn(new CardAction(doubling, getSupportedTypes(self).getActionType(Likeness.Action)));
 				centerPlay.discard(doubling);
 			});
 			centerPlay.discard(rentCard);

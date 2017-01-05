@@ -107,6 +107,8 @@ public class Board {
 
 	/**
 	 * This is the central function that runs the entire game.
+	 * 
+	 * This does not return until game ends.
 	 */
 	public void start() {
 		@SuppressWarnings("unused")
@@ -124,6 +126,8 @@ public class Board {
 			// three turns.
 			for (; !current.isTurnDone();) {
 				CardAction action = current.selectHand();
+				if (current.isTurnDone()) //If user ends turn here.
+					break;
 				if (!current.playAction(action)) {
 					throw new AssertionError();
 				}
@@ -132,6 +136,8 @@ public class Board {
 					break;
 				}
 			}
+			while (!current.isTurnEnd())
+				current.selectEndTurn();
 
 			playerIndex++;
 			if (playerIndex >= players.size()) {

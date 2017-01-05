@@ -20,8 +20,8 @@ public class JustSayNoCard extends ActionCard implements Response {
 	}
 
 	@Override
-	public SupportedActions getSupportedTypes() {
-		SupportedActions actions = super.getSupportedTypes();
+	public SupportedActions getSupportedTypes(Player self) {
+		SupportedActions actions = super.getSupportedTypes(self);
 		actions.removeAction(CardActionType.Likeness.Action);
 		return actions;
 	}
