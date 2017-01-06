@@ -1,12 +1,30 @@
 package monopolycards.ui.test;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
 import java.util.function.Predicate;
 
-import monopolycards.card.*;
+import monopolycards.card.Card;
+import monopolycards.card.CardDefaults;
+import monopolycards.card.Cash;
+import monopolycards.card.Deck;
+import monopolycards.card.Property;
+import monopolycards.card.PropertyColumn;
+import monopolycards.card.Response;
+import monopolycards.card.ResponseType;
+import monopolycards.card.Valuable;
 import monopolycards.card.standard.JustSayNoCard;
 import monopolycards.card.standard.StandardCardDefaults;
-import monopolycards.impl.*;
+import monopolycards.impl.Board;
+import monopolycards.impl.CardAction;
+import monopolycards.impl.CardActionType;
+import monopolycards.impl.CenterPlay;
+import monopolycards.impl.CounterProposal;
+import monopolycards.impl.Payment;
+import monopolycards.impl.Player;
 
 public class GameTest
 {
@@ -21,7 +39,8 @@ public class GameTest
 		@Override
 		public void alert(String prompt)
 		{
-			System.out.println(prompt);
+			System.out.println("[" + prompt + "]");
+			System.out.println("Press <enter> to continue...");
 		}
 
 		@Override
@@ -79,7 +98,12 @@ public class GameTest
 		{
 			Response prop;
 			if (response == JustSayNoCard.JUST_SAY_NO)
-				prop = rebuttalResponse(prevProposal.getDebtor().getName() + " just Just-say-noed you.");
+			{
+				if (prevProposal == null)
+					prop = rebuttalResponse(amount.getCreditor().getName() + " just Just-say-noed you.");
+				else
+					prop = rebuttalResponse(prevProposal.getDebtor().getName() + " just Just-say-noed you.");
+			}
 			else 
 				prop = rebuttalResponse(amount.toString());
 			
@@ -93,18 +117,39 @@ public class GameTest
 				{
 					List<Valuable> payments = new ArrayList<>();
 					payments.addAll(getBankAccount());
+					List<PropertyColumn> columns = new ArrayList<>(getPropColumns());
+					columns.removeAll(amount.getPropSetsRequested());
+					for (PropertyColumn col : columns)
+					{
+						if (col.isDowngradable()) //TODO: downgrade houses/ hotels.
+							continue;
+						for (Card c : col)
+						{
+							Valuable v = (Valuable)c; //Should not throw ClassCastError.
+							if (v.getValue() > 0)
+								payments.add(v);
+						}
+					}
 					
-					while (!isBankrupt())
+					while (!payments.isEmpty() && !amount.metPayment())
 					{
 						System.out.println("You need to give " + Cash.moneyString(debt, true));
-						//TODO: select payment.
+						System.out.println("Possible items: ");
+						for (int i = 0; i < payments.size(); i++)
+						{
+							Valuable v = payments.get(i);
+							System.out.println("  " + i + " -- " + v + " (" + Cash.moneyString(v.getValue(), true) + ")");
+						}
+						
+						Valuable v = payments.remove(readNumber("Select an item: ", 0, payments.size() - 1));
+						amount.payBill(v);
+						debt -= v.getValue();
 					}
 				}
-				amount.finishPay();
 			}
 			return null;
 		}
-
+		//TODO: fix rent stuff.
 		@Override
 		public Player selectPlayer(String prompt, Predicate<Player> filter)
 		{
@@ -168,7 +213,7 @@ public class GameTest
 			System.out.println((p == this ? "You have " : p.getName() + " has ") + Cash.moneyString(p.getCashAmount(), false));
 			System.out.println();
 			
-			for (PropertyColumn column : getPropColumns())
+			for (PropertyColumn column : p.getPropColumns())
 			{
 				if (column.getPropertyColor() == null)
 					System.out.println("[Other Properties]");
@@ -240,7 +285,7 @@ public class GameTest
 					System.out.println("  " + cards.size() + " -- " + r.getActionName());
 					cards.add(r);
 				}
-				System.out.println("  " + cards.size() + " -- continue on");
+				System.out.println("  " + cards.size() + " -- Continue on");
 				
 				int ind = readNumber("Select a response: ", 0, cards.size());
 				if (ind == cards.size())

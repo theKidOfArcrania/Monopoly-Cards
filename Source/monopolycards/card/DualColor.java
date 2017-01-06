@@ -163,10 +163,10 @@ public class DualColor implements Serializable {
 	 * @return true if this is compatible, false otherwise.
 	 */
 	public boolean compatibleWith(PropertyColor other) {
-		if (other == null)
-			return false;
 		if (this.isAllWildCard()) {
 			return other != PropertyColor.Gold;
+		} else if (other == null){
+			return false;
 		} else {
 			boolean compatible = getPropertyColor() == other;
 			boolean compatible2 = getPropertyColor2() == other;

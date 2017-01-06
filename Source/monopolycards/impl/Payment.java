@@ -5,13 +5,21 @@
  */
 package monopolycards.impl;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
-import monopolycards.card.*;
-
-import static java.util.Objects.requireNonNull;
+import monopolycards.card.Card;
+import monopolycards.card.Cash;
+import monopolycards.card.Property;
+import monopolycards.card.PropertyColor;
+import monopolycards.card.PropertyColumn;
+import monopolycards.card.ResponseType;
+import monopolycards.card.Valuable;
 
 /**
  * This is a collection of cash cards and property cards used as a payment.
@@ -47,11 +55,6 @@ public class Payment {
 	private static void transferProp(Player giver, Player reciever, Property prop) {
 		PropertyColumn columnGiver = giver.getPropertyColumn(prop);
 		PropertyColumn columnReciever = reciever.getPropertyColumn(columnGiver.getPropertyColor());
-
-		if (columnGiver.isFullSet()) {
-			throw new AssertionError();
-		}
-
 		columnGiver.remove(prop);
 		columnReciever.addAndSort(prop);
 	}
@@ -211,8 +214,31 @@ public class Payment {
 			}else
 				break;
 		}
+		
 		if (current != null)
 			current.finishPay();
+	}
+
+	
+	
+	public List<Property> getPropRequested()
+	{
+		return Collections.unmodifiableList(propRequested);
+	}
+
+	public List<PropertyColor> getPropSetsRequested()
+	{
+		return Collections.unmodifiableList(propSetsRequested);
+	}
+
+	public List<Property> getPropGiven()
+	{
+		return Collections.unmodifiableList(propGiven);
+	}
+
+	public List<PropertyColor> getPropSetsGiven()
+	{
+		return Collections.unmodifiableList(propSetsGiven);
 	}
 
 	/**

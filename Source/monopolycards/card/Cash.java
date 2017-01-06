@@ -10,14 +10,14 @@ public interface Cash extends Valuable {
 		double figure;
 		String unit;
 
-		if (amount > 1000000000) { // billions
+		if (amount >= 1000000000) { // billions
 			figure = amount / 1000000000.0;
 			unit = shortString ? "B" : " billion dollars";
-		} else if (amount > 1000000) { // millions
+		} else if (amount >= 1000000) { // millions
 			figure = amount / 1000000.0;
 			unit = shortString ? "M" : " million dollars";
-		} else if (amount > 1000) { // thousands
-			figure = amount / 1000000.0;
+		} else if (amount >= 1000) { // thousands
+			figure = amount / 1000.0;
 			unit = shortString ? "K" : " thousand dollars";
 		} else {
 			figure = amount;

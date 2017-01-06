@@ -94,7 +94,7 @@ public abstract class CardDefaults extends ResourceDefaults {
 		if (propertyCount < 0) {
 			throw new IllegalArgumentException("property count must not be negative.");
 		}
-		int maxConciousCount = Math.max(propertyCount, getPropertyFullSet(propertyType));
+		int maxConciousCount = Math.min(propertyCount, getPropertyFullSet(propertyType));
 
 		if (maxConciousCount == 0) {
 			return 0;
