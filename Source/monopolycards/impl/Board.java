@@ -96,7 +96,7 @@ public class Board {
 	public void removePlayer(int index) {
 		checkStarted();
 		players.remove(index)
-				.registerGame(null);
+		.registerGame(null);
 	}
 
 	public void removePlayer(Player player) {
@@ -107,7 +107,7 @@ public class Board {
 
 	/**
 	 * This is the central function that runs the entire game.
-	 * 
+	 *
 	 * This does not return until game ends.
 	 */
 	public void start() {
@@ -120,14 +120,17 @@ public class Board {
 		int playerIndex = 0;
 		while ((winner = checkWin()).length == 0) {
 			current = players.get(playerIndex);
+			current.resetTurn();
 			current.selectTurn();
 			current.drawCards();
 
 			// three turns.
 			for (; !current.isTurnDone();) {
 				CardAction action = current.selectHand();
-				if (current.isTurnDone()) //If user ends turn here.
+				if (current.isTurnDone())
+				{
 					break;
+				}
 				if (!current.playAction(action)) {
 					throw new AssertionError();
 				}
@@ -137,7 +140,9 @@ public class Board {
 				}
 			}
 			while (!current.isTurnEnd())
+			{
 				current.selectEndTurn();
+			}
 
 			playerIndex++;
 			if (playerIndex >= players.size()) {

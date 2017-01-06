@@ -9,13 +9,7 @@ import javafx.beans.property.ReadOnlyIntegerPropertyBase;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import monopolycards.card.Card;
-import monopolycards.card.CardDefaults;
-import monopolycards.card.Cash;
-import monopolycards.card.Property;
-import monopolycards.card.PropertyColor;
-import monopolycards.card.PropertyColumn;
-import monopolycards.card.Response;
+import monopolycards.card.*;
 
 /**
  * This class describes the cards that a player has at any point.
@@ -111,10 +105,10 @@ public abstract class Player {
 					{
 						if (event.wasAdded()) {
 							event.getAddedSubList()
-									.parallelStream()
-									.forEach(column -> column.addListener(columnList));
+							.parallelStream()
+							.forEach(column -> column.addListener(columnList));
 						}
-	
+
 						setCache = -1;
 					}
 					this.fireValueChangedEvent();
@@ -171,8 +165,7 @@ public abstract class Player {
 	}
 
 	public boolean checkWin() {
-		int fullSets = propertyColumn.stream()
-				.parallel()
+		int fullSets = propertyColumn.stream().parallel()
 				.reduce(0, (count, column) -> count + (column.isFullSet() ? 1 : 0), (count1, count2) -> count1 + count2);
 		return fullSets >= 3;
 	}
@@ -184,8 +177,12 @@ public abstract class Player {
 	// starts a player's turn with drawing cards.
 	@SuppressWarnings("FinalMethod")
 	public final void drawCards() {
+		int draw = 2;
+		if (hand.isEmpty())
+			draw = 5;
+		
 		Card[] cards = game.getCenterPlay()
-				.drawCards(2);
+				.drawCards(draw);
 		hand.addAll(Arrays.asList(cards));
 	}
 
@@ -193,7 +190,7 @@ public abstract class Player {
 	{
 		moves = 4;
 	}
-	
+
 	public ObservableList<Cash> getBankAccount() {
 		return FXCollections.unmodifiableObservableList(bank);
 	}
@@ -290,16 +287,37 @@ public abstract class Player {
 				.anyMatch(PropertyColumn::hasIncompleteSet);
 	}
 
+	/**
+	 * Determines whether if player has any valued assets on the field.
+	 * @return true if there are no assets, false otherwise.
+	 */
+	public final boolean isBankrupt()
+	{
+		if (getCashAmount() > 0)
+			return false;
+		for (PropertyColumn column : propertyColumn)
+		{
+			for (Card c : column)
+			{
+				if (c.getSellValue() > 0)
+					return false;
+				if (c instanceof Property && ((Property)c).getValue() > 0)
+					return false;
+			}
+		}
+		return true;
+	}
+	
 	public final boolean isLastTurn() {
 		return moves == 2;
 	}
 
-	public final boolean isTurnEnd() {
-		return moves >= 4;
-	}
-	
 	public final boolean isTurnDone() {
 		return moves >= 3;
+	}
+
+	public final boolean isTurnEnd() {
+		return moves >= 4;
 	}
 
 	// player makes one move.
@@ -316,6 +334,21 @@ public abstract class Player {
 			pushTurn(move);
 			hand.remove(played);
 		}
+		return true;
+	}
+	
+	public final boolean playActionNoTurn(CardAction move) {
+		Card played = move.getPlayed();
+
+		if (isTurnDone()) {
+			return false;
+		}
+
+		// TODO: checkReference(current, played);
+		move.getActionType().getAction().apply(played, this);
+		playerHistory.add(move);
+		hand.remove(played);
+
 		return true;
 	}
 
@@ -348,7 +381,7 @@ public abstract class Player {
 	 * Prompts the player to end the turn.
 	 */
 	public abstract void selectEndTurn();
-	
+
 	/**
 	 * This prompts the player to select a card to play (convenience method)
 	 * <p>
@@ -388,7 +421,7 @@ public abstract class Player {
 	/**
 	 * This prompts the player to select a card to play
 	 * This method must acknowledge whether if the card has any valid supported actions
-	 * by calling {@link Card#getSupportedTypes(Player)}. 
+	 * by calling {@link Card#getSupportedTypes(Player)}.
 	 * <p>
 	 *
 	 * @param prompt
@@ -405,10 +438,13 @@ public abstract class Player {
 	 * This prompts the player of a payment that must be made.
 	 * <p>
 	 *
-	 * @param amount
-	 *            the debt amount.
+	 * @param amount the debt amount to pay (if any) that is currently due.
+	 * @param prevProposal the previous proposal this player has made, or null 
+	 * 		no previous ones have been made, or if player rejected the payment
+	 * @param response response of the other player if any, or null if other player has not made a response.
+	 * @return any counter proposal of the player if the player objects to the payment.
 	 */
-	public abstract void selectPayment(Payment amount);
+	public abstract CounterProposal selectPayment(Payment amount, Payment prevProposal, ResponseType response);
 
 	/**
 	 * This prompts the player to select another player
@@ -555,20 +591,10 @@ public abstract class Player {
 	public abstract boolean selectRequest(String prompt);
 
 	/**
-	 * This prompts the player whether to agree
-	 * <p>
-	 *
-	 * @param prompt
-	 *            the prompt that the player will see.
-	 * @return null if player accepts, the response card (currently only a just say no) if player rejects.
-	 */
-	public abstract Response selectResponse(String prompt);
-
-	/**
 	 * This method allows for a pause before player starts a turn... ie if player needs to be prompted to start turn and draw cards.
 	 */
 	public abstract void selectTurn();
-	
+
 	@Override
 	public String toString()
 	{

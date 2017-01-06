@@ -1,6 +1,7 @@
 package monopolycards.card.standard;
 
 import monopolycards.card.Response;
+import monopolycards.card.ResponseType;
 import monopolycards.impl.CardActionType;
 import monopolycards.impl.CardActionType.Likeness;
 import monopolycards.impl.Player;
@@ -8,7 +9,8 @@ import monopolycards.impl.SupportedActions;
 
 public class JustSayNoCard extends ActionCard implements Response {
 	private static final long serialVersionUID = -1356787074424595137L;
-
+	public static final ResponseType JUST_SAY_NO = (prevProposal, current) -> prevProposal;
+	
 	@Override
 	public String getInternalType() {
 		return "action.justSayNo";
@@ -16,7 +18,7 @@ public class JustSayNoCard extends ActionCard implements Response {
 
 	@Override
 	public ResponseType getResponseType() {
-		return ResponseType.JustSayNo;
+		return JUST_SAY_NO;
 	}
 
 	@Override

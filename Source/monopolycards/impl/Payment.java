@@ -5,19 +5,13 @@
  */
 package monopolycards.impl;
 
-import static java.util.Objects.requireNonNull;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-import monopolycards.card.Card;
-import monopolycards.card.Cash;
-import monopolycards.card.Property;
-import monopolycards.card.PropertyColor;
-import monopolycards.card.PropertyColumn;
-import monopolycards.card.Response;
-import monopolycards.card.Valuable;
+import monopolycards.card.*;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * This is a collection of cash cards and property cards used as a payment.
@@ -26,16 +20,12 @@ import monopolycards.card.Valuable;
  * @author HW
  */
 public class Payment {
-
+	
 	private static int getValue(Card c) {
-		if (!(c instanceof Cash) && !(c instanceof Property)) {
-			throw new IllegalArgumentException("Must be a money card or a property card.");
+		if (!(c instanceof Valuable)) {
+			throw new IllegalArgumentException("Must contain a money value.");
 		}
-
-		if (c instanceof Valuable) {
-			return ((Valuable) c).getValue();
-		}
-		return 0;
+		return ((Valuable) c).getValue();
 	}
 
 	private static String joinList(ArrayList<String> list) {
@@ -84,14 +74,10 @@ public class Payment {
 	private final Player debtor;
 	private int paidAmount = 0;
 	private final ArrayList<Property> propRequested = new ArrayList<>(3);
-
 	private final ArrayList<PropertyColor> propSetsRequested = new ArrayList<>(3);
-
 	private final ArrayList<Property> propGiven = new ArrayList<>(3);
-
 	private final ArrayList<PropertyColor> propSetsGiven = new ArrayList<>(3);
 
-	private boolean canceled = false;
 
 	/**
 	 * Constructs a payment object without any payment parameters.
@@ -175,10 +161,6 @@ public class Payment {
 	}
 
 	public void finishPay() {
-		// if (!metPayment()) {
-		// throw new IllegalStateException("Debt has not been fully met");
-		// }
-
 		propRequested.forEach(this::takeProp0);
 		propSetsRequested.forEach(this::takeProp0);
 		propGiven.forEach(this::giveProp0);
@@ -196,6 +178,16 @@ public class Payment {
 		});
 	}
 
+	public Player getCreditor()
+	{
+		return creditor;
+	}
+
+	public Player getDebtor()
+	{
+		return debtor;
+	}
+	
 	/**
 	 * This method finishes the payment request and hands it over to the debtor/ ower.
 	 */
@@ -205,13 +197,22 @@ public class Payment {
 			return;
 		}
 
-		// currently, we only support one type of response: Just say no.
-		handleResponse(this.toString(), creditor, debtor);
-
-		if (!canceled) {
-			debtor.selectPayment(this);
-			this.finishPay();
+		CounterProposal prop = null;
+		Payment prevProposal = null;
+		Payment current = this;
+		while (true)
+		{
+			ResponseType resp = prop == null ? null : prop.getCard().getResponseType();
+			prop = debtor.selectPayment(current, prevProposal, resp);
+			if (prop != null)
+			{
+				current = prop.getProposal();
+				prevProposal = prop.getOriginal();
+			}else
+				break;
 		}
+		if (current != null)
+			current.finishPay();
 	}
 
 	/**
@@ -313,7 +314,12 @@ public class Payment {
 	public void setDebt(int debt) {
 		this.debt = debt;
 	}
-
+	
+	public int getDebt()
+	{
+		return debt;
+	}
+	
 	@Override
 	public String toString() {
 		ArrayList<String> requests = new ArrayList<>(10);
@@ -355,9 +361,8 @@ public class Payment {
 
 		String requestsString = joinList(requests);
 		String givesString = joinList(gives);
-		StringBuilder description = new StringBuilder(25 + requestsString.length() + givesString.length()).append("Player ")
-				.append(creditor.getName())
-				.append(" wants ");
+		StringBuilder description = new StringBuilder(25 + requestsString.length() + givesString.length())
+				.append(creditor.getName()).append(" wants ");
 		description.append(requestsString);
 
 		if (!givesString.isEmpty()) {
@@ -374,21 +379,6 @@ public class Payment {
 
 	private void giveProp0(PropertyColor propset) {
 		transferProp(creditor, debtor, propset);
-	}
-
-	private void handleResponse(String responseString, Player requester, Player responder) {
-		Response response = responder.selectResponse(responseString);
-		if (response != null && response.getResponseType() != null) {
-			switch (response.getResponseType()) {
-			case JustSayNo:
-				canceled = !canceled;
-				handleResponse("Player " + responder.getName() + " has Just-Say-No-ed your request.", responder, requester);
-				break;
-			default:
-				// not supported.
-				throw new InternalError();
-			}
-		}
 	}
 
 	private void takeProp0(Property prop) {

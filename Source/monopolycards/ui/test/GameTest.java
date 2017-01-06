@@ -1,24 +1,12 @@
 package monopolycards.ui.test;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.function.Predicate;
 
-import monopolycards.card.Card;
-import monopolycards.card.CardDefaults;
-import monopolycards.card.Cash;
-import monopolycards.card.Deck;
-import monopolycards.card.Property;
-import monopolycards.card.PropertyColumn;
-import monopolycards.card.Response;
+import monopolycards.card.*;
+import monopolycards.card.standard.JustSayNoCard;
 import monopolycards.card.standard.StandardCardDefaults;
-import monopolycards.impl.Board;
-import monopolycards.impl.CardAction;
-import monopolycards.impl.CardActionType;
-import monopolycards.impl.CenterPlay;
-import monopolycards.impl.Payment;
-import monopolycards.impl.Player;
+import monopolycards.impl.*;
 
 public class GameTest
 {
@@ -40,7 +28,6 @@ public class GameTest
 		public CardAction selectHand(String prompt, Predicate<Card> filter,
 				Predicate<CardActionType> actionFilter)
 		{
-			//TODO: debug action cards. Something is wrong with it!!!!
 			System.out.println();
 			System.out.println("[Turn " + (getMove() + 1) + "]");
 			
@@ -88,10 +75,34 @@ public class GameTest
 		}
 		
 		@Override
-		public void selectPayment(Payment amount)
+		public CounterProposal selectPayment(Payment amount, Payment prevProposal, ResponseType response)
 		{
-			System.out.println("TODO: Payment");
-			System.exit(1);
+			Response prop;
+			if (response == JustSayNoCard.JUST_SAY_NO)
+				prop = rebuttalResponse(prevProposal.getDebtor().getName() + " just Just-say-noed you.");
+			else 
+				prop = rebuttalResponse(amount.toString());
+			
+			if (prop != null)
+				return new CounterProposal(prop, amount, prevProposal);
+			
+			if (amount != null)
+			{
+				int debt = amount.getDebt();
+				if (debt > 0)
+				{
+					List<Valuable> payments = new ArrayList<>();
+					payments.addAll(getBankAccount());
+					
+					while (!isBankrupt())
+					{
+						System.out.println("You need to give " + Cash.moneyString(debt, true));
+						//TODO: select payment.
+					}
+				}
+				amount.finishPay();
+			}
+			return null;
 		}
 
 		@Override
@@ -147,14 +158,6 @@ public class GameTest
 		}
 
 		@Override
-		public Response selectResponse(String prompt)
-		{
-			System.out.println("[" + prompt + "]");
-			System.out.println("TODO: select Just-say-no?");
-			return null;
-		}
-
-		@Override
 		public void selectTurn()
 		{
 			System.out.println(getName() + "'s turn!");
@@ -162,7 +165,7 @@ public class GameTest
 		
 		private void printPlayer(Player p) 
 		{
-			System.out.println((p == this ? "You have " : p.getName() + " has ") + Cash.moneyString(getCashAmount(), false));
+			System.out.println((p == this ? "You have " : p.getName() + " has ") + Cash.moneyString(p.getCashAmount(), false));
 			System.out.println();
 			
 			for (PropertyColumn column : getPropColumns())
@@ -210,7 +213,43 @@ public class GameTest
 				in.nextLine(); //Flush buffer.
 			}
 		}
-
+		
+		private Response rebuttalResponse(String prompt)
+		{
+			System.out.println("[" + prompt + "]");
+			Map<ResponseType, Response> resps = new HashMap<>();
+			for (Card c : getFullHand())
+			{
+				if (c instanceof Response)
+				{
+					Response r = (Response) c;
+					resps.put(r.getResponseType(), r);
+				}
+			}
+			
+			System.out.println("Here is your current status:");
+			printPlayer(this);
+			if (resps.isEmpty())
+				return null;
+			else
+			{
+				ArrayList<Response> cards = new ArrayList<>(resps.size());
+				System.out.println("You can do the following: ");
+				for (Response r : resps.values())
+				{
+					System.out.println("  " + cards.size() + " -- " + r.getActionName());
+					cards.add(r);
+				}
+				System.out.println("  " + cards.size() + " -- continue on");
+				
+				int ind = readNumber("Select a response: ", 0, cards.size());
+				if (ind == cards.size())
+					return null;
+				else
+					return cards.get(ind);
+			}
+		}
+		
 		@Override
 		public void selectEndTurn()
 		{

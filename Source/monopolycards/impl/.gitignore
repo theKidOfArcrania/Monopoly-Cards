@@ -11,3 +11,5 @@
 /CardActionType$ActionType.class
 /CardActionType$Likeness.class
 /SupportedActions.class
+/Payment$CounterProposal.class
+/CounterProposal.class

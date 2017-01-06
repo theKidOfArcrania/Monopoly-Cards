@@ -27,7 +27,7 @@ public class CenterPlay {
 		this.playedCards = new LinkedList<>();
 		this.drawPile = new LinkedList<>();
 		this.deck = deck;
-		
+
 		drawPile.addAll(deck);
 	}
 
@@ -47,7 +47,6 @@ public class CenterPlay {
 	public Card[] drawCards(int count) {
 		Card[] drawn = new Card[count];
 		for (int i = 0; i < count; i++) {
-			drawn[i] = drawPile.removeFirst();
 			if (drawPile.isEmpty()) {
 				// refill.
 				if (playedCards.isEmpty()) {
@@ -61,6 +60,7 @@ public class CenterPlay {
 					shuffle();
 				}
 			}
+			drawn[i] = drawPile.removeFirst();
 		}
 		return drawn;
 	}

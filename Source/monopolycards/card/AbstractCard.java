@@ -22,7 +22,8 @@ public abstract class AbstractCard implements Card {
 				Player target = game.getPlayer(i);
 				if (target != self) {
 					Payment rentPay = new Payment(self, target, amount);
-					rentPay.finishRequest();
+					if (!target.isBankrupt())
+						rentPay.finishRequest();
 				}
 			}
 			return true;

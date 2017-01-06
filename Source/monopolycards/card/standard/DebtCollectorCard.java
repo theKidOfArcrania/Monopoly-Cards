@@ -13,9 +13,6 @@ import monopolycards.impl.Player;
  * @author Henry
  */
 public class DebtCollectorCard extends ActionCard {
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = -882780157673704376L;
 
 	@Override
