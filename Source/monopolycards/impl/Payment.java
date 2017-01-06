@@ -5,21 +5,15 @@
  */
 package monopolycards.impl;
 
-import static java.util.Objects.requireNonNull;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import monopolycards.card.Card;
-import monopolycards.card.Cash;
-import monopolycards.card.Property;
-import monopolycards.card.PropertyColor;
-import monopolycards.card.PropertyColumn;
-import monopolycards.card.ResponseType;
-import monopolycards.card.Valuable;
+import monopolycards.card.*;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * This is a collection of cash cards and property cards used as a payment.
@@ -163,7 +157,7 @@ public class Payment {
 		this.propSetsRequested.add(propSetRequested);
 	}
 
-	public void finishPay() {
+	private void finishPay() {
 		propRequested.forEach(this::takeProp0);
 		propSetsRequested.forEach(this::takeProp0);
 		propGiven.forEach(this::giveProp0);
@@ -200,17 +194,29 @@ public class Payment {
 			return;
 		}
 
+		ResponseType resp = null;
 		CounterProposal prop = null;
 		Payment prevProposal = null;
 		Payment current = this;
+		Player target = debtor;
 		while (true)
 		{
-			ResponseType resp = prop == null ? null : prop.getCard().getResponseType();
-			prop = debtor.selectPayment(current, prevProposal, resp);
+			prop = target.selectPayment(current, prevProposal, resp);
 			if (prop != null)
 			{
+				Response respCard = prop.getCard();
+				assert respCard != null;
+				resp = respCard.getResponseType();
+				
+				//Play the card that the target responded with
+				CardActionType actionType = new CardActionType(respCard.getActionName(), 
+						respCard.getActionInternalType(), respCard.getDefaults()); 
+				target.playActionNoTurn(new CardAction(prop.getCard(), actionType));
+				
+				//Cycle to next round to see if opponent will accept offer.
 				current = prop.getProposal();
 				prevProposal = prop.getOriginal();
+				target = (target == debtor ? creditor : debtor);
 			}else
 				break;
 		}
@@ -219,8 +225,6 @@ public class Payment {
 			current.finishPay();
 	}
 
-	
-	
 	public List<Property> getPropRequested()
 	{
 		return Collections.unmodifiableList(propRequested);

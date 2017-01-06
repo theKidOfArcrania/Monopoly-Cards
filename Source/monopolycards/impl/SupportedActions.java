@@ -1,14 +1,14 @@
 package monopolycards.impl;
 
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.TreeMap;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import monopolycards.impl.CardActionType.Likeness;
 
 public class SupportedActions implements Iterable<CardActionType> {
-	private final HashMap<Likeness, CardActionType> supported = new HashMap<>();
+	private final TreeMap<Likeness, CardActionType> supported = new TreeMap<>();
 
 	public void addAction(CardActionType type) {
 		supported.put(type.getLikeness(), type);

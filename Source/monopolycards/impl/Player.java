@@ -329,7 +329,7 @@ public abstract class Player {
 			return false;
 		}
 
-		// TO DO: checkReference(current, played);
+		// TODO: checkReference(current, played);
 		if (move.getActionType().getAction().apply(played, this)) {
 			pushTurn(move);
 			hand.remove(played);

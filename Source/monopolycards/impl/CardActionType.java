@@ -13,7 +13,7 @@ import monopolycards.card.standard.ActionCard;
 public class CardActionType {
 
 	public enum Likeness {
-		Action(ACTION_ACTION), SingleAction(Card::actionPlayed), Cashin(ACTION_CASHIN), Discard(ACTION_DISCARD);
+		Action(ACTION_ACTION), FieldPlace(Card::actionPlayed), Cashin(ACTION_CASHIN), Discard(ACTION_DISCARD);
 
 		private BiFunction<? super Card, ? super Player, ? extends Boolean> action;
 
@@ -27,16 +27,15 @@ public class CardActionType {
 	}
 
 	// TO DO: make more standard.
-	public static BiFunction<? super Card, ? super Player, ? extends Boolean> ACTION_DISCARD = (card, player) -> {
-		player.getGame()
-				.getCenterPlay()
-				.discard(card);
+	public static final BiFunction<? super Card, ? super Player, ? extends Boolean> ACTION_DISCARD = (card, player) -> {
+		player.getGame().getCenterPlay().discard(card);
+		//player.playAction(null)
 		return true;
 	};
-	public static BiFunction<? super Card, ? super Player, ? extends Boolean> ACTION_CASHIN = Lambdas.convertType(ActionCard.class)
+	public static final BiFunction<? super Card, ? super Player, ? extends Boolean> ACTION_CASHIN = Lambdas.convertType(ActionCard.class)
 			.andThen(ActionCard::convertToCash)
 			.filterReturn(Cash::actionPlayed);
-	public static BiFunction<? super Card, ? super Player, ? extends Boolean> ACTION_ACTION = (card, player) -> {
+	public static final BiFunction<? super Card, ? super Player, ? extends Boolean> ACTION_ACTION = (card, player) -> {
 		boolean action = card.actionPlayed(player);
 		if (action) {
 			ACTION_DISCARD.apply(card, player);
