@@ -22,7 +22,8 @@ import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
+import javafx.collections.ObservableSet;
+import javafx.collections.SetChangeListener;
 
 /**
  *
@@ -39,7 +40,7 @@ public class PropertyColumn implements Iterable<Card>, Serializable, Observable 
 		return card.getSellValue();
 	}
 
-	private final ObservableList<Card> properties = FXCollections.observableArrayList();
+	private final ObservableSet<Card> properties = FXCollections.observableTreeList();
 
 	private final CardDefaults defs;
 	private final PropertyColor propertyColor;
@@ -91,7 +92,7 @@ public class PropertyColumn implements Iterable<Card>, Serializable, Observable 
 		properties.addListener(listener);
 	}
 
-	public void addListener(ListChangeListener<? super Card> listener) {
+	public void addListener(SetChangeListener<? super Card> listener) {
 		properties.addListener(listener);
 	}
 
@@ -120,10 +121,6 @@ public class PropertyColumn implements Iterable<Card>, Serializable, Observable 
 				.parallel()
 				.map(Action::convertToCash)
 				.toArray(length -> new Cash[length]);
-	}
-
-	public Card get(int index) {
-		return properties.get(index);
 	}
 
 	public int getFullSet() {
