@@ -12,12 +12,7 @@ import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.ConditionalFeature;
 import javafx.application.Platform;
-import javafx.scene.DepthTest;
-import javafx.scene.Group;
-import javafx.scene.PerspectiveCamera;
-import javafx.scene.PointLight;
-import javafx.scene.Scene;
-import javafx.scene.SceneAntialiasing;
+import javafx.scene.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
@@ -25,7 +20,6 @@ import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
 import static java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment;
@@ -56,6 +50,10 @@ public class BoardTest extends Application {
 
 	}
 
+	public void init() throws Exception {
+		
+	};
+	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		init(primaryStage);
@@ -84,8 +82,9 @@ public class BoardTest extends Application {
 			}
 		}
 
-		primaryStage.initStyle(StageStyle.TRANSPARENT);
-
+		//primaryStage.initStyle(StageStyle.TRANSPARENT);
+		
+		
 		AnchorPane root = new AnchorPane();
 		root.setDepthTest(DepthTest.ENABLE);
 
@@ -101,9 +100,9 @@ public class BoardTest extends Application {
 		PhongMaterial greenTexture = new PhongMaterial();
 
 		woodTexture.setSpecularColor(Color.WHITE);
-		woodTexture.setBumpMap(imgWood);
+		//woodTexture.setBumpMap(imgWood);
 		woodTexture.setDiffuseMap(imgWood);
-		greenTexture.setBumpMap(imgRoughGreen);
+		//greenTexture.setBumpMap(imgRoughGreen);
 		greenTexture.setDiffuseMap(imgRoughGreen);
 
 		//parts
@@ -120,7 +119,7 @@ public class BoardTest extends Application {
 		table.setMaterial(woodTexture);
 		//table.setRotate(15);
 		top.setMaterial(greenTexture);
-		faceLight.setTranslateZ(10000);
+		faceLight.setTranslateZ(-10000);
 		buff.setTranslateZ(-10);
 		top.setTranslateZ(-10);
 
@@ -132,7 +131,6 @@ public class BoardTest extends Application {
 
 		scene.setOnMouseEntered(e->trans(true));
 		scene.setOnMouseExited(e->trans(false));
-
 
 		Timeline rotator = new Timeline();
 		rotator.getKeyFrames()

@@ -1,42 +1,111 @@
 package monopolycards.ui;
-
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.scene.Group;
+import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
-import monopolycards.card.Card;
 
-public class CardUI extends Box
+public class CardUI extends Group
 {
-	private ObjectProperty<Card> card = new SimpleObjectProperty<>(this, "card");
+	private DoubleProperty width = new SimpleDoubleProperty(this, "width", 11 * 20);
+	private DoubleProperty height = new SimpleDoubleProperty(this, "height", 17 * 20);
+	private ObjectProperty<Image> backImage = new SimpleObjectProperty<>(this, "backImage", null);
+	private ObjectProperty<Image> frontImage = new SimpleObjectProperty<>(this, "frontImage", null);
 	
-	public CardUI(int width, int height)
+	public CardUI()
 	{
-		this(null, width, height);
-	}
-	
-	public CardUI(Card c, int width, int height)
-	{
-		setWidth(width);
-		setHeight(height);
-		setDepth(2);
-		translateXProperty().bind(widthProperty().divide(2));
-		translateYProperty().bind(heightProperty().divide(2));
+		PhongMaterial frontMat = new PhongMaterial(Color.WHITE);
+		PhongMaterial backMat = new PhongMaterial(Color.WHITE);
 		
-		setCard(c);
+		frontMat.diffuseMapProperty().bind(frontImage);
+		backMat.diffuseMapProperty().bind(backImage);
+		
+		Box front = new Box();
+		front.widthProperty().bind(width);
+		front.heightProperty().bind(height);
+		front.translateXProperty().bind(width.divide(2));
+		front.translateYProperty().bind(height.divide(2));
+		front.setDepth(1);
+		front.setMaterial(frontMat);
+		
+		Box back = new Box();
+		back.widthProperty().bind(width);
+		back.heightProperty().bind(height);
+		back.translateXProperty().bind(width.divide(2));
+		back.translateYProperty().bind(height.divide(2));
+		back.setDepth(1);
+		back.setTranslateZ(-1);
+		back.setMaterial(backMat);
+		
+		this.getChildren().addAll(front, back);
 	}
 	
-	public Card getCard()
+	public final DoubleProperty widthProperty()
 	{
-		return card.get();
+		return this.width;
 	}
 	
-	public void setCard(Card c)
+	public final double getWidth()
 	{
-		card.set(c);
+		return this.widthProperty().get();
 	}
 	
-	public ObjectProperty<Card> cardProperty()
+	public final void setWidth(final double width)
 	{
-		return card;
+		this.widthProperty().set(width);
+	}
+	
+	public final DoubleProperty heightProperty()
+	{
+		return this.height;
+	}
+	
+	public final double getHeight()
+	{
+		return this.heightProperty().get();
+	}
+	
+	public final void setHeight(final double height)
+	{
+		this.heightProperty().set(height);
+	}
+
+	public final ObjectProperty<Image> backImageProperty()
+	{
+		return this.backImage;
+	}
+	
+
+	public final javafx.scene.image.Image getBackImage()
+	{
+		return this.backImageProperty().get();
+	}
+	
+
+	public final void setBackImage(final javafx.scene.image.Image backImage)
+	{
+		this.backImageProperty().set(backImage);
+	}
+	
+
+	public final ObjectProperty<Image> frontImageProperty()
+	{
+		return this.frontImage;
+	}
+	
+
+	public final javafx.scene.image.Image getFrontImage()
+	{
+		return this.frontImageProperty().get();
+	}
+	
+
+	public final void setFrontImage(final javafx.scene.image.Image frontImage)
+	{
+		this.frontImageProperty().set(frontImage);
 	}
 }

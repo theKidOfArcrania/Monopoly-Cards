@@ -28,7 +28,7 @@ public abstract class AbstractCard implements Card {
 			}
 			return true;
 		} else {
-			Player target = self.selectPlayer("Please select a player to " + payType + " you.");
+			Player target = self.selectPlayer("Please select a player to " + payType + ".");
 			if (target == null) {
 				return false;
 			}
