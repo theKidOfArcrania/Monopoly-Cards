@@ -5,13 +5,15 @@ import javafx.scene.Group;
 import monopolycards.card.Card;
 import monopolycards.card.PropertyColumn;
 
-public class BoardColumnUI extends Group
+public class BoardColumnUI extends UIComponent
 {
-	private PropertyColumn col;
+	private final PropertyColumn col;
+	private final Group root;
 	
-	public BoardColumnUI(PropertyColumn col)
+	public BoardColumnUI(Group root, PropertyColumn col)
 	{
 		this.col = col;
+		this.root = root;
 		col.addListener((SetChangeListener<Card>)(c ->
 		{
 			if (c.wasAdded())
@@ -23,6 +25,12 @@ public class BoardColumnUI extends Group
 				//TODO: Show card being removed.
 			}
 		}));
+	}
+
+	@Override
+	public void transferCard(CardUI c)
+	{
+		
 	}
 	
 	

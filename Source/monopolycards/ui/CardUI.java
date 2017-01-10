@@ -3,13 +3,12 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 
-public class CardUI extends Group
+public class CardUI extends UIObject
 {
 	private DoubleProperty width = new SimpleDoubleProperty(this, "width", 11 * 20);
 	private DoubleProperty height = new SimpleDoubleProperty(this, "height", 17 * 20);
@@ -18,6 +17,7 @@ public class CardUI extends Group
 	
 	public CardUI()
 	{
+		//TODO: change transform to on CardUI
 		PhongMaterial frontMat = new PhongMaterial(Color.WHITE);
 		PhongMaterial backMat = new PhongMaterial(Color.WHITE);
 		
