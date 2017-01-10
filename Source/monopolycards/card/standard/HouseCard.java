@@ -23,12 +23,12 @@ public class HouseCard extends ActionCard implements PropertyRaise {
 
 	@Override
 	public boolean actionPlayed(Player self) {
-		// TO DO: implementing Hasbro rules??
+		// TODO: limit number of houses and hotels?
 		PropertyColumn column = self.selectPropertyColumn("Please select a full-set property column to build on.", PropertyColumn::isFullSet);
 		if (column == null) {
 			return false;
 		}
-		column.addAndSort(this);
+		column.add(this);
 		return true;
 	}
 
@@ -41,11 +41,11 @@ public class HouseCard extends ActionCard implements PropertyRaise {
 	public int getRaiseValue() {
 		return getInternalIntProperty("raiseValue");
 	}
-
-	// TO DO: implement support type for building
+	
+	// TODO: implement support type for building
 	@Override
 	public boolean isEnabled(Player self, Likeness action) {
-		if (action == Likeness.Action) {
+		if (action == Likeness.FieldPlace) {
 			// must have at least a full set in order to have build action type.
 			return self.columnStream()
 					.anyMatch(PropertyColumn::isFullSet);

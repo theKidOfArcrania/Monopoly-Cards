@@ -11,7 +11,7 @@ public interface Property extends Valuable {
 	@Override
 	default boolean actionPlayed(Player self) {
 		PropertyColumn column = self.getPropertyColumn(getDualColors().getPropertyColor());
-		column.addAndSort(this);
+		column.add(this);
 		return true;
 	}
 

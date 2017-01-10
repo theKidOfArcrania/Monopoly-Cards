@@ -121,7 +121,7 @@ public class GameTest
 					columns.removeAll(amount.getPropSetsRequested());
 					for (PropertyColumn col : columns)
 					{
-						if (col.isDowngradable()) //TODO: downgrade houses/ hotels.
+						if (col.isDowngradable()) 
 							continue;
 						for (Card c : col)
 						{
@@ -149,7 +149,6 @@ public class GameTest
 			}
 			return null;
 		}
-		//TODO: fix rent stuff.
 		@Override
 		public Player selectPlayer(String prompt, Predicate<Player> filter)
 		{

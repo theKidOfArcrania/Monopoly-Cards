@@ -5,15 +5,22 @@
  */
 package monopolycards.impl;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import monopolycards.card.*;
-
-import static java.util.Objects.requireNonNull;
+import monopolycards.card.Card;
+import monopolycards.card.Cash;
+import monopolycards.card.Property;
+import monopolycards.card.PropertyColor;
+import monopolycards.card.PropertyColumn;
+import monopolycards.card.Response;
+import monopolycards.card.ResponseType;
+import monopolycards.card.Valuable;
 
 /**
  * This is a collection of cash cards and property cards used as a payment.
@@ -50,7 +57,7 @@ public class Payment {
 		PropertyColumn columnGiver = giver.getPropertyColumn(prop);
 		PropertyColumn columnReciever = reciever.getPropertyColumn(columnGiver.getPropertyColor());
 		columnGiver.remove(prop);
-		columnReciever.addAndSort(prop);
+		columnReciever.add(prop);
 	}
 
 	private static void transferProp(Player giver, Player reciever, PropertyColor propSet) {
@@ -61,7 +68,7 @@ public class Payment {
 			throw new AssertionError();
 		}
 
-		columnReciever.addAllAndSort(columnGiver.removeFullSet());
+		columnReciever.addAll(columnGiver.removeFullSet());
 	}
 
 	private final ArrayList<Card> bills = new ArrayList<>(10);

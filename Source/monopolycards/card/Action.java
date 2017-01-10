@@ -15,7 +15,9 @@ public interface Action extends Card {
 	@Override
 	default SupportedActions getSupportedTypes(Player self) {
 		SupportedActions actions = new SupportedActions();
-		actions.addAction(new CardActionType(getActionName(), getActionInternalType(), getDefaults()));
+		String actionType = getActionInternalType();
+		if (!actionType.isEmpty())
+			actions.addAction(new CardActionType(getActionName(), actionType, getDefaults()));
 		actions.addAction(new CardActionType("Discard", "move.discard", getDefaults()));
 		actions.addAction(new CardActionType("Cash-in", "move.cashin", getDefaults()));
 		filterSupportedTypes(self, actions);

@@ -31,8 +31,7 @@ public class SlyDealCard extends ActionCard {
 		PropertyCard take = (PropertyCard) self.selectProperty("Please select a property to take.", (card) -> {
 			// Has to not be part of the full set.
 			PropertyColumn column = target.getPropertyColumn(card);
-			column.sort();
-			return !column.isFullSet() || column.indexOf(card) >= column.getFullSet();
+			return !column.isFullSet() || column.isPrimarySet(card);
 		} , target);
 
 		if (take == null) {

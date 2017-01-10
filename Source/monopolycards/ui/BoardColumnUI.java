@@ -1,6 +1,6 @@
 package monopolycards.ui;
 
-import javafx.collections.ListChangeListener;
+import javafx.collections.SetChangeListener;
 import javafx.scene.Group;
 import monopolycards.card.Card;
 import monopolycards.card.PropertyColumn;
@@ -12,11 +12,15 @@ public class BoardColumnUI extends Group
 	public BoardColumnUI(PropertyColumn col)
 	{
 		this.col = col;
-		col.addListener((ListChangeListener<Card>)(c ->
+		col.addListener((SetChangeListener<Card>)(c ->
 		{
-			while (c.next())
+			if (c.wasAdded())
 			{
-				c.
+				//TODO: Show card being added.
+			}
+			else if (c.wasRemoved())
+			{
+				//TODO: Show card being removed.
 			}
 		}));
 	}

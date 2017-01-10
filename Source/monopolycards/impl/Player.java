@@ -4,12 +4,19 @@ import java.util.Arrays;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import javafx.beans.InvalidationListener;
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.ReadOnlyIntegerPropertyBase;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import monopolycards.card.*;
+import monopolycards.card.Card;
+import monopolycards.card.CardDefaults;
+import monopolycards.card.Cash;
+import monopolycards.card.Property;
+import monopolycards.card.PropertyColor;
+import monopolycards.card.PropertyColumn;
+import monopolycards.card.ResponseType;
 
 /**
  * This class describes the cards that a player has at any point.
@@ -96,7 +103,7 @@ public abstract class Player {
 
 		propertySets = new ReadOnlyIntegerPropertyBase() {
 			{
-				ListChangeListener<Card> columnList = event -> {
+				InvalidationListener columnList = event -> {
 					setCache = -1;
 					this.fireValueChangedEvent();
 				};

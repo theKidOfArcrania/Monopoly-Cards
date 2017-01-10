@@ -5,14 +5,12 @@
  */
 package monopolycards.card;
 
-import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -21,7 +19,6 @@ import java.util.stream.Stream;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableSet;
 import javafx.collections.SetChangeListener;
 
@@ -40,7 +37,10 @@ public class PropertyColumn implements Iterable<Card>, Serializable, Observable 
 		return card.getSellValue();
 	}
 
-	private final ObservableSet<Card> properties = FXCollections.observableTreeList();
+	//TODO: configure so that the user can change the full-set.
+	//TODO: allow user to pay with houses/hotels
+	private final ObservableSet<Property> primarySet = FXCollections.observableSet();
+	private final ObservableSet<Card> properties = FXCollections.observableSet();
 
 	private final CardDefaults defs;
 	private final PropertyColor propertyColor;
@@ -54,37 +54,23 @@ public class PropertyColumn implements Iterable<Card>, Serializable, Observable 
 	public boolean add(Card prop) {
 		requireNonNull(prop);
 		checkCard(prop);
-		// TO DO: check ref.
+		boolean fullSet = isFullSet();
+		if (!fullSet && !(prop instanceof Property))
+			throw new IllegalArgumentException("Cannot add houses/hotels before obtaining full set");
+		if (!fullSet && prop instanceof Property)
+			primarySet.add((Property)prop);
+		// TODO: check ref.
 		return properties.add(prop);
 	}
 
 	public void addAll(Collection<Card> prop) {
-		prop.stream()
-				.forEach(this::add);
+		for (Card c : prop)
+			add(c);
 	}
 
 	public void addAll(PropertyColumn prop) {
-		prop.stream()
-				.forEach(this::add);
-	}
-
-	public void addAllAndSort(Collection<Card> prop) {
-		prop.stream()
-				.forEach(this::add);
-		sort();
-	}
-
-	public void addAllAndSort(PropertyColumn prop) {
-		prop.stream()
-				.forEach(this::add);
-		sort();
-	}
-
-	public void addAndSort(Card prop) {
-		requireNonNull(prop);
-		checkCard(prop);
-		properties.add(prop);
-		sort();
+		for (Card c : prop)
+			add(c);
 	}
 
 	@Override
@@ -123,7 +109,7 @@ public class PropertyColumn implements Iterable<Card>, Serializable, Observable 
 				.toArray(length -> new Cash[length]);
 	}
 
-	public int getFullSet() {
+	public int getFullSetCount() {
 		return defs.getPropertyFullSet(propertyColor);
 	}
 
@@ -168,10 +154,6 @@ public class PropertyColumn implements Iterable<Card>, Serializable, Observable 
 		return getPropertyCount() != 0 && getPropertyCount() != defs.getPropertyFullSet(propertyColor);
 	}
 
-	public int indexOf(Object o) {
-		return properties.indexOf(o);
-	}
-
 	public boolean isEmpty() {
 		return getPropertyCount() == 0;
 	}
@@ -185,7 +167,7 @@ public class PropertyColumn implements Iterable<Card>, Serializable, Observable 
 	public boolean isFullSet() {
 		if (propertyColor == null)
 			return false;
-		return getPropertyCount() >= defs.getPropertyFullSet(propertyColor);
+		return primarySet.size() >= defs.getPropertyFullSet(propertyColor);
 	}
 
 	/**
@@ -214,33 +196,23 @@ public class PropertyColumn implements Iterable<Card>, Serializable, Observable 
 		return properties.remove(o);
 	}
 
-	public Card remove(int index) {
-		return properties.remove(index);
-	}
-
 	public PropertyColumn removeFullSet() {
 		if (!isFullSet()) {
 			throw new IllegalStateException("Not a full set.");
 		}
 
-		sort(); // make sure props come first.
 		PropertyColumn set = new PropertyColumn(defs, propertyColor);
-		int fullSet = defs.getPropertyFullSet(propertyColor);
-		for (int i = 0; i < fullSet; i++) {
-			Card removed = properties.remove(0);
-			if (!(removed instanceof Property)) {
-				throw new AssertionError();
-			}
-			set.add(removed);
+		for (Property prop : primarySet) {
+			properties.remove(prop);
+			set.add(prop);
 		}
+		primarySet.clear();
 
 		ArrayList<Card> misc = properties.parallelStream()
 				.filter(card -> !(card instanceof Property))
 				.collect(Collectors.toCollection(ArrayList::new));
 		set.addAll(misc);
 		properties.removeAll(misc);
-		set.sort();
-
 		return set;
 	}
 
@@ -249,20 +221,12 @@ public class PropertyColumn implements Iterable<Card>, Serializable, Observable 
 		properties.removeListener(listener);
 	}
 
-	public void removeListener(ListChangeListener<? super Card> listener) {
+	public void removeListener(SetChangeListener<? super Card> listener) {
 		properties.removeListener(listener);
 	}
 
 	public int size() {
 		return properties.size();
-	}
-
-	public void sort() {
-		Comparator<Card> comp = comparing((card) -> !(card instanceof Property));// property cards first.
-		comp = comp.thenComparing(PropertyColumn::getValue) // order by lowest value to highest
-				.thenComparing(Card::getCardName) // order by alphabetical order (based on card name).
-				.thenComparing(Card::getCardId); // order finally, by card id.
-		properties.sort(comp);
 	}
 
 	public Stream<Card> stream() {
@@ -303,6 +267,11 @@ public class PropertyColumn implements Iterable<Card>, Serializable, Observable 
 				return true;
 		}
 		return false;
+	}
+
+	public boolean isPrimarySet(Property card)
+	{
+		return primarySet.contains(card);
 	}
 
 }
