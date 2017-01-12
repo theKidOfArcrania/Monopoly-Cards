@@ -5,12 +5,12 @@ import javafx.scene.Group;
 import monopolycards.card.Card;
 import monopolycards.card.PropertyColumn;
 
-public class BoardColumnUI extends UIComponent
+public class ColumnGroupUI extends UIGroup
 {
 	private final PropertyColumn col;
 	private final Group root;
 	
-	public BoardColumnUI(Group root, PropertyColumn col)
+	public ColumnGroupUI(Group root, PropertyColumn col)
 	{
 		this.col = col;
 		this.root = root;

@@ -1,8 +1,8 @@
 package monopolycards.ui;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.scene.PointLight;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
@@ -10,19 +10,25 @@ import javafx.scene.shape.Box;
 
 public class CardUI extends UIObject
 {
-	private DoubleProperty width = new SimpleDoubleProperty(this, "width", 11 * 20);
-	private DoubleProperty height = new SimpleDoubleProperty(this, "height", 17 * 20);
+	
 	private ObjectProperty<Image> backImage = new SimpleObjectProperty<>(this, "backImage", null);
 	private ObjectProperty<Image> frontImage = new SimpleObjectProperty<>(this, "frontImage", null);
 	
 	public CardUI()
 	{
-		//TODO: change transform to on CardUI
-		PhongMaterial frontMat = new PhongMaterial(Color.WHITE);
-		PhongMaterial backMat = new PhongMaterial(Color.WHITE);
+		setWidth(11 * 20);
+		setHeight(17 * 20);
+		
+		PhongMaterial frontMat = new PhongMaterial();
+		PhongMaterial backMat = new PhongMaterial();
 		
 		frontMat.diffuseMapProperty().bind(frontImage);
 		backMat.diffuseMapProperty().bind(backImage);
+		frontMat.setSpecularColor(Color.BLACK);
+		backMat.setSpecularColor(Color.BLACK);
+		
+		DoubleProperty width = widthProperty();
+		DoubleProperty height = heightProperty();
 		
 		Box front = new Box();
 		front.widthProperty().bind(width);
@@ -41,38 +47,20 @@ public class CardUI extends UIObject
 		back.setTranslateZ(-1);
 		back.setMaterial(backMat);
 		
-		this.getChildren().addAll(front, back);
+		PointLight light = new PointLight();
+		light.translateXProperty().bind(width.divide(2));
+		light.translateYProperty().bind(height.divide(2));
+		light.setTranslateZ(200);
+		
+		PointLight light2 = new PointLight();
+		light2.translateXProperty().bind(width.divide(2));
+		light2.translateYProperty().bind(height.divide(2));
+		light2.setTranslateZ(-200);
+		
+		this.getChildren().addAll(front, back, light, light2);
 	}
 	
-	public final DoubleProperty widthProperty()
-	{
-		return this.width;
-	}
 	
-	public final double getWidth()
-	{
-		return this.widthProperty().get();
-	}
-	
-	public final void setWidth(final double width)
-	{
-		this.widthProperty().set(width);
-	}
-	
-	public final DoubleProperty heightProperty()
-	{
-		return this.height;
-	}
-	
-	public final double getHeight()
-	{
-		return this.heightProperty().get();
-	}
-	
-	public final void setHeight(final double height)
-	{
-		this.heightProperty().set(height);
-	}
 
 	public final ObjectProperty<Image> backImageProperty()
 	{
