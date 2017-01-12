@@ -1,24 +1,28 @@
-package monopolycards.ui;
+package monopolycards.ui.virtual;
 
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.util.Duration;
 
-public abstract class UIGroup
+public abstract class VrtGroup extends VrtNode
 {
-	public static Timeline createAnimation(UIObject obj, Duration length, double finalX, double finalY, double finalZ)
+	private final ObservableList<VrtNode> children = FXCollections.observableArrayList()
+	
+	public static Timeline createAnimation(VrtNode obj, Duration length, double finalX, double finalY, double finalZ)
 	{
 		return createAnimation(obj, length, Interpolator.EASE_BOTH, finalX, finalY, finalZ, obj.getRotateX(), 
 				obj.getRotateY(), obj.getRotateZ());
 	}
-	public static Timeline createAnimation(UIObject obj, Duration length, double finalX, double finalY, double finalZ, 
+	public static Timeline createAnimation(VrtNode obj, Duration length, double finalX, double finalY, double finalZ, 
 			double angleX, double angleY, double angleZ)
 	{
 		return createAnimation(obj, length, Interpolator.EASE_BOTH, finalX, finalY, finalZ, angleX, angleY, angleZ);
 	}
-	public static Timeline createAnimation(UIObject obj, Duration length, Interpolator intrp, double finalX, double finalY, 
+	public static Timeline createAnimation(VrtNode obj, Duration length, Interpolator intrp, double finalX, double finalY, 
 			double finalZ, double angleX, double angleY, double angleZ)
 	{
 		Timeline animate = new Timeline();
@@ -39,11 +43,12 @@ public abstract class UIGroup
 	}
 	
 	
+	
 	/**
 	 * Transfers a card into this UIComponent in its position and orientation
 	 * @param c the card to move.
 	 */
-	public abstract void transferCard(CardUI c);
+	public abstract void transferCard(VrtCard c);
 	
 	
 }

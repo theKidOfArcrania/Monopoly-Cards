@@ -1,16 +1,16 @@
-package monopolycards.ui;
+package monopolycards.ui.virtual;
 
 import javafx.collections.SetChangeListener;
 import javafx.scene.Group;
 import monopolycards.card.Card;
 import monopolycards.card.PropertyColumn;
 
-public class ColumnGroupUI extends UIGroup
+public class VrtColumn extends VrtGroup
 {
 	private final PropertyColumn col;
 	private final Group root;
 	
-	public ColumnGroupUI(Group root, PropertyColumn col)
+	public VrtColumn(Group root, PropertyColumn col)
 	{
 		this.col = col;
 		this.root = root;
@@ -28,7 +28,7 @@ public class ColumnGroupUI extends UIGroup
 	}
 
 	@Override
-	public void transferCard(CardUI c)
+	public void transferCard(VrtCard c)
 	{
 		
 	}

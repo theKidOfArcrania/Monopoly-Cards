@@ -1,21 +1,25 @@
-package monopolycards.ui;
+package monopolycards.ui.virtual;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.scene.Group;
 import javafx.scene.PointLight;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 
-public class CardUI extends UIObject
+public class VrtCard extends VrtNode
 {
 	
 	private ObjectProperty<Image> backImage = new SimpleObjectProperty<>(this, "backImage", null);
 	private ObjectProperty<Image> frontImage = new SimpleObjectProperty<>(this, "frontImage", null);
 	
-	public CardUI()
+	public VrtCard()
 	{
+		super(new Group());
+		Group g;
+
 		setWidth(11 * 20);
 		setHeight(17 * 20);
 		
@@ -57,7 +61,7 @@ public class CardUI extends UIObject
 		light2.translateYProperty().bind(height.divide(2));
 		light2.setTranslateZ(-200);
 		
-		this.getChildren().addAll(front, back, light, light2);
+		((Group)getNode()).getChildren().addAll(front, back, light, light2);
 	}
 	
 	

@@ -7,7 +7,7 @@ import javafx.scene.*;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import monopolycards.ui.CardUI;
+import monopolycards.ui.virtual.VrtCard;
 
 public class CardTest extends Application
 {
@@ -20,7 +20,7 @@ public class CardTest extends Application
 		Image cardBack = new Image(CardTest.class.getResourceAsStream("Card back.jpg"));
 		Image dealBreakCard = new Image(CardTest.class.getResourceAsStream("Dealbreaker.jpg"));
 		
-		CardUI card = new CardUI();
+		VrtCard card = new VrtCard();
 		card.setBackImage(cardBack);
 		card.setFrontImage(dealBreakCard);
 		//card.setRotateZ(45);
