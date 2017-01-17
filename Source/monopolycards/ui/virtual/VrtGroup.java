@@ -10,7 +10,9 @@ import javafx.util.Duration;
 
 public abstract class VrtGroup extends VrtNode
 {
-	private final ObservableList<VrtNode> children = FXCollections.observableArrayList()
+	private final ObservableList<VrtNode> children = new VetoableObservableList<>(node -> {
+		
+	});
 	
 	public static Timeline createAnimation(VrtNode obj, Duration length, double finalX, double finalY, double finalZ)
 	{
@@ -42,7 +44,7 @@ public abstract class VrtGroup extends VrtNode
 		return animate;
 	}
 	
-	
+	private void checkC
 	
 	/**
 	 * Transfers a card into this UIComponent in its position and orientation
