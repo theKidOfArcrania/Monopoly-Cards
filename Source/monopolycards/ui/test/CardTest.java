@@ -1,6 +1,5 @@
 package monopolycards.ui.test;
 
-import javafx.animation.Interpolator;
 import javafx.animation.Transition;
 import javafx.application.Application;
 import javafx.scene.*;
@@ -23,8 +22,9 @@ public class CardTest extends Application
 		VrtCard card = new VrtCard();
 		card.setBackImage(cardBack);
 		card.setFrontImage(dealBreakCard);
-		//card.setRotateZ(45);
-		
+		card.setRotateX(-90);
+		card.setTranslateY(600);
+		card.setTranslateX(350);
 		rotate = new Transition()
 		{
 			{
@@ -33,19 +33,28 @@ public class CardTest extends Application
 			@Override
 			protected void interpolate(double frac)
 			{
-				card.setRotateX(-frac * 360.0);
+				frac *= 2;
+				if (frac >= 1)
+				{
+					frac--;
+					card.setRotateY(-frac * 180.0);
+					card.setTranslateZ(-frac * 1000.0);	
+				}
+				else
+				{
+					card.setRotateX(-90 + frac * 90.0);
+					card.setTranslateY(600 - frac * 300.0);
+				}
 			}
 		};
-		rotate.setInterpolator(Interpolator.LINEAR);
-		rotate.setCycleCount(-1);
+		//rotate.setInterpolator(Interpolator.LINEAR);
+		rotate.setDelay(Duration.seconds(.5));
+		//rotate.setCycleCount(-1);
 		
 		PointLight light = new PointLight();
-		PointLight light2 = new PointLight();
-		PointLight light3 = new PointLight();
 		light.setTranslateX(500);
 		light.setTranslateY(500);
 		light.setTranslateZ(-10000);
-		light2.setTranslateX(10000);
 		
 		//camera.setTranslateX(-10);
 		//camera.setTranslateY(-10);

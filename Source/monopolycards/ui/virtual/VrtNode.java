@@ -1,28 +1,25 @@
 package monopolycards.ui.virtual;
 
-import java.util.Arrays;
-import java.util.List;
-
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.Node;
 import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Transform;
+import javafx.scene.transform.Translate;
 
 public abstract class VrtNode
 {
 	private final Rotate rotateX = new Rotate(0, Rotate.X_AXIS);
 	private final Rotate rotateY = new Rotate(0, Rotate.Y_AXIS);
 	private final Rotate rotateZ = new Rotate(0, Rotate.Z_AXIS);
+	private final Translate translate = new Translate();
 	
 	private final DoubleProperty width = new SimpleDoubleProperty(this, "width");
 	private final DoubleProperty height = new SimpleDoubleProperty(this, "height");
 	final ReadOnlyObjectWrapper<VrtGroup> parent = new ReadOnlyObjectWrapper<>(this, "parent");
 	
 	private final Node ui;
-	private final List<Transform> transforms; 
 	
 	protected VrtNode()
 	{
@@ -33,12 +30,7 @@ public abstract class VrtNode
 	{
 		this.ui = ui;
 		if (ui != null)
-		{
-			ui.getTransforms().addAll(rotateX, rotateY, rotateZ);
-			transforms = null;
-		}
-		else
-			transforms = Arrays.asList(rotateX, rotateY, rotateZ);
+			ui.getTransforms().addAll(translate, rotateX, rotateY, rotateZ);
 		
 		rotateZ.angleProperty().addListener(val -> recalcAxis());
 		rotateY.angleProperty().addListener(val -> recalcAxis());
@@ -51,9 +43,58 @@ public abstract class VrtNode
 		rotateZ.pivotYProperty().bind(height.divide(2));
 	}
 	
-	protected final List<Transform> getTransforms()
+	public double getParentRotateX()
 	{
-		return transforms;
+		VrtGroup parent = getParent();
+		if (parent == null)
+			return 0;
+		else
+			return parent.getParentRotateX() + parent.getRotateX();
+	}
+	
+	public double getParentRotateY()
+	{
+		VrtGroup parent = getParent();
+		if (parent == null)
+			return 0;
+		else
+			return parent.getParentRotateY() + parent.getRotateY();
+	}
+	
+	public double getParentRotateZ()
+	{
+		VrtGroup parent = getParent();
+		if (parent == null)
+			return 0;
+		else
+			return parent.getParentRotateZ() + parent.getRotateZ();
+	}
+	
+	public double getParentTranslateX()
+	{
+		VrtGroup parent = getParent();
+		if (parent == null)
+			return 0;
+		else
+			return parent.getParentTranslateX() + parent.getTranslateX();
+	}
+	
+	public double getParentTranslateY()
+	{
+		VrtGroup parent = getParent();
+		if (parent == null)
+			return 0;
+		else
+			return parent.getParentTranslateY() + parent.getTranslateY();
+	}
+	
+	public double getParentTranslateZ()
+	{
+		VrtGroup parent = getParent();
+		if (parent == null)
+			return 0;
+		else
+			return parent.getParentTranslateZ() + parent.getTranslateZ();
 	}
 	
 	public final Node getNode()
@@ -135,47 +176,47 @@ public abstract class VrtNode
 	
 	public final void setTranslateX(double value)
 	{
-		ui.setTranslateX(value);
+		translate.setX(value);
 	}
 
 	public final double getTranslateX()
 	{
-		return ui.getTranslateX();
+		return translate.getX();
 	}
 
 	public final DoubleProperty translateXProperty()
 	{
-		return ui.translateXProperty();
+		return translate.xProperty();
 	}
 
 	public final void setTranslateY(double value)
 	{
-		ui.setTranslateY(value);
+		translate.setY(value);
 	}
 
 	public final double getTranslateY()
 	{
-		return ui.getTranslateY();
+		return translate.getY();
 	}
 
 	public final DoubleProperty translateYProperty()
 	{
-		return ui.translateYProperty();
+		return translate.yProperty();
 	}
 
 	public final void setTranslateZ(double value)
 	{
-		ui.setTranslateZ(value);
+		translate.setZ(value);
 	}
 
 	public final double getTranslateZ()
 	{
-		return ui.getTranslateZ();
+		return translate.getZ();
 	}
 
 	public final DoubleProperty translateZProperty()
 	{
-		return ui.translateZProperty();
+		return translate.zProperty();
 	}
 
 	private void recalcAxis()

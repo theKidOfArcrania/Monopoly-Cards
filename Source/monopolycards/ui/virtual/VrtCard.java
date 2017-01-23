@@ -11,6 +11,8 @@ import javafx.scene.shape.Box;
 
 public class VrtCard extends VrtNode
 {
+	private static final double PADDING = 5;
+	private static final double DELTA = .01;
 	
 	private ObjectProperty<Image> backImage = new SimpleObjectProperty<>(this, "backImage", null);
 	private ObjectProperty<Image> frontImage = new SimpleObjectProperty<>(this, "frontImage", null);
@@ -51,17 +53,27 @@ public class VrtCard extends VrtNode
 		back.setTranslateZ(-1);
 		back.setMaterial(backMat);
 		
-		PointLight light = new PointLight();
+		PhongMaterial white = new PhongMaterial(Color.WHITE);
+		Box rim = new Box();
+		rim.widthProperty().bind(width.add(PADDING));
+		rim.heightProperty().bind(height.add(PADDING));
+		rim.translateXProperty().bind(width.divide(2));
+		rim.translateYProperty().bind(height.divide(2));
+		rim.setDepth((1 - DELTA) * 2);
+		rim.setTranslateZ(-.5);
+		rim.setMaterial(white);
+		
+		PointLight light = new PointLight(Color.GRAY);
 		light.translateXProperty().bind(width.divide(2));
 		light.translateYProperty().bind(height.divide(2));
 		light.setTranslateZ(200);
 		
-		PointLight light2 = new PointLight();
+		PointLight light2 = new PointLight(Color.GRAY);
 		light2.translateXProperty().bind(width.divide(2));
 		light2.translateYProperty().bind(height.divide(2));
 		light2.setTranslateZ(-200);
 		
-		((Group)getNode()).getChildren().addAll(front, back, light, light2);
+		((Group)getNode()).getChildren().addAll(rim, front, back, light, light2);
 	}
 	
 	
