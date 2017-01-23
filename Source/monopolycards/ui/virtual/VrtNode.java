@@ -8,7 +8,7 @@ import javafx.scene.Node;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 
-public abstract class VrtNode
+public class VrtNode
 {
 	private final Rotate rotateX = new Rotate(0, Rotate.X_AXIS);
 	private final Rotate rotateY = new Rotate(0, Rotate.Y_AXIS);
@@ -26,7 +26,7 @@ public abstract class VrtNode
 		this(null);
 	}
 	
-	protected VrtNode(Node ui)
+	public VrtNode(Node ui)
 	{
 		this.ui = ui;
 		if (ui != null)
