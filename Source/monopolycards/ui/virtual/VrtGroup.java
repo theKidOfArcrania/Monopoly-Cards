@@ -40,7 +40,7 @@ public abstract class VrtGroup extends VrtNode
 	
 	public static void toRotate(VrtNode obj, Timeline animate, Duration time, double rx, double ry, double rz)
 	{
-		toTranslate(obj, animate, animate.getCycleDuration(), time, rx, ry, rz);
+		toRotate(obj, animate, animate.getCycleDuration(), time, rx, ry, rz);
 	}
 	
 	public static void toRotate(VrtNode obj, Timeline animate, Duration start, Duration time, double rx, double ry, double rz)

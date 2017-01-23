@@ -1,5 +1,6 @@
 package monopolycards.ui.test;
 
+import javafx.animation.Timeline;
 import javafx.animation.Transition;
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -11,22 +12,17 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import monopolycards.ui.virtual.VrtCard;
+import monopolycards.ui.virtual.VrtGroup;
 
 public class CardTest extends Application
 {
 	private PerspectiveCamera camera = new PerspectiveCamera();
 	private Group root = new Group();
 	private Transition rotate;
+	
+	private Timeline cardMovement;
+	
 	private VrtCard card = new VrtCard();
-	private void resetAnimation()
-	{
-		card.setRotateY(0);
-		card.setRotateX(-90);
-		card.setTranslateY(600);
-		card.setTranslateX(350);
-		card.setTranslateZ(0);
-		rotate.playFromStart();
-	}
 	
 	@Override
 	public void init() throws Exception
@@ -38,31 +34,22 @@ public class CardTest extends Application
 		card.setBackImage(cardBack);
 		card.setFrontImage(dealBreakCard);
 		
-		rotate = new Transition()
-		{
-			{
-				setCycleDuration(Duration.seconds(3));
-			}
-			@Override
-			protected void interpolate(double frac)
-			{
-				frac *= 2;
-				if (frac >= 1)
-				{
-					frac--;
-					card.setRotateY(-frac * 180.0);
-					card.setTranslateZ(-frac * 1000.0);	
-				}
-				else
-				{
-					card.setRotateX(-90 + frac * 90.0);
-					card.setTranslateY(600 - frac * 300.0);
-				}
-			}
-		};
+		card.setRotateX(-90);
+		card.setTranslateY(600);
+		card.setTranslateX(350);
+		
+		cardMovement = VrtGroup.createAnimation(card);
+		VrtGroup.toRotate(card, cardMovement, Duration.seconds(2), 0, 0, 0);
+		VrtGroup.toTranslate(card, cardMovement, Duration.ZERO, Duration.seconds(2), 350, 300, 0);
+		
+		VrtGroup.toRotate(card, cardMovement, Duration.seconds(1), 0, 180, 0);
+		VrtGroup.toTranslate(card, cardMovement, Duration.seconds(2), Duration.seconds(1), 350, 300, -1000);
+		
+		VrtGroup.toRotate(card, cardMovement, Duration.seconds(1), 0, 180, 0);
+		
 		//rotate.setInterpolator(Interpolator.LINEAR);
-		rotate.setDelay(Duration.seconds(.5));
-		rotate.setOnFinished(evt -> resetAnimation());
+		cardMovement.setDelay(Duration.seconds(.5));
+		cardMovement.setCycleCount(-1);
 		//rotate.setCycleCount(-1);
 		
 		PointLight light = new PointLight();
@@ -85,7 +72,7 @@ public class CardTest extends Application
 		primaryStage.setScene(scene);
 		primaryStage.show();
 		
-		resetAnimation();
+		cardMovement.playFromStart();
 	}
 	
 
