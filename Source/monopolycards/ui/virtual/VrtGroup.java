@@ -2,7 +2,6 @@ package monopolycards.ui.virtual;
 
 import java.util.Objects;
 
-import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -13,34 +12,43 @@ public abstract class VrtGroup extends VrtNode
 {
 	private final ObservableList<VrtNode> children = new VetoableObservableList<>(this::checkChildren);
 	
-	public static Timeline createAnimation(VrtNode obj, Duration length, double finalX, double finalY, double finalZ)
-	{
-		return createAnimation(obj, length, Interpolator.EASE_BOTH, finalX, finalY, finalZ, obj.getRotateX(), 
-				obj.getRotateY(), obj.getRotateZ());
-	}
-	public static Timeline createAnimation(VrtNode obj, Duration length, double finalX, double finalY, double finalZ, 
-			double angleX, double angleY, double angleZ)
-	{
-		return createAnimation(obj, length, Interpolator.EASE_BOTH, finalX, finalY, finalZ, angleX, angleY, angleZ);
-	}
-	public static Timeline createAnimation(VrtNode obj, Duration length, Interpolator intrp, double finalX, double finalY, 
-			double finalZ, double angleX, double angleY, double angleZ)
+	public static Timeline createAnimation(VrtNode obj)
 	{
 		Timeline animate = new Timeline();
-		KeyFrame before = new KeyFrame(Duration.ZERO, new KeyValue(obj.translateXProperty(), obj.getTranslateX(), intrp),
-				new KeyValue(obj.translateYProperty(), obj.getTranslateY(), intrp),
-				new KeyValue(obj.translateZProperty(), obj.getTranslateZ(), intrp),
-				new KeyValue(obj.rotateXProperty(), obj.getRotateX(), intrp),
-				new KeyValue(obj.rotateYProperty(), obj.getRotateY(), intrp),
-				new KeyValue(obj.rotateZProperty(), obj.getRotateZ(), intrp));
-		KeyFrame after = new KeyFrame(length, new KeyValue(obj.translateXProperty(), finalX, intrp),
-				new KeyValue(obj.translateYProperty(), finalY, intrp),
-				new KeyValue(obj.translateZProperty(), finalZ, intrp),
-				new KeyValue(obj.rotateXProperty(), angleX, intrp),
-				new KeyValue(obj.rotateYProperty(), angleY, intrp),
-				new KeyValue(obj.rotateZProperty(), angleZ, intrp));
-		animate.getKeyFrames().addAll(before, after);
+		KeyFrame before = new KeyFrame(Duration.ZERO, new KeyValue(obj.translateXProperty(), obj.getTranslateX()),
+				new KeyValue(obj.translateYProperty(), obj.getTranslateY()),
+				new KeyValue(obj.translateZProperty(), obj.getTranslateZ()),
+				new KeyValue(obj.rotateXProperty(), obj.getRotateX()),
+				new KeyValue(obj.rotateYProperty(), obj.getRotateY()),
+				new KeyValue(obj.rotateZProperty(), obj.getRotateZ()));
+		animate.getKeyFrames().add(before);
 		return animate;
+	}
+	
+	public static void toTranslate(VrtNode obj, Timeline animate, Duration time, double tx, double ty, double tz)
+	{
+		toTranslate(obj, animate, animate.getCycleDuration(), time, tx, ty, tz);
+	}
+	
+	public static void toTranslate(VrtNode obj, Timeline animate, Duration start, Duration time, double tx, double ty, double tz)
+	{
+		KeyFrame fra = new KeyFrame(start.add(time), new KeyValue(obj.translateXProperty(), tx),
+				new KeyValue(obj.translateYProperty(), ty),
+				new KeyValue(obj.translateZProperty(), tz));
+		animate.getKeyFrames().add(fra);
+	}
+	
+	public static void toRotate(VrtNode obj, Timeline animate, Duration time, double rx, double ry, double rz)
+	{
+		toTranslate(obj, animate, animate.getCycleDuration(), time, rx, ry, rz);
+	}
+	
+	public static void toRotate(VrtNode obj, Timeline animate, Duration start, Duration time, double rx, double ry, double rz)
+	{
+		KeyFrame fra = new KeyFrame(start.add(time), new KeyValue(obj.rotateXProperty(), rx),
+				new KeyValue(obj.rotateYProperty(), ry),
+				new KeyValue(obj.rotateZProperty(), rz));
+		animate.getKeyFrames().add(fra);
 	}
 	
 	private void checkChildren(VrtNode node)
