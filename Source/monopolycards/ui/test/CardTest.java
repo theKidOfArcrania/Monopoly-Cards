@@ -33,7 +33,7 @@ public class CardTest extends Application
 			@Override
 			protected void interpolate(double frac)
 			{
-				card.setRotateX(frac * 360.0);
+				card.setRotateX(-frac * 360.0);
 			}
 		};
 		rotate.setInterpolator(Interpolator.LINEAR);
@@ -47,11 +47,11 @@ public class CardTest extends Application
 		light.setTranslateZ(-10000);
 		light2.setTranslateX(10000);
 		
-		camera.setTranslateX(100);
-		camera.setTranslateY(100);
-		camera.setTranslateZ(-1000);
+		//camera.setTranslateX(-10);
+		//camera.setTranslateY(-10);
+		//camera.setTranslateZ(-1000);
 		
-		root.getChildren().addAll(card, camera, light);
+		root.getChildren().addAll(card.getNode(), camera, light);
 	}
 	
 	@Override

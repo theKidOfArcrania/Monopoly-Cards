@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.Node;
 import javafx.scene.transform.Rotate;
@@ -17,6 +19,8 @@ public abstract class VrtNode
 	
 	private final DoubleProperty width = new SimpleDoubleProperty(this, "width");
 	private final DoubleProperty height = new SimpleDoubleProperty(this, "height");
+	final ReadOnlyObjectWrapper<VrtGroup> parent = new ReadOnlyObjectWrapper<>(this, "parent");
+	
 	private final Node ui;
 	private final List<Transform> transforms; 
 	
@@ -179,4 +183,16 @@ public abstract class VrtNode
 		rotateY.setAxis(rotateZ.transform(Rotate.Y_AXIS));
 		rotateX.setAxis(rotateY.transform(rotateZ.transform(Rotate.X_AXIS)));
 	}
+
+	public final ReadOnlyObjectProperty<VrtGroup> parentProperty()
+	{
+		return this.parent.getReadOnlyProperty();
+	}
+	
+
+	public final VrtGroup getParent()
+	{
+		return this.parentProperty().get();
+	}
+	
 }

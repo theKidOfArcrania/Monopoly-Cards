@@ -1,18 +1,17 @@
 package monopolycards.ui.virtual;
 
+import java.util.Objects;
+
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.util.Duration;
 
 public abstract class VrtGroup extends VrtNode
 {
-	private final ObservableList<VrtNode> children = new VetoableObservableList<>(node -> {
-		
-	});
+	private final ObservableList<VrtNode> children = new VetoableObservableList<>(this::checkChildren);
 	
 	public static Timeline createAnimation(VrtNode obj, Duration length, double finalX, double finalY, double finalZ)
 	{
@@ -44,13 +43,34 @@ public abstract class VrtGroup extends VrtNode
 		return animate;
 	}
 	
-	private void checkC
+	private void checkChildren(VrtNode node)
+	{
+		if (node == null)
+			throw new NullPointerException();
+		if (node.getParent() != null)
+			throw new VetoedException("Node already has a parent.");
+		if (Objects.equals(node,this))
+			throw new VetoedException("Cannot add node to itself.");
+		
+		VrtGroup tmp = this;
+		while (tmp != null)
+		{
+			if (Objects.equals(node,tmp))
+				throw new VetoedException("Parent node cannot be added to a child node.");
+			tmp = tmp.getParent();
+		}
+	}
 	
 	/**
 	 * Transfers a card into this UIComponent in its position and orientation
 	 * @param c the card to move.
 	 */
 	public abstract void transferCard(VrtCard c);
+	
+	public final ObservableList<VrtNode> getChildren()
+	{
+		return children;
+	}
 	
 	
 }
