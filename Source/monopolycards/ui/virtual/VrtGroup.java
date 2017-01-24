@@ -2,11 +2,55 @@ package monopolycards.ui.virtual;
 
 import java.util.Objects;
 
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 
 public abstract class VrtGroup extends VrtNode
 {
-	private final ObservableList<VrtNode> children = new VetoableObservableList<>(this::checkChildren);
+	private final ObservableList<VrtNode> children;
+	
+	public VrtGroup()
+	{
+		children = new VetoableObservableList<>(this::checkChildren);
+		children.addListener((ListChangeListener<VrtNode>)chg -> {
+			while (chg.next())
+			{
+				if (chg.wasRemoved())
+				{
+					for (VrtNode node : chg.getRemoved())
+					{
+						if (node instanceof VrtCard)
+							removeCard((VrtCard)node);
+					}
+				}
+				if (chg.wasAdded())
+				{
+					for (VrtNode node : chg.getAddedSubList())
+					{
+						if (node instanceof VrtCard)
+							addCard((VrtCard)node);
+					}
+				}
+			}
+		});
+	}
+	
+	public final ObservableList<VrtNode> getChildren()
+	{
+		return children;
+	}
+	
+	/**
+	 * Removes any card references to this group
+	 * @param c the card to remove.
+	 */
+	protected abstract void removeCard(VrtCard c);
+	
+	/**
+	 * Adds a card into this UIComponent in its position and orientation
+	 * @param c the card to add.
+	 */
+	protected abstract void addCard(VrtCard c);
 	
 	private void checkChildren(VrtNode node)
 	{
@@ -25,17 +69,5 @@ public abstract class VrtGroup extends VrtNode
 			tmp = tmp.getParent();
 		}
 	}
-	
-	/**
-	 * Transfers a card into this UIComponent in its position and orientation
-	 * @param c the card to move.
-	 */
-	public abstract void transferCard(VrtCard c);
-	
-	public final ObservableList<VrtNode> getChildren()
-	{
-		return children;
-	}
-	
 	
 }

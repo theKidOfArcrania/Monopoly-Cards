@@ -63,12 +63,12 @@ public class VrtCard extends VrtNode
 		rim.setTranslateZ(-.5);
 		rim.setMaterial(white);
 		
-		PointLight light = new PointLight(Color.GRAY);
+		PointLight light = new PointLight(Color.WHITE);
 		light.translateXProperty().bind(width.divide(2));
 		light.translateYProperty().bind(height.divide(2));
 		light.setTranslateZ(200);
 		
-		PointLight light2 = new PointLight(Color.GRAY);
+		PointLight light2 = new PointLight(Color.WHITE);
 		light2.translateXProperty().bind(width.divide(2));
 		light2.translateYProperty().bind(height.divide(2));
 		light2.setTranslateZ(-200);
