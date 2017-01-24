@@ -3,16 +3,13 @@ package monopolycards.ui.test;
 import javafx.animation.Timeline;
 import javafx.animation.Transition;
 import javafx.application.Application;
-import javafx.scene.Group;
-import javafx.scene.PerspectiveCamera;
-import javafx.scene.PointLight;
-import javafx.scene.Scene;
-import javafx.scene.SceneAntialiasing;
+import javafx.scene.*;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import monopolycards.ui.virtual.MovementFrame;
+import monopolycards.ui.virtual.MovementTimeline;
 import monopolycards.ui.virtual.VrtCard;
-import monopolycards.ui.virtual.VrtGroup;
 
 public class CardTest extends Application
 {
@@ -38,16 +35,18 @@ public class CardTest extends Application
 		card.setTranslateY(600);
 		card.setTranslateX(350);
 		
-		cardMovement = VrtGroup.createAnimation(card);
-		VrtGroup.toRotate(card, cardMovement, Duration.seconds(2), 0, 0, 0);
-		VrtGroup.toTranslate(card, cardMovement, Duration.ZERO, Duration.seconds(2), 350, 300, 0);
+		MovementTimeline timeline = new MovementTimeline(card);
+		MovementFrame frame = new MovementFrame();
 		
-		VrtGroup.toRotate(card, cardMovement, Duration.seconds(1), 0, 180, 0);
-		VrtGroup.toTranslate(card, cardMovement, Duration.seconds(2), Duration.seconds(1), 350, 300, -1000);
+		frame.setRotateX(0);
+		frame.setTranslateY(300);
+		timeline.addFrame(Duration.seconds(2), frame);
 		
-		VrtGroup.toRotate(card, cardMovement, Duration.seconds(1), 0, 180, 0);
+		frame.setRotateY(180);
+		frame.setTranslateZ(-1000);
+		timeline.addFrame(Duration.seconds(1), frame);
 		
-		//rotate.setInterpolator(Interpolator.LINEAR);
+		cardMovement = timeline.generateAnimation();
 		cardMovement.setDelay(Duration.seconds(.5));
 		cardMovement.setCycleCount(-1);
 		//rotate.setCycleCount(-1);

@@ -1,10 +1,6 @@
 package monopolycards.ui.virtual;
 
-import java.util.ArrayList;
-
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.util.Duration;
+import javafx.animation.Interpolator;
 
 public class MovementFrame
 {
@@ -22,6 +18,23 @@ public class MovementFrame
 	private double rotateZ;
 	private boolean rotateZSet;
 	
+	private final Interpolator interp;
+	
+	public MovementFrame()
+	{
+		this(Interpolator.EASE_BOTH);
+	}
+	
+	public MovementFrame(Interpolator interp)
+	{
+		this.interp = interp;
+	}
+
+	public Interpolator getInterpolator()
+	{
+		return interp;
+	}
+
 	public double getTranslateX()
 	{
 		return translateX;
@@ -32,16 +45,18 @@ public class MovementFrame
 		return translateXSet;
 	}
 	
-	public void setTranslateX(double translateX)
+	public MovementFrame setTranslateX(double translateX)
 	{
 		translateXSet = true;
 		this.translateX = translateX;
+		return this;
 	}
 		
-	public void unsetTranslateX()
+	public MovementFrame unsetTranslateX()
 	{
 		translateX = 0;
 		translateXSet = false;
+		return this;
 	}
 	
 	public double getTranslateY()
@@ -54,16 +69,18 @@ public class MovementFrame
 		return translateYSet;
 	}
 	
-	public void setTranslateY(double translateY)
+	public MovementFrame setTranslateY(double translateY)
 	{
 		translateYSet = true;
 		this.translateY = translateY;
+		return this;
 	}
 	
-	public void unsetTranslateY()
+	public MovementFrame unsetTranslateY()
 	{
 		translateY = 0;
 		translateYSet = false;
+		return this;
 	}
 	
 	public double getTranslateZ()
@@ -76,16 +93,18 @@ public class MovementFrame
 		return translateZSet;
 	}
 	
-	public void setTranslateZ(double translateZ)
+	public MovementFrame setTranslateZ(double translateZ)
 	{
 		translateZSet = true;
 		this.translateZ = translateZ;
+		return this;
 	}
 	
-	public void unsetTranslateZ()
+	public MovementFrame unsetTranslateZ()
 	{
 		translateZ = 0;
 		translateZSet = false;
+		return this;
 	}
 	
 	public double getRotateX()
@@ -98,16 +117,18 @@ public class MovementFrame
 		return rotateXSet;
 	}
 	
-	public void setRotateX(double rotateX)
+	public MovementFrame setRotateX(double rotateX)
 	{
 		rotateXSet = true;
 		this.rotateX = rotateX;
+		return this;
 	}
 	
-	public void unsetRotateX()
+	public MovementFrame unsetRotateX()
 	{
 		rotateX = 0;
 		rotateXSet = false;
+		return this;
 	}
 	
 	public double getRotateY()
@@ -120,16 +141,18 @@ public class MovementFrame
 		return rotateYSet;
 	}
 	
-	public void setRotateY(double rotateY)
+	public MovementFrame setRotateY(double rotateY)
 	{
 		rotateYSet = true;
 		this.rotateY = rotateY;
+		return this;
 	}
 	
-	public void unsetRotateY()
+	public MovementFrame unsetRotateY()
 	{
 		rotateY = 0;
 		rotateYSet = false;
+		return this;
 	}
 	
 	public double getRotateZ()
@@ -142,34 +165,36 @@ public class MovementFrame
 		return rotateZSet;
 	}
 	
-	public void setRotateZ(double rotateZ)
+	public MovementFrame setRotateZ(double rotateZ)
 	{
 		rotateZSet = true;
 		this.rotateZ = rotateZ;
+		return this;
 	}
 	
-	public void unsetRotateZ()
+	public MovementFrame unsetRotateZ()
 	{
 		rotateZ = 0;
 		rotateZSet = false;
+		return this;
 	}
 	
-	public KeyFrame generateKeyFrame(VrtNode node, Duration time)
-	{
-		ArrayList<KeyValue> vals = new ArrayList<>();
-		if (rotateXSet)
-			vals.add(new KeyValue(node.rotateXProperty(), rotateX));
-		if (rotateYSet)
-			vals.add(new KeyValue(node.rotateYProperty(), rotateY));
-		if (rotateZSet)
-			vals.add(new KeyValue(node.rotateZProperty(), rotateZ));
-		if (translateXSet)
-			vals.add(new KeyValue(node.translateXProperty(), translateX));
-		if (translateYSet)
-			vals.add(new KeyValue(node.translateYProperty(), translateY));
-		if (translateZSet)
-			vals.add(new KeyValue(node.translateZProperty(), translateZ));
-		
-		return new KeyFrame(time, vals.toArray(new KeyValue[0]));
-	}
+//	public KeyFrame generateKeyFrame(VrtNode node, Duration time)
+//	{
+//		ArrayList<KeyValue> vals = new ArrayList<>();
+//		if (rotateXSet)
+//			vals.add(new KeyValue(node.rotateXProperty(), rotateX));
+//		if (rotateYSet)
+//			vals.add(new KeyValue(node.rotateYProperty(), rotateY));
+//		if (rotateZSet)
+//			vals.add(new KeyValue(node.rotateZProperty(), rotateZ));
+//		if (translateXSet)
+//			vals.add(new KeyValue(node.translateXProperty(), translateX));
+//		if (translateYSet)
+//			vals.add(new KeyValue(node.translateYProperty(), translateY));
+//		if (translateZSet)
+//			vals.add(new KeyValue(node.translateZProperty(), translateZ));
+//		
+//		return new KeyFrame(time, vals.toArray(new KeyValue[0]));
+//	}
 }
