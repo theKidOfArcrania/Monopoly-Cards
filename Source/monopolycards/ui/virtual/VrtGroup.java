@@ -9,7 +9,7 @@ public abstract class VrtGroup extends VrtNode
 {
 	private final ObservableList<VrtNode> children;
 	
-	public VrtGroup()
+	protected VrtGroup()
 	{
 		children = new VetoableObservableList<>(this::checkChildren);
 		children.addListener((ListChangeListener<VrtNode>)chg -> {
