@@ -34,7 +34,7 @@ public class CardTest2 extends Application
 			VrtCard card = new VrtCard();
 			card.setBackImage(cardBack);
 			card.setFrontImage(dealBreakCard);
-			card.setTranslateZ(i * 200);
+			card.setTranslateZ(i * 2);
 			root.getChildren().add(card.getNode());
 			cards.add(card);
 		}
@@ -42,11 +42,13 @@ public class CardTest2 extends Application
 		deck = new VrtDeck();
 		deck.setTranslateY(600);
 		deck.setTranslateX(350);
-
+		deck.setRotateX(30); //Angle it upward
+		
 		PointLight light = new PointLight();
 		light.setTranslateX(500);
 		light.setTranslateY(600);
 		light.setTranslateZ(-10000);
+		
 		root.getChildren().addAll(camera, light);
 	}
 
@@ -61,7 +63,7 @@ public class CardTest2 extends Application
 		Transition t = new Transition()
 		{
 			{
-				setCycleDuration(Duration.millis(200));
+				setCycleDuration(Duration.millis(20));
 			}
 			@Override
 			protected void interpolate(double frac)
