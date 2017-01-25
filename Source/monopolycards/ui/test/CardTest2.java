@@ -2,6 +2,7 @@ package monopolycards.ui.test;
 
 import java.util.ArrayList;
 
+import javafx.animation.Timeline;
 import javafx.animation.Transition;
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -12,6 +13,8 @@ import javafx.scene.SceneAntialiasing;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import monopolycards.ui.virtual.MovementFrame;
+import monopolycards.ui.virtual.MovementTimeline;
 import monopolycards.ui.virtual.VrtCard;
 import monopolycards.ui.virtual.VrtDeck;
 
@@ -34,7 +37,7 @@ public class CardTest2 extends Application
 			VrtCard card = new VrtCard();
 			card.setBackImage(cardBack);
 			card.setFrontImage(dealBreakCard);
-			card.setTranslateZ(i * 2);
+			card.setTranslateZ(i * 200);
 			root.getChildren().add(card.getNode());
 			cards.add(card);
 		}
@@ -60,7 +63,7 @@ public class CardTest2 extends Application
 		primaryStage.setScene(scene);
 		primaryStage.show();
 		
-		Transition t = new Transition()
+		Transition fillDeck = new Transition()
 		{
 			{
 				setCycleDuration(Duration.millis(20));
@@ -76,13 +79,45 @@ public class CardTest2 extends Application
 						stop();
 						return;
 					}
-					deck.getChildren().add(cards.get(ind));
+					deck.pushCard(cards.get(ind));
 				}
 			}
 		};
-		t.setCycleCount(-1);
-		t.playFromStart();
-		//deck.getChildren().addAll(cards);
+		fillDeck.setCycleCount(-1);
+		fillDeck.playFromStart();
+		
+		Transition remove = new Transition()
+		{
+			{
+				setCycleDuration(Duration.seconds(.2));
+			}
+			
+			@Override
+			public void interpolate(double frac)
+			{
+				if (cards.size() == 0)
+				{
+					stop();
+					return;
+				}
+				
+				if (frac == 1)
+				{
+					int ind = (int)(Math.random() * cards.size());
+					VrtCard removed = cards.remove(ind);
+					deck.getChildren().remove(removed);
+					
+					MovementFrame frame = new MovementFrame();
+					frame.setTranslateZ(-5000);
+					Timeline animate = new MovementTimeline(removed).addFrame(Duration.seconds(.5), frame).generateAnimation();
+					animate.setOnFinished(evt -> root.getChildren().remove(removed.getNode()));
+					animate.play();
+				}
+			}
+		};
+		remove.setCycleCount(-1);
+		remove.setDelay(Duration.seconds(3));
+		remove.playFromStart();
 	}
 	
 	public static void main(String[] args)

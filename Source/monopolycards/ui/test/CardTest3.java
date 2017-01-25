@@ -11,10 +11,12 @@ import javafx.scene.PointLight;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCombination;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import monopolycards.ui.virtual.VrtCard;
+import monopolycards.ui.virtual.VrtDeck;
 import monopolycards.ui.virtual.VrtHand;
 
 public class CardTest3 extends Application
@@ -24,6 +26,7 @@ public class CardTest3 extends Application
 	private PerspectiveCamera camera = new PerspectiveCamera();
 	private Group root = new Group();
 	private VrtHand hand;
+	private VrtDeck deck;
 	private ArrayList<VrtCard> cards;
 	
 	@Override
@@ -34,15 +37,20 @@ public class CardTest3 extends Application
 		Image dealBreakCard = new Image(CardTest.class.getResourceAsStream("Dealbreaker.jpg"));
 		
 		cards = new ArrayList<>();
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < 100; i++)
 		{
 			VrtCard card = new VrtCard();
 			card.setBackImage(cardBack);
 			card.setFrontImage(dealBreakCard);
-			card.setTranslateZ(i * 2);
+			card.setTranslateZ(i * 200);
 			root.getChildren().add(card.getNode());
 			cards.add(card);
 		}
+		
+		deck = new VrtDeck();
+		deck.setTranslateY(600);
+		deck.setTranslateX(350);
+		deck.setRotateX(30); //Angle it upward
 		
 		hand = new VrtHand();
 		hand.setTranslateY(BOUNDS.getHeight() - cards.get(0).getHeight());
@@ -60,10 +68,14 @@ public class CardTest3 extends Application
 	{
 		Scene scene = new Scene(root, 1300, 750, true, SceneAntialiasing.BALANCED);
 		scene.setCamera(camera);
+		
 		primaryStage.setScene(scene);
+		primaryStage.setFullScreen(true);
+		primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
 		primaryStage.show();
 		
-		Transition t = new Transition()
+		
+		Transition fillDeck = new Transition()
 		{
 			{
 				setCycleDuration(Duration.millis(20));
@@ -73,34 +85,34 @@ public class CardTest3 extends Application
 			{
 				if (frac == 1)
 				{
-					int ind = hand.getChildren().size();
+					int ind = deck.getChildren().size();
 					if (cards.size() == ind)
 					{
 						stop();
 						return;
 					}
-					hand.getChildren().add(cards.get(ind));
+					deck.getChildren().add(cards.get(ind));
 				}
 			}
 		};
-		Transition wait = new Transition()
+		fillDeck.setCycleCount(-1);
+		fillDeck.playFromStart();
+		
+		Transition drawDeck = new Transition()
 		{
 			{
-				setCycleDuration(Duration.seconds(4));
+				setCycleDuration(Duration.seconds(1));
 			}
 			protected void interpolate(double frac)
 			{
 				if (frac == 1)
 				{
-					hand.flipAll();
+					VrtCard c = (VrtCard)deck.popCard()
+					
 				}
 			}
 		};
-		wait.setCycleCount(-1);
-		wait.play();
-		t.setCycleCount(-1);
-		t.playFromStart();
-		//deck.getChildren().addAll(cards);
+		drawDeck.setCycleCount(5);
 	}
 	
 	public static void main(String[] args)
