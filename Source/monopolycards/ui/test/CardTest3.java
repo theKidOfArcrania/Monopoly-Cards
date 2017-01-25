@@ -17,6 +17,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import monopolycards.ui.virtual.VrtCard;
 import monopolycards.ui.virtual.VrtDeck;
+import monopolycards.ui.virtual.VrtGroup;
 import monopolycards.ui.virtual.VrtHand;
 
 public class CardTest3 extends Application
@@ -49,7 +50,8 @@ public class CardTest3 extends Application
 		
 		deck = new VrtDeck();
 		deck.setTranslateY(600);
-		deck.setTranslateX(350);
+		deck.setTranslateX(600);
+		deck.setTranslateZ(1000);
 		deck.setRotateX(30); //Angle it upward
 		
 		hand = new VrtHand();
@@ -60,7 +62,7 @@ public class CardTest3 extends Application
 		light.setTranslateY(600);
 		light.setTranslateZ(-10000);
 		
-		root.getChildren().addAll(camera, light);
+		root.getChildren().addAll(camera/*, light*/);
 	}
 
 	@Override
@@ -103,16 +105,35 @@ public class CardTest3 extends Application
 			{
 				setCycleDuration(Duration.seconds(1));
 			}
-			protected void interpolate(double frac)
+			
+			@Override
+			public void interpolate(double frac)
 			{
 				if (frac == 1)
 				{
-					VrtCard c = (VrtCard)deck.popCard()
-					
+					VrtCard removed = deck.popCard();
+					hand.getChildren().add(removed);
+					Transition wait = new Transition()
+					{
+						{
+							setCycleDuration(VrtGroup.MEDIUM_TRANS);
+						}
+						@Override
+						protected void interpolate(double frac)
+						{
+							if (frac == 1)
+							{
+								hand.flipCard(removed);
+							}
+						}
+					};
+					wait.play();
 				}
 			}
 		};
 		drawDeck.setCycleCount(5);
+		drawDeck.setDelay(Duration.seconds(3));
+		drawDeck.playFromStart();
 	}
 	
 	public static void main(String[] args)

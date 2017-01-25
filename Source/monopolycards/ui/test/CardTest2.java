@@ -52,7 +52,7 @@ public class CardTest2 extends Application
 		light.setTranslateY(600);
 		light.setTranslateZ(-10000);
 		
-		root.getChildren().addAll(camera, light);
+		root.getChildren().addAll(camera);
 	}
 
 	@Override

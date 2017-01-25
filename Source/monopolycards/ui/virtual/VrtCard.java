@@ -73,7 +73,7 @@ public class VrtCard extends VrtNode
 		light2.translateYProperty().bind(height.divide(2));
 		light2.setTranslateZ(-200);
 		
-		((Group)getNode()).getChildren().addAll(rim, front, back, light, light2);
+		((Group)getNode()).getChildren().addAll(rim, front, back /*,light, light2*/);
 	}
 	
 	

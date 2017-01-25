@@ -13,6 +13,7 @@ public class VrtDeck extends VrtGroup
 	public VrtDeck()
 	{
 		deck = new ArrayList<>();
+		
 	}
 
 	public void pushCard(VrtCard card)
@@ -22,11 +23,14 @@ public class VrtDeck extends VrtGroup
 	
 	public VrtCard popCard()
 	{
-		for (int i = deck.size(); i >= 0; i--)
+		for (int i = deck.size() - 1; i >= 0; i--)
 		{
 			VrtNode node = getChildren().get(i);
 			if (node instanceof VrtCard)
+			{
+				getChildren().remove(node);
 				return (VrtCard)node;
+			}
 		}
 		return null;
 	}
@@ -43,7 +47,7 @@ public class VrtDeck extends VrtGroup
 			{
 				MovementFrame frame = new MovementFrame(Interpolator.EASE_IN);
 				frame.setTranslateY(getTranslateY() - (2 * ind));
-				new MovementTimeline(node).addFrame(Duration.seconds(.3), frame).generateAnimation().playFromStart();
+				new MovementTimeline(node).addFrame(Duration.seconds(.1), frame).generateAnimation().playFromStart();
 				ind++;
 			}
 		}
@@ -62,6 +66,6 @@ public class VrtDeck extends VrtGroup
 		frame.setTranslateY(getTranslateY() - 2 * (deck.size() - 1));
 		frame.setTranslateZ(getTranslateZ());
 		
-		new MovementTimeline(c).addFrame(Duration.seconds(2), frame).generateAnimation().playFromStart();
+		new MovementTimeline(c).addFrame(MEDIUM_TRANS, frame).generateAnimation().playFromStart();
 	}
 }

@@ -1,27 +1,77 @@
 package monopolycards.ui.virtual;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 
+import javafx.animation.Animation;
+import javafx.animation.Animation.Status;
+import javafx.animation.Timeline;
+import javafx.event.EventHandler;
+import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 
 public class VrtHand extends VrtGroup
 {
 
 	private static final int PADDING = 10;
-	private ArrayList<VrtCard> hand;
-	private HashSet<VrtCard> shown; 
+	private final ArrayList<VrtCard> hand;
+	private final HashSet<VrtCard> shown;
+	private final HashMap<VrtCard, Animation> animating;
+	private final EventHandler<MouseEvent> mouseEnter;
+	private final EventHandler<MouseEvent> mouseExit;
 	
+	//TODO: the cards are centered.
 	public VrtHand()
 	{
 		hand = new ArrayList<>();
 		shown = new HashSet<>();
+		animating = new HashMap<>();
+		
+		mouseEnter = evt -> {
+			for (int i = 0; i < hand.size(); i++)
+			{
+				VrtCard c = hand.get(i);
+				if (c.getNode() == evt.getSource())
+				{
+					Animation prev = animating.get(c);
+					if (prev != null && prev.getStatus() == Status.RUNNING)
+						prev.stop();
+					MovementFrame frame = new MovementFrame();
+					frame.setTranslateZ(getTranslateZ() - 300);
+					frame.setTranslateY(getTranslateY() - 100);
+					Timeline animate = new MovementTimeline(c).addFrame(Duration.seconds(.5), frame).generateAnimation();
+					animating.put(c, animate);
+					animate.play();
+				}
+			}
+		};
+		mouseExit = evt -> {
+			for (int i = 0; i < hand.size(); i++)
+			{
+				VrtCard c = hand.get(i);
+				if (c.getNode() == evt.getSource())
+				{
+					Animation prev = animating.get(c);
+					if (prev != null && prev.getStatus() == Status.RUNNING)
+						prev.stop();
+					MovementFrame frame = new MovementFrame();
+					frame.setTranslateZ(getTranslateZ());
+					frame.setTranslateY(getTranslateY());
+					Timeline animate = new MovementTimeline(c).addFrame(Duration.seconds(.5), frame).generateAnimation();
+					animating.put(c, animate);
+					animate.play();
+				}
+			}
+		};
 	}
 
 	@Override
 	protected void removeCard(VrtCard c)
 	{
 		hand.remove(c);
+		c.getNode().removeEventHandler(MouseEvent.MOUSE_ENTERED, mouseEnter);
+		c.getNode().removeEventHandler(MouseEvent.MOUSE_EXITED, mouseExit);
 	}
 
 	@Override
@@ -37,7 +87,12 @@ public class VrtHand extends VrtGroup
 		frame.setTranslateY(getTranslateY());
 		frame.setTranslateZ(getTranslateZ());
 		
-		new MovementTimeline(c).addFrame(Duration.seconds(2), frame).generateAnimation().playFromStart();
+		Timeline addToHand = new MovementTimeline(c).addFrame(MEDIUM_TRANS, frame).generateAnimation();
+		addToHand.setOnFinished(evt -> {
+			c.getNode().addEventHandler(MouseEvent.MOUSE_EXITED, mouseExit);
+			c.getNode().addEventHandler(MouseEvent.MOUSE_ENTERED, mouseEnter);
+		});
+		addToHand.play();
 	}
 	
 	public boolean isShown(VrtCard c)
@@ -62,6 +117,6 @@ public class VrtHand extends VrtGroup
 		
 		MovementFrame frame = new MovementFrame();
 		frame.setRotateY(getRotateY() + flipSide);
-		new MovementTimeline(c).addFrame(Duration.seconds(2), frame).generateAnimation().playFromStart();
+		new MovementTimeline(c).addFrame(MEDIUM_TRANS, frame).generateAnimation().playFromStart();
 	}
 }

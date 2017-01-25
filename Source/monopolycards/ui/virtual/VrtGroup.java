@@ -4,9 +4,13 @@ import java.util.Objects;
 
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.util.Duration;
 
 public abstract class VrtGroup extends VrtNode
 {
+	public static final Duration FAST_TRANS = Duration.seconds(1);
+	public static final Duration MEDIUM_TRANS = Duration.seconds(2);
+	
 	private final ObservableList<VrtNode> children;
 	
 	protected VrtGroup()
