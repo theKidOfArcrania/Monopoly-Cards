@@ -129,40 +129,23 @@ public class CardTest3 extends Application
 		fillingDeck.setCycleCount(-1);
 		fillingDeck.playFromStart();
 		
-		Transition drawingDeck = new Transition()
-		{
+		drawDeck.setOnDrawDeck(() -> {
+			VrtCard removed = drawDeck.popCard();
+			hand.getChildren().add(removed);
+			Transition wait = new Transition()
 			{
-				setCycleDuration(Duration.seconds(3));
-			}
-			
-			@Override
-			public void interpolate(double frac)
-			{
-				if (frac == 1)
 				{
-					VrtCard removed = drawDeck.popCard();
-					hand.getChildren().add(removed);
-					Transition wait = new Transition()
-					{
-						{
-							setCycleDuration(VrtGroup.MEDIUM_TRANS);
-						}
-						@Override
-						protected void interpolate(double frac)
-						{
-							if (frac == 1)
-							{
-								hand.flipCard(removed);
-							}
-						}
-					};
-					wait.play();
+					setCycleDuration(VrtGroup.MEDIUM_TRANS);
 				}
-			}
-		};
-		drawingDeck.setCycleCount(10);
-		drawingDeck.setDelay(Duration.seconds(3));
-		drawingDeck.playFromStart();
+				@Override
+				protected void interpolate(double frac)
+				{
+					if (frac == 1)
+						hand.flipCard(removed);
+				}
+			};
+			wait.play();
+		});
 	}
 	
 	public static void main(String[] args)
