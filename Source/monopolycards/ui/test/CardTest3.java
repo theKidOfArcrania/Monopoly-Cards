@@ -99,7 +99,7 @@ public class CardTest3 extends Application
 		Transition drawDeck = new Transition()
 		{
 			{
-				setCycleDuration(Duration.seconds(1));
+				setCycleDuration(Duration.seconds(3));
 			}
 			
 			@Override
