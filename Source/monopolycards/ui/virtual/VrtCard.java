@@ -22,8 +22,8 @@ public class VrtCard extends VrtNode
 		super(new Group());
 		Group g;
 
-		setWidth(11 * 20);
-		setHeight(17 * 20);
+		setWidth(11 * 16);
+		setHeight(17 * 16);
 		
 		PhongMaterial frontMat = new PhongMaterial();
 		PhongMaterial backMat = new PhongMaterial();

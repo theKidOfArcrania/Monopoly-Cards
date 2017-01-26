@@ -5,11 +5,7 @@ import java.util.ArrayList;
 import javafx.animation.Transition;
 import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Group;
-import javafx.scene.PerspectiveCamera;
-import javafx.scene.PointLight;
-import javafx.scene.Scene;
-import javafx.scene.SceneAntialiasing;
+import javafx.scene.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.Screen;
@@ -56,6 +52,7 @@ public class CardTest3 extends Application
 		
 		hand = new VrtHand();
 		hand.setTranslateY(BOUNDS.getHeight() - cards.get(0).getHeight());
+		hand.setWidth(BOUNDS.getWidth());
 		
 		PointLight light = new PointLight();
 		light.setTranslateX(500);
@@ -70,7 +67,6 @@ public class CardTest3 extends Application
 	{
 		Scene scene = new Scene(root, 1300, 750, true, SceneAntialiasing.BALANCED);
 		scene.setCamera(camera);
-		
 		primaryStage.setScene(scene);
 		primaryStage.setFullScreen(true);
 		primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
@@ -131,7 +127,7 @@ public class CardTest3 extends Application
 				}
 			}
 		};
-		drawDeck.setCycleCount(5);
+		drawDeck.setCycleCount(10);
 		drawDeck.setDelay(Duration.seconds(3));
 		drawDeck.playFromStart();
 	}
