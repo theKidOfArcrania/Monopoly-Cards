@@ -9,11 +9,16 @@ public class VrtDeck extends VrtGroup
 {
 
 	private ArrayList<VrtCard> deck;
+	private final boolean faceUp;
 	
 	public VrtDeck()
 	{
+		this(false);
+	}
+	public VrtDeck(boolean faceUp)
+	{
 		deck = new ArrayList<>();
-		
+		this.faceUp = faceUp;
 	}
 
 	public void pushCard(VrtCard card)
@@ -60,7 +65,7 @@ public class VrtDeck extends VrtGroup
 		
 		MovementFrame frame = new MovementFrame();
 		frame.setRotateX(-90 + getRotateX());
-		frame.setRotateY(getRotateY());
+		frame.setRotateY(getRotateY() + (faceUp ? 180 : 0));
 		frame.setRotateZ(getRotateZ());
 		frame.setTranslateX(getTranslateX());
 		frame.setTranslateY(getTranslateY() - 2 * (deck.size() - 1));

@@ -2,15 +2,23 @@ package monopolycards.ui.test;
 
 import java.util.ArrayList;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.animation.Transition;
 import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.*;
+import javafx.scene.Group;
+import javafx.scene.PerspectiveCamera;
+import javafx.scene.PointLight;
+import javafx.scene.Scene;
+import javafx.scene.SceneAntialiasing;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import monopolycards.ui.virtual.MovementFrame;
+import monopolycards.ui.virtual.MovementTimeline;
 import monopolycards.ui.virtual.VrtCard;
 import monopolycards.ui.virtual.VrtDeck;
 import monopolycards.ui.virtual.VrtGroup;
@@ -23,7 +31,8 @@ public class CardTest3 extends Application
 	private PerspectiveCamera camera = new PerspectiveCamera();
 	private Group root = new Group();
 	private VrtHand hand;
-	private VrtDeck deck;
+	private VrtDeck drawDeck;
+	private VrtDeck discardDeck;
 	private ArrayList<VrtCard> cards;
 	
 	@Override
@@ -44,15 +53,39 @@ public class CardTest3 extends Application
 			cards.add(card);
 		}
 		
-		deck = new VrtDeck();
-		deck.setTranslateY(600);
-		deck.setTranslateX(600);
-		deck.setTranslateZ(1000);
-		deck.setRotateX(30); //Angle it upward
+		drawDeck = new VrtDeck();
+		drawDeck.setTranslateY(600);
+		drawDeck.setTranslateX(600);
+		drawDeck.setTranslateZ(1000);
+		drawDeck.setRotateX(30); //Angle it upward
+		
+		discardDeck = new VrtDeck(true);
+		discardDeck.setTranslateY(600);
+		discardDeck.setTranslateX(800);
+		discardDeck.setTranslateZ(1000);
+		discardDeck.setRotateX(30); //Angle it upward
 		
 		hand = new VrtHand();
 		hand.setTranslateY(BOUNDS.getHeight() - cards.get(0).getHeight());
 		hand.setWidth(BOUNDS.getWidth());
+		hand.setOnSelectHand(card -> {
+			hand.getChildren().remove(card);
+			
+			MovementFrame frame = new MovementFrame();
+			frame.setRotateX(0);
+			frame.setRotateY(180);
+			frame.setRotateZ(0);
+			frame.setTranslateX((BOUNDS.getWidth() - card.getWidth()) / 2);
+			frame.setTranslateY((BOUNDS.getHeight() - card.getHeight()) / 2);
+			frame.setTranslateZ(-500);
+			
+			Timeline enlarge = new MovementTimeline(card).addFrame(VrtGroup.FAST_TRANS, frame).generateAnimation();
+			enlarge.getKeyFrames().add(new KeyFrame(VrtGroup.MEDIUM_TRANS));
+			enlarge.setOnFinished(evt -> {
+				discardDeck.pushCard(card);
+			});
+			enlarge.play();
+		});
 		
 		PointLight light = new PointLight();
 		light.setTranslateX(500);
@@ -73,7 +106,7 @@ public class CardTest3 extends Application
 		primaryStage.show();
 		
 		
-		Transition fillDeck = new Transition()
+		Transition fillingDeck = new Transition()
 		{
 			{
 				setCycleDuration(Duration.millis(20));
@@ -83,20 +116,20 @@ public class CardTest3 extends Application
 			{
 				if (frac == 1)
 				{
-					int ind = deck.getChildren().size();
+					int ind = drawDeck.getChildren().size();
 					if (cards.size() == ind)
 					{
 						stop();
 						return;
 					}
-					deck.getChildren().add(cards.get(ind));
+					drawDeck.getChildren().add(cards.get(ind));
 				}
 			}
 		};
-		fillDeck.setCycleCount(-1);
-		fillDeck.playFromStart();
+		fillingDeck.setCycleCount(-1);
+		fillingDeck.playFromStart();
 		
-		Transition drawDeck = new Transition()
+		Transition drawingDeck = new Transition()
 		{
 			{
 				setCycleDuration(Duration.seconds(3));
@@ -107,7 +140,7 @@ public class CardTest3 extends Application
 			{
 				if (frac == 1)
 				{
-					VrtCard removed = deck.popCard();
+					VrtCard removed = drawDeck.popCard();
 					hand.getChildren().add(removed);
 					Transition wait = new Transition()
 					{
@@ -127,9 +160,9 @@ public class CardTest3 extends Application
 				}
 			}
 		};
-		drawDeck.setCycleCount(10);
-		drawDeck.setDelay(Duration.seconds(3));
-		drawDeck.playFromStart();
+		drawingDeck.setCycleCount(10);
+		drawingDeck.setDelay(Duration.seconds(3));
+		drawingDeck.playFromStart();
 	}
 	
 	public static void main(String[] args)

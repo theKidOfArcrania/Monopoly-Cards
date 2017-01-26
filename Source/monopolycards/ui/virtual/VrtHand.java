@@ -3,11 +3,15 @@ package monopolycards.ui.virtual;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.function.Consumer;
 
 import javafx.animation.Animation;
 import javafx.animation.Animation.Status;
 import javafx.animation.Timeline;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.EventHandler;
+import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 
@@ -20,53 +24,68 @@ public class VrtHand extends VrtGroup
 	private final HashMap<VrtCard, Animation> animating;
 	private final EventHandler<MouseEvent> mouseEnter;
 	private final EventHandler<MouseEvent> mouseExit;
+	private final EventHandler<MouseEvent> mouseClick;
+	private final ObjectProperty<Consumer<VrtCard>> onSelectHand;
 	
-	//TODO: the cards are centered.
 	public VrtHand()
 	{
 		hand = new ArrayList<>();
 		shown = new HashSet<>();
 		animating = new HashMap<>();
 		
+		onSelectHand = new SimpleObjectProperty<>(this, "onSelectHand");
+		
 		mouseEnter = evt -> {
-			for (int i = 0; i < hand.size(); i++)
-			{
-				VrtCard c = hand.get(i);
-				if (c.getNode() == evt.getSource())
-				{
-					Animation prev = animating.get(c);
-					if (prev != null && prev.getStatus() == Status.RUNNING)
-						prev.stop();
+			VrtCard c = identifyCardFrom((Node)evt.getSource());
+			
+			Animation prev = animating.get(c);
+			if (prev != null && prev.getStatus() == Status.RUNNING)
+				prev.stop();
 					
-					MovementFrame frame = new MovementFrame();
-					frame.setTranslateZ(getTranslateZ() - 200);
-					frame.setTranslateY(getTranslateY() - 80);
-					Timeline animate = new MovementTimeline(c).addFrame(Duration.seconds(.2), frame).generateAnimation();
-					animating.put(c, animate);
-					animate.play();
-				}
-			}
+			MovementFrame frame = new MovementFrame();
+			frame.setTranslateZ(getTranslateZ() - 200);
+			frame.setTranslateY(getTranslateY() - 80);
+			Timeline animate = new MovementTimeline(c).addFrame(Duration.seconds(.2), frame).generateAnimation();
+			animating.put(c, animate);
+			animate.play();
 		};
 		mouseExit = evt -> {
-			for (int i = 0; i < hand.size(); i++)
-			{
-				VrtCard c = hand.get(i);
-				if (c.getNode() == evt.getSource())
-				{
-					Animation prev = animating.get(c);
-					if (prev != null && prev.getStatus() == Status.RUNNING)
-						prev.stop();
-					MovementFrame frame = new MovementFrame();
-					frame.setTranslateZ(getTranslateZ());
-					frame.setTranslateY(getTranslateY());
-					Timeline animate = new MovementTimeline(c).addFrame(Duration.seconds(.2), frame).generateAnimation();
-					animating.put(c, animate);
-					animate.play();
-				}
-			}
+			VrtCard c = identifyCardFrom((Node)evt.getSource());
+	
+			Animation prev = animating.get(c);
+			if (prev != null && prev.getStatus() == Status.RUNNING)
+				prev.stop();
+			
+			MovementFrame frame = new MovementFrame();
+			frame.setTranslateZ(getTranslateZ());
+			frame.setTranslateY(getTranslateY());
+			Timeline animate = new MovementTimeline(c).addFrame(Duration.seconds(.2), frame).generateAnimation();
+			animating.put(c, animate);
+			animate.play();
+		};
+		
+		mouseClick = evt -> {
+			VrtCard c = identifyCardFrom((Node)evt.getSource());
+			Consumer<VrtCard> han = getOnSelectHand();
+			if (han != null)
+				han.accept(c);
 		};
 	}
+
+	public final Consumer<VrtCard> getOnSelectHand()
+	{
+		return onSelectHand.get();
+	}
 	
+	public final void setOnSelectHand(Consumer<VrtCard> p)
+	{
+		onSelectHand.set(p);
+	}
+	
+	public final ObjectProperty<Consumer<VrtCard>> onSelectHandProperty()
+	{
+		return onSelectHand;
+	}
 
 	public boolean isShown(VrtCard c)
 	{
@@ -99,6 +118,7 @@ public class VrtHand extends VrtGroup
 		hand.remove(c);
 		c.getNode().removeEventHandler(MouseEvent.MOUSE_ENTERED, mouseEnter);
 		c.getNode().removeEventHandler(MouseEvent.MOUSE_EXITED, mouseExit);
+		c.getNode().removeEventHandler(MouseEvent.MOUSE_CLICKED, mouseClick);
 		
 		repositionCards();
 	}
@@ -119,10 +139,22 @@ public class VrtHand extends VrtGroup
 		addToHand.setOnFinished(evt -> {
 			c.getNode().addEventHandler(MouseEvent.MOUSE_EXITED, mouseExit);
 			c.getNode().addEventHandler(MouseEvent.MOUSE_ENTERED, mouseEnter);
+			c.getNode().addEventHandler(MouseEvent.MOUSE_CLICKED, mouseClick);
 		});
 		addToHand.play();
 		
 		repositionCards();
+	}
+	
+	private VrtCard identifyCardFrom(Node source)
+	{
+		for (int i = 0; i < hand.size(); i++)
+		{
+			VrtCard c = hand.get(i);
+			if (c.getNode() == source)
+				return c;
+		}
+		return null;
 	}
 	
 	private void repositionCards()
