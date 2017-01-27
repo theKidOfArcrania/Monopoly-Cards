@@ -109,7 +109,7 @@ public class VrtHand extends VrtGroup
 		
 		MovementFrame frame = new MovementFrame();
 		frame.setRotateY(getRotateY() + flipSide);
-		Timeline flip = new MovementTimeline(c).addFrame(MEDIUM_TRANS, frame).generateAnimation();
+		Timeline flip = new MovementTimeline(c).addFrame(FAST_TRANS, frame).generateAnimation();
 		flip.play();
 		runningAnimation(flip);
 	}

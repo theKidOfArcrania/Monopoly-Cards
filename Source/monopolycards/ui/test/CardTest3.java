@@ -52,13 +52,13 @@ public class CardTest3 extends Application
 		drawDeck = new VrtDeck();
 		drawDeck.setTranslateY(600);
 		drawDeck.setTranslateX(600);
-		drawDeck.setTranslateZ(1000);
+		drawDeck.setTranslateZ(2000);
 		drawDeck.setRotateX(30); //Angle it upward
 		
 		discardDeck = new VrtDeck(true);
 		discardDeck.setTranslateY(600);
 		discardDeck.setTranslateX(800);
-		discardDeck.setTranslateZ(1000);
+		discardDeck.setTranslateZ(2000);
 		discardDeck.setRotateX(30); //Angle it upward
 		
 		hand = new VrtHand();
@@ -111,13 +111,13 @@ public class CardTest3 extends Application
 			{
 				if (frac == 1)
 				{
-					int ind = drawDeck.getChildren().size();
+					int ind = discardDeck.getChildren().size();
 					if (cards.size() == ind)
 					{
 						stop();
 						return;
 					}
-					drawDeck.getChildren().add(cards.get(ind));
+					discardDeck.getChildren().add(cards.get(ind));
 				}
 			}
 		};
