@@ -2,6 +2,12 @@ package monopolycards.ui.virtual;
 
 import java.util.Objects;
 
+import javafx.animation.Animation;
+import javafx.animation.Animation.Status;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.util.Duration;
@@ -12,6 +18,9 @@ public abstract class VrtGroup extends VrtNode
 	public static final Duration MEDIUM_TRANS = Duration.seconds(2);
 	
 	private final ObservableList<VrtNode> children;
+	
+	private final ReadOnlyBooleanWrapper animating;
+	private volatile int running = 0;
 	
 	protected VrtGroup()
 	{
@@ -37,7 +46,20 @@ public abstract class VrtGroup extends VrtNode
 				}
 			}
 		});
+		
+		animating = new ReadOnlyBooleanWrapper(this, "animating");
 	}
+	
+	public final ReadOnlyBooleanProperty animatingProperty()
+	{
+		return this.animating.getReadOnlyProperty();
+	}
+
+	public final boolean isAnimating()
+	{
+		return this.animatingProperty().get();
+	}
+	
 	
 	public final ObservableList<VrtNode> getChildren()
 	{
@@ -56,6 +78,25 @@ public abstract class VrtGroup extends VrtNode
 	 */
 	protected abstract void addCard(VrtCard c);
 	
+	protected void runningAnimation(Animation a)
+	{
+		running++;
+		a.statusProperty().addListener(new InvalidationListener()
+		{
+			@Override
+			public void invalidated(Observable observable)
+			{
+				if (a.getStatus() == Status.STOPPED)
+				{
+					a.statusProperty().removeListener(this);
+					running--;
+					animating.set(false);
+				}
+			}
+		});
+		animating.set(true);
+	}
+	
 	private void checkChildren(VrtNode node)
 	{
 		if (node == null)
@@ -73,5 +114,7 @@ public abstract class VrtGroup extends VrtNode
 			tmp = tmp.getParent();
 		}
 	}
+
+	
 	
 }

@@ -7,22 +7,13 @@ import javafx.animation.Timeline;
 import javafx.animation.Transition;
 import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Group;
-import javafx.scene.PerspectiveCamera;
-import javafx.scene.PointLight;
-import javafx.scene.Scene;
-import javafx.scene.SceneAntialiasing;
+import javafx.scene.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import monopolycards.ui.virtual.MovementFrame;
-import monopolycards.ui.virtual.MovementTimeline;
-import monopolycards.ui.virtual.VrtCard;
-import monopolycards.ui.virtual.VrtDeck;
-import monopolycards.ui.virtual.VrtGroup;
-import monopolycards.ui.virtual.VrtHand;
+import monopolycards.ui.virtual.*;
 
 public class CardTest3 extends Application
 {

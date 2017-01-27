@@ -109,7 +109,9 @@ public class VrtHand extends VrtGroup
 		
 		MovementFrame frame = new MovementFrame();
 		frame.setRotateY(getRotateY() + flipSide);
-		new MovementTimeline(c).addFrame(MEDIUM_TRANS, frame).generateAnimation().playFromStart();
+		Timeline flip = new MovementTimeline(c).addFrame(MEDIUM_TRANS, frame).generateAnimation();
+		flip.play();
+		runningAnimation(flip);
 	}
 	
 	@Override
@@ -142,6 +144,7 @@ public class VrtHand extends VrtGroup
 			c.getNode().addEventHandler(MouseEvent.MOUSE_CLICKED, mouseClick);
 		});
 		addToHand.play();
+		runningAnimation(addToHand);
 		
 		repositionCards();
 	}
@@ -179,7 +182,9 @@ public class VrtHand extends VrtGroup
 			{
 				MovementFrame frame = new MovementFrame();
 				frame.setTranslateX(tx);
-				new MovementTimeline(c).addFrame(MEDIUM_TRANS, frame).generateAnimation().play();
+				Timeline repos = new MovementTimeline(c).addFrame(MEDIUM_TRANS, frame).generateAnimation();
+				repos.play();
+				runningAnimation(repos);
 			}
 			
 			tx += c.getWidth() + PADDING;
