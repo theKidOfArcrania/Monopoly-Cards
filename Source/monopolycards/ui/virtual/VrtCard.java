@@ -3,7 +3,6 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Group;
-import javafx.scene.PointLight;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
@@ -63,17 +62,7 @@ public class VrtCard extends VrtNode
 		rim.setTranslateZ(-.5);
 		rim.setMaterial(white);
 		
-		PointLight light = new PointLight(Color.WHITE);
-		light.translateXProperty().bind(width.divide(2));
-		light.translateYProperty().bind(height.divide(2));
-		light.setTranslateZ(200);
-		
-		PointLight light2 = new PointLight(Color.WHITE);
-		light2.translateXProperty().bind(width.divide(2));
-		light2.translateYProperty().bind(height.divide(2));
-		light2.setTranslateZ(-200);
-		
-		((Group)getNode()).getChildren().addAll(rim, front, back /*,light, light2*/);
+		((Group)getNode()).getChildren().addAll(rim, front, back);
 	}
 	
 	

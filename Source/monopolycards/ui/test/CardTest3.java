@@ -2,12 +2,16 @@ package monopolycards.ui.test;
 
 import java.util.ArrayList;
 
+import javafx.animation.Animation.Status;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.animation.Transition;
 import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.*;
+import javafx.scene.Group;
+import javafx.scene.PerspectiveCamera;
+import javafx.scene.Scene;
+import javafx.scene.SceneAntialiasing;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.Screen;
@@ -25,6 +29,7 @@ public class CardTest3 extends Application
 	private VrtDeck drawDeck;
 	private VrtDeck discardDeck;
 	private ArrayList<VrtCard> cards;
+	private Timeline running;
 	
 	@Override
 	public void init()
@@ -60,6 +65,9 @@ public class CardTest3 extends Application
 		hand.setTranslateY(BOUNDS.getHeight() - cards.get(0).getHeight());
 		hand.setWidth(BOUNDS.getWidth());
 		hand.setOnSelectHand(card -> {
+			if (isAnimating())
+				return;
+			
 			hand.getChildren().remove(card);
 			
 			MovementFrame frame = new MovementFrame();
@@ -76,14 +84,10 @@ public class CardTest3 extends Application
 				discardDeck.pushCard(card);
 			});
 			enlarge.play();
+			running = enlarge;
 		});
 		
-		PointLight light = new PointLight();
-		light.setTranslateX(500);
-		light.setTranslateY(600);
-		light.setTranslateZ(-10000);
-		
-		root.getChildren().addAll(camera/*, light*/);
+		root.getChildren().addAll(camera);
 	}
 
 	@Override
@@ -120,23 +124,35 @@ public class CardTest3 extends Application
 		fillingDeck.setCycleCount(-1);
 		fillingDeck.playFromStart();
 		
+		ArrayList<VrtCard> drawing = new ArrayList<>();
+		hand.animatingProperty().addListener((val, before, after) -> {
+			if (!after)
+			{
+				while (!drawing.isEmpty())
+					hand.flipCard(drawing.remove(drawing.size() - 1));
+			}
+		});
 		drawDeck.setOnDrawDeck(() -> {
+			if (isAnimating())
+				return;
+			
 			VrtCard removed = drawDeck.popCard();
 			hand.getChildren().add(removed);
-			Transition wait = new Transition()
-			{
-				{
-					setCycleDuration(VrtGroup.MEDIUM_TRANS);
-				}
-				@Override
-				protected void interpolate(double frac)
-				{
-					if (frac == 1)
-						hand.flipCard(removed);
-				}
-			};
-			wait.play();
+			drawing.add(removed);
 		});
+		discardDeck.setOnDrawDeck(() -> {
+			if (isAnimating())
+				return;
+			while (!discardDeck.isEmpty())
+				drawDeck.pushCard(discardDeck.popCard());
+			drawDeck.shuffle();
+		});
+	}
+	
+	private boolean isAnimating()
+	{
+		return hand.isAnimating() || discardDeck.isAnimating() || drawDeck.isAnimating() 
+				|| running != null && running.getStatus() == Status.RUNNING;
 	}
 	
 	public static void main(String[] args)

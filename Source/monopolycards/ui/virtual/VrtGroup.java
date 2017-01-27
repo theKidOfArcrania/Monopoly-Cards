@@ -90,7 +90,8 @@ public abstract class VrtGroup extends VrtNode
 				{
 					a.statusProperty().removeListener(this);
 					running--;
-					animating.set(false);
+					if (running <= 0)
+						animating.set(false);
 				}
 			}
 		});
