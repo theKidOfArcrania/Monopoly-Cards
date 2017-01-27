@@ -9,7 +9,7 @@ import javafx.scene.SceneAntialiasing;
 import javafx.scene.SubScene;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCombination;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
@@ -17,7 +17,7 @@ import javafx.scene.transform.Rotate;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
-public class MainUI extends StackPane
+public class MainUI extends AnchorPane
 {
 	public static class Main extends Application
 	{
@@ -60,9 +60,15 @@ public class MainUI extends StackPane
 		tableScene.setFill(Color.ALICEBLUE);
 		tableScene.setCamera(camera);
 		
+		PlayerUI[] players = new PlayerUI[4];
+		for (int i = 0; i < players.length; i++)
+		{
+			PlayerUI player = players[i] = new PlayerUI();
+			AnchorPane.setLeftAnchor(player, 100.0 + i * (PlayerUI.WIDTH + 20));
+		}
 		
-		
-		getChildren().add(tableScene);
+		getChildren().addAll(tableScene);
+		getChildren().addAll(players);
 	}
 	
 	private Group initTable()
