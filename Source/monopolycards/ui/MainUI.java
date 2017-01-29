@@ -180,8 +180,8 @@ public class MainUI extends StackPane
 		
 		//Rounded stuff.
 		Tools.roundCorners(status);
-		status.setTranslateY(-Tools.CORNER_RADIUS - 1); //Shove the top rounds "under the rug"
-		status.setTranslateX(-Tools.CORNER_RADIUS - 1);
+		status.setTranslateY(-Tools.CORNER_RADIUS); //Shove the top rounds "under the rug"
+		status.setTranslateX(-Tools.CORNER_RADIUS);
 		
 		/*****************
 		 * Settings gear button
@@ -200,7 +200,8 @@ public class MainUI extends StackPane
 		/*****************
 		 * Putting 'em together
 		 *****************/
-		root.getChildren().addAll(scaledPlayerPane, scaleToScreen(status), scaledButton);
+		root.getChildren().addAll(scaledPlayerPane, scaleToScreen(new StackPane(status)), 
+				scaledButton);
 		root.setPickOnBounds(false);
 		return root;
 	}

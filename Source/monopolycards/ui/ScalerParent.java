@@ -115,7 +115,7 @@ public class ScalerParent extends Region
 		return scalingX.get();
 	}
 
-	public final javafx.geometry.HPos getHAlign()
+	public final HPos getHAlign()
 	{
 		return this.hAlignProperty().get();
 	}
@@ -125,7 +125,7 @@ public class ScalerParent extends Region
 		return scaled.get();
 	}
 
-	public final javafx.geometry.VPos getVAlign()
+	public final VPos getVAlign()
 	{
 		return this.vAlignProperty().get();
 	}
@@ -165,7 +165,7 @@ public class ScalerParent extends Region
 		scalingX.set(val);
 	}
 
-	public final void setHAlign(final javafx.geometry.HPos hAlign)
+	public final void setHAlign(final HPos hAlign)
 	{
 		this.hAlignProperty().set(hAlign);
 	}
@@ -180,7 +180,7 @@ public class ScalerParent extends Region
 		this.scaled.set(scaled);
 	}
 
-	public final void setVAlign(final javafx.geometry.VPos vAlign)
+	public final void setVAlign(final VPos vAlign)
 	{
 		this.vAlignProperty().set(vAlign);
 	}
