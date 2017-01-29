@@ -34,25 +34,25 @@ public class PlayerUI extends GridPane
     @FXML
     private ImageView imgSets;
 	
-    private SimpleStringProperty playerName = new SimpleStringProperty(this, "playerName") {
+    private final SimpleStringProperty playerName = new SimpleStringProperty(this, "playerName") {
     	protected void invalidated() {
     		lblPlayer.setText(getValue());
-    	};
+    	}
     };
     
-    private SimpleIntegerProperty cash = new SimpleIntegerProperty(this, "cash") {
+    private final SimpleIntegerProperty cash = new SimpleIntegerProperty(this, "cash") {
     	protected void invalidated() {
     		lblCash.setText(String.format("$%,d", getValue()));
     	}
     };
     
-    private SimpleIntegerProperty propSets = new SimpleIntegerProperty(this, "propSets") {
+    private final SimpleIntegerProperty propSets = new SimpleIntegerProperty(this, "propSets") {
     	protected void invalidated() {
     		lblSets.setText(String.format("%d set(s)", getValue()));
     	}
     };
     
-    private SimpleObjectProperty<Image> profileImage = new SimpleObjectProperty<Image>(this, "profileImage") {
+    private final SimpleObjectProperty<Image> profileImage = new SimpleObjectProperty<Image>(this, "profileImage") {
     	protected void invalidated() {
     		imgProfile.setImage(getValue());
     	}

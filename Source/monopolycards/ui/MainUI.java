@@ -19,6 +19,8 @@ import javafx.stage.Stage;
 public class MainUI extends StackPane
 {
 	private static final Image DEFAULT_PROFILE_IMAGE = Tools.createFXImage("DefaultProfile.png");
+	private static final Image GEAR_IMAGE = Tools.createFXImage("gear.png");
+	private static final Image GEAR_PRESSED_IMAGE = Tools.createFXImage("gear_pressed.png");
 	private static final Rectangle2D BOUNDS = Screen.getPrimary().getBounds();
 	
 	public static final double SCALE_X = BOUNDS.getWidth() / 1920.0;
@@ -55,16 +57,18 @@ public class MainUI extends StackPane
 	
 	private final Group tableRoot;
 	private final Pane floatingUI;
+	
 	private final PlayerUI[] players;
+	private final StatusUI status;
 	
 	public MainUI()
 	{
-		//Initializing stuff
+		//Initializing some UI
 		players = new PlayerUI[4]; //TODO: change number of players.
+		status = new StatusUI();
 		
 		//Floating UI elements
 		floatingUI = initFloatingUI();
-		
 		
 		//3D scene
 		tableRoot = initTable();
@@ -108,7 +112,6 @@ public class MainUI extends StackPane
 			display.setCash(15000000);
 			display.setPropSets(2);
 			display.setProfileImage(DEFAULT_PROFILE_IMAGE);
-			display.setEffect(Tools.BEVEL_SHADOW);
 			
 			//Handlers for when the user mouseovers (stats enlarge and highlight)
 			Scale statsScale = new Scale(1, 1);
@@ -163,13 +166,41 @@ public class MainUI extends StackPane
 			Tools.roundCorners(playerStats);
 			playerStats.setTranslateY(-Tools.CORNER_RADIUS - 1); //Shove the top rounds "under the rug"
 		}
-		ScalerParent scaledPlayerPane = new ScalerParent(playerPane);
-		scaledPlayerPane.setPreserveRatio(true);
-		scaledPlayerPane.setScalingX(SCALE_X);
-		scaledPlayerPane.setScalingY(SCALE_Y);
+		ScalerParent scaledPlayerPane = scaleToScreen(playerPane);
+		AnchorPane.setRightAnchor(scaledPlayerPane, 150.0 * SCALE_X);
 		
-		AnchorPane.setLeftAnchor(scaledPlayerPane, 100.0 * SCALE_X);
-		root.getChildren().addAll(scaledPlayerPane);
+		/*****************
+		 * Status description pane
+		 *****************/
+		status.setTitle("It's Your Turn!");
+		status.setDescription("A sample description: Click on the card icon or the deck of cards to draw some cards " +
+				"and start your turn!");
+		status.setTurnNum(1);
+		status.setMoves(3);
+		
+		//Rounded stuff.
+		Tools.roundCorners(status);
+		status.setTranslateY(-Tools.CORNER_RADIUS - 1); //Shove the top rounds "under the rug"
+		status.setTranslateX(-Tools.CORNER_RADIUS - 1);
+		
+		/*****************
+		 * Settings gear button
+		 *****************/
+		ButtonUI gearButton = new ButtonUI();
+		gearButton.setMinSize(50, 50);
+		gearButton.setPrefSize(50, 50);
+		gearButton.setMaxSize(50, 50);
+		gearButton.setImage(GEAR_IMAGE);
+		gearButton.setPressedImage(GEAR_PRESSED_IMAGE);
+		
+		ScalerParent scaledButton = scaleToScreen(gearButton);
+		AnchorPane.setRightAnchor(scaledButton, 0.0 /*10.0 * SCALE_MIN*/);
+		AnchorPane.setTopAnchor(scaledButton, 0.0 /*10.0 * SCALE_MIN*/);
+		
+		/*****************
+		 * Putting 'em together
+		 *****************/
+		root.getChildren().addAll(scaledPlayerPane, scaleToScreen(status), scaledButton);
 		root.setPickOnBounds(false);
 		return root;
 	}
@@ -197,5 +228,14 @@ public class MainUI extends StackPane
 		
 		root.getChildren().add(table);
 		return root;
+	}
+	
+	private ScalerParent scaleToScreen(Node node)
+	{
+		ScalerParent scale = new ScalerParent(node);
+		scale.setPreserveRatio(true);
+		scale.setScalingX(SCALE_X);
+		scale.setScalingY(SCALE_Y);
+		return scale;
 	}
 }

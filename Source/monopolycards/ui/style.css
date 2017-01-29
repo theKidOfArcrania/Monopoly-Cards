@@ -13,9 +13,33 @@
 	-fx-font-size: 15px; 
 }
 
-.PlayerCard 
+.Small
+{
+	-fx-font-size: 12px;
+}
+
+.Card
 {
 	-fx-background-color: rgb(24,180,231);
+	-fx-effect: innershadow(gaussian, BLACK, 10, 0, 0, 0) 
+}
+
+.ButtonHighlight:hover
+{
+	-fx-background-color: rgba(255,255,255,.2);
+	-fx-background-radius: 5px;
+}
+
+.Button
+{
+	-fx-background-color: linear-gradient( to bottom, #c7bc8c, #7e7463);
+	-fx-background-radius: 5px;
+	-fx-effect: innershadow(gaussian, rgba(0,0,0,.5), 10, 0, 0, 0)
+}
+
+.Button:pressed
+{
+	-fx-background-color: linear-gradient( to top, #c7bc8c, #7e7463);
 }
 
 .ProfilePic
