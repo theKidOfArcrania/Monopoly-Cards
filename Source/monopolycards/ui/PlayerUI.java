@@ -1,44 +1,149 @@
 package monopolycards.ui;
 
+import java.io.IOException;
+import java.net.URL;
+
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 
 public class PlayerUI extends GridPane
 {
-	public static final double WIDTH = 300;
-	public static final double HEIGHT = 150;
+
+    @FXML
+    private ImageView imgProfile;
+
+    @FXML
+    private Label lblPlayer;
+
+    @FXML
+    private Label lblCash;
+
+    @FXML
+    private Label lblSets;
+
+    @FXML
+    private ImageView imgCash;
+
+    @FXML
+    private ImageView imgSets;
 	
+    private SimpleStringProperty playerName = new SimpleStringProperty(this, "playerName") {
+    	protected void invalidated() {
+    		lblPlayer.setText(getValue());
+    	};
+    };
+    
+    private SimpleIntegerProperty cash = new SimpleIntegerProperty(this, "cash") {
+    	protected void invalidated() {
+    		lblCash.setText(String.format("$%,d", getValue()));
+    	}
+    };
+    
+    private SimpleIntegerProperty propSets = new SimpleIntegerProperty(this, "propSets") {
+    	protected void invalidated() {
+    		lblSets.setText(String.format("%d set(s)", getValue()));
+    	}
+    };
+    
+    private SimpleObjectProperty<Image> profileImage = new SimpleObjectProperty<Image>(this, "profileImage") {
+    	protected void invalidated() {
+    		imgProfile.setImage(getValue());
+    	}
+    };
+    
 	public PlayerUI()
-	{	
-		StackPane profile = new StackPane();
-		ImageView profileView = new ImageView();
-		profileView.setFitHeight(100);
-		profileView.setFitWidth(100);
-		profile.getChildren().add(profileView);
-		profile.setBackground(new Background(new BackgroundFill(Color.NAVY, null, null)));
-		profile.setMaxSize(100, 100);
-		
-		//TODO: use fxml
-		Label money = new Label("15 Million Dollars");
-		Label sets = new Label("4 sets");
-		Label name = new Label("Player name");
-		
-		GridPane.setConstraints(profile, 0, 0, 1, 2);
-		GridPane.setConstraints(money, 1, 0, 1, 1);
-		
-		GridPane.setConstraints(sets, 1, 1, 1, 1);
-		GridPane.setConstraints(name, 0, 2, 2, 1);
-		getChildren().addAll(profile, money, sets, name);
-		
-		setBackground(new Background(new BackgroundFill(Color.DEEPSKYBLUE, null, null)));
-		
-		setMinSize(WIDTH, HEIGHT);
-		setPrefSize(WIDTH, HEIGHT);
-		setMaxSize(WIDTH, HEIGHT);
+	{
+		URL path = PlayerUI.class.getResource("PlayerUI.fxml");
+		if (path == null)
+			throw new RuntimeException("Unable to find Player UI");
+		try
+		{
+			FXMLLoader loader = new FXMLLoader(path);
+			loader.setController(this);
+			loader.setRoot(this);
+			loader.load();
+		}
+		catch (IOException e)
+		{
+			throw new RuntimeException("Unable to load Player UI", e);
+		}
 	}
+
+	public final SimpleStringProperty playerNameProperty()
+	{
+		return this.playerName;
+	}
+	
+
+	public final String getPlayerName()
+	{
+		return this.playerNameProperty().get();
+	}
+	
+
+	public final void setPlayerName(final String playerName)
+	{
+		this.playerNameProperty().set(playerName);
+	}
+	
+
+	public final SimpleIntegerProperty cashProperty()
+	{
+		return this.cash;
+	}
+	
+
+	public final int getCash()
+	{
+		return this.cashProperty().get();
+	}
+	
+
+	public final void setCash(final int cash)
+	{
+		this.cashProperty().set(cash);
+	}
+	
+
+	public final SimpleIntegerProperty propSetsProperty()
+	{
+		return this.propSets;
+	}
+	
+
+	public final int getPropSets()
+	{
+		return this.propSetsProperty().get();
+	}
+	
+
+	public final void setPropSets(final int propSets)
+	{
+		this.propSetsProperty().set(propSets);
+	}
+
+	public final SimpleObjectProperty<Image> profileImageProperty()
+	{
+		return this.profileImage;
+	}
+	
+
+	public final Image getProfileImage()
+	{
+		return this.profileImageProperty().get();
+	}
+	
+
+	public final void setProfileImage(final Image profileImage)
+	{
+		this.profileImageProperty().set(profileImage);
+	}
+	
 }

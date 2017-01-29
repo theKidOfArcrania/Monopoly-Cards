@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+
+<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="340.0" styleClass="PlayerCard" type="GridPane" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1">
+  <columnConstraints>
+    <ColumnConstraints hgrow="NEVER" minWidth="10.0" prefWidth="100.0" />
+      <ColumnConstraints hgrow="SOMETIMES" prefWidth="50.0" />
+    <ColumnConstraints hgrow="SOMETIMES" />
+      <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
+  </columnConstraints>
+  <rowConstraints>
+      <RowConstraints minHeight="10.0" prefHeight="20.0" vgrow="NEVER" />
+    <RowConstraints prefHeight="50.0" vgrow="NEVER" />
+    <RowConstraints prefHeight="50.0" vgrow="NEVER" />
+    <RowConstraints vgrow="SOMETIMES" />
+  </rowConstraints>
+   <children>
+      <StackPane maxHeight="100.0" maxWidth="100.0" minHeight="100.0" minWidth="100.0" prefHeight="100.0" prefWidth="100.0" style="-fx-background-color: BLACK;" styleClass="ProfilePic" GridPane.rowIndex="1" GridPane.rowSpan="2">
+         <children>
+            <ImageView fx:id="imgProfile" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
+         </children>
+      </StackPane>
+      <Label maxHeight="-Infinity" minHeight="-Infinity" prefHeight="20.0" styleClass="Medium" text="Cash:" GridPane.columnIndex="2" GridPane.rowIndex="1">
+         <GridPane.margin>
+            <Insets bottom="5.0" left="5.0" right="10.0" top="5.0" />
+         </GridPane.margin>
+      </Label>
+      <Label maxHeight="-Infinity" minHeight="-Infinity" prefHeight="20.0" styleClass="Medium" text="Sets:" GridPane.columnIndex="2" GridPane.rowIndex="2">
+         <GridPane.margin>
+            <Insets bottom="5.0" left="5.0" right="10.0" top="5.0" />
+         </GridPane.margin>
+      </Label>
+      <Label fx:id="lblPlayer" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" styleClass="Large" GridPane.columnSpan="2147483647" GridPane.rowIndex="3">
+         <GridPane.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </GridPane.margin>
+      </Label>
+      <Label fx:id="lblCash" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" styleClass="Large" text="\$0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+      <Label fx:id="lblSets" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" styleClass="Large" text="0 set(s)" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+      <ImageView fx:id="imgCash" fitHeight="45.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+         <image>
+            <Image url="@../res/Dollar%20Sign.png" />
+         </image></ImageView>
+      <ImageView fx:id="imgSets" fitHeight="45.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
+         <image>
+            <Image url="@../res/fullset.png" />
+         </image></ImageView>
+   </children>
+</fx:root>

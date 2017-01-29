@@ -1,24 +1,30 @@
 package monopolycards.ui;
 
 import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Group;
-import javafx.scene.PerspectiveCamera;
-import javafx.scene.Scene;
-import javafx.scene.SceneAntialiasing;
-import javafx.scene.SubScene;
+import javafx.scene.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCombination;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
+import javafx.scene.text.Font;
 import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Scale;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
-public class MainUI extends AnchorPane
+public class MainUI extends StackPane
 {
+	private static final Image DEFAULT_PROFILE_IMAGE = Tools.createFXImage("DefaultProfile.png");
+	private static final Rectangle2D BOUNDS = Screen.getPrimary().getBounds();
+	
+	public static final double SCALE_X = BOUNDS.getWidth() / 1920.0;
+	public static final double SCALE_Y = BOUNDS.getHeight() / 1080.0;
+	public static final double SCALE_MIN = Math.min(SCALE_X, SCALE_Y);
+	
 	public static class Main extends Application
 	{
 		private MainUI root;
@@ -26,6 +32,7 @@ public class MainUI extends AnchorPane
 		@Override
 		public void init()
 		{
+			Font.loadFont(Main.class.getResourceAsStream("KabaleMedium-Normal.ttf"), 1);
 			root = new MainUI();
 		}
 		
@@ -33,6 +40,7 @@ public class MainUI extends AnchorPane
 		public void start(Stage primaryStage)
 		{
 			Scene s = new Scene(root);
+			s.getStylesheets().add(Main.class.getResource("style.css").toExternalForm());
 			primaryStage.setScene(s);
 			primaryStage.setFullScreen(true);
 			primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
@@ -45,11 +53,20 @@ public class MainUI extends AnchorPane
 		}
 	}
 	
-	private final Rectangle2D BOUNDS = Screen.getPrimary().getBounds();
-	private Group tableRoot;
+	private final Group tableRoot;
+	private final Pane floatingUI;
+	private final PlayerUI[] players;
 	
 	public MainUI()
 	{
+		//Initializing stuff
+		players = new PlayerUI[4]; //TODO: change number of players.
+		
+		//Floating UI elements
+		floatingUI = initFloatingUI();
+		
+		
+		//3D scene
 		tableRoot = initTable();
 		PerspectiveCamera camera = new PerspectiveCamera();
 		tableRoot.getChildren().add(camera);
@@ -60,32 +77,121 @@ public class MainUI extends AnchorPane
 		tableScene.setFill(Color.ALICEBLUE);
 		tableScene.setCamera(camera);
 		
-		PlayerUI[] players = new PlayerUI[4];
+		getChildren().addAll(tableScene, floatingUI);
+	}
+	
+	private Pane initFloatingUI()
+	{
+		AnchorPane root = new AnchorPane();
+		
+		/*****************
+		 * Player Pane
+		 *****************/
+		HBox playerPane = new HBox();
+		playerPane.setPickOnBounds(false);
 		for (int i = 0; i < players.length; i++)
 		{
-			PlayerUI player = players[i] = new PlayerUI();
-			AnchorPane.setLeftAnchor(player, 100.0 + i * (PlayerUI.WIDTH + 20));
+			StackPane playerStats = new StackPane();
+			
+			//Highlight used when user mouseovers.
+			Pane highlight = new Pane();
+			highlight.setBackground(new Background(new BackgroundFill(Color.gray(1, .3), null, null)));
+			highlight.setVisible(false);
+			
+			Pane shadow = new Pane();
+			shadow.setBackground(new Background(new BackgroundFill(Color.gray(.5, .3), null, null)));
+			shadow.setVisible(false);
+			
+			//Contains all the player's quick stats display
+			PlayerUI display = players[i] = new PlayerUI();
+			display.setPlayerName("Mr. Nice-Guy-The-Player");
+			display.setCash(15000000);
+			display.setPropSets(2);
+			display.setProfileImage(DEFAULT_PROFILE_IMAGE);
+			display.setEffect(Tools.BEVEL_SHADOW);
+			
+			//Handlers for when the user mouseovers (stats enlarge and highlight)
+			Scale statsScale = new Scale(1, 1);
+			statsScale.setPivotY(0);
+			statsScale.pivotXProperty().bind(playerStats.widthProperty().divide(2));
+			playerStats.getTransforms().add(statsScale);
+			
+			playerStats.hoverProperty().addListener(val -> {
+				if (playerStats.isHover())
+				{
+					double scale = playerStats.isPressed() ? .96 : 1.04;
+					statsScale.setX(scale);
+					statsScale.setY(scale);
+					highlight.setVisible(!playerStats.isPressed());
+				}
+				else
+				{
+					statsScale.setX(1);
+					statsScale.setY(1);
+					highlight.setVisible(false);
+				}
+			});
+			
+			playerStats.pressedProperty().addListener(val -> {
+				if (playerStats.isPressed())
+				{
+					statsScale.setX(.96);
+					statsScale.setY(.96);
+					highlight.setVisible(false);
+					shadow.setVisible(true);
+				}
+				else
+				{
+					double scale = playerStats.isHover() ? 1.04 : 1;
+					statsScale.setX(scale);
+					statsScale.setY(scale);
+					highlight.setVisible(playerStats.isHover());
+					shadow.setVisible(false);
+				}
+			});
+			
+			//TODO: quickly flash card twice and then show extended stats when clicked.
+			
+			playerStats.getChildren().addAll(display, highlight, shadow);
+			playerPane.getChildren().add(playerStats);
+			
+			//Create 20px gaps between player stat cards
+			if (i > 0)
+				HBox.setMargin(playerStats, new Insets(0, 0, 0, 20));
+			
+			//Rounded stuff.
+			Tools.roundCorners(playerStats);
+			playerStats.setTranslateY(-Tools.CORNER_RADIUS - 1); //Shove the top rounds "under the rug"
 		}
+		ScalerParent scaledPlayerPane = new ScalerParent(playerPane);
+		scaledPlayerPane.setPreserveRatio(true);
+		scaledPlayerPane.setScalingX(SCALE_X);
+		scaledPlayerPane.setScalingY(SCALE_Y);
 		
-		getChildren().addAll(tableScene);
-		getChildren().addAll(players);
+		AnchorPane.setLeftAnchor(scaledPlayerPane, 100.0 * SCALE_X);
+		root.getChildren().addAll(scaledPlayerPane);
+		root.setPickOnBounds(false);
+		return root;
 	}
 	
 	private Group initTable()
 	{
 		Group root = new Group();
 		
-		Image imgWood = new Image(MainUI.class.getResourceAsStream("WoodTexture.jpg"));
+		Image imgWood = Tools.createFXImage("WoodTexture.jpg");
 		PhongMaterial wood = new PhongMaterial();
 		wood.setDiffuseMap(imgWood);
 		
-		final double DEFLECT = 90.0; 
+		final double DEFLECT = 60.0; 
+		final double DEPTH = 50;
+		double cos = Math.cos(Math.toRadians(DEFLECT));
+		double sin = Math.sin(Math.toRadians(DEFLECT));
 		double size = Math.max(BOUNDS.getHeight(), BOUNDS.getWidth());
-		Box table = new Box(size, size, 50);
+		Box table = new Box(size, size, DEPTH);
 		table.setMaterial(wood);
 		table.setTranslateX(size / 2);
-		table.setTranslateY(BOUNDS.getHeight() - table.getDepth() * 4);
-		table.setTranslateZ(size / 2 * Math.cos(Math.toRadians(DEFLECT)));
+		table.setTranslateY(BOUNDS.getHeight() - size / 2 * cos);
+		table.setTranslateZ(size / 2 * sin);
 		table.setRotate(-DEFLECT);
 		table.setRotationAxis(Rotate.X_AXIS);
 		

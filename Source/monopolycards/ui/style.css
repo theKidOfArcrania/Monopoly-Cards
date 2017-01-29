@@ -1,0 +1,27 @@
+.root
+{
+	-fx-font-family: "KabaleMedium";
+}
+
+.Large
+{
+	-fx-font-size: 20px; 
+}
+
+.Medium
+{
+	-fx-font-size: 15px; 
+}
+
+.PlayerCard 
+{
+	-fx-background-color: rgb(24,180,231);
+}
+
+.ProfilePic
+{
+	-fx-border-style: solid;
+	-fx-border-color: BLACK;
+	-fx-border-width: 1px;
+	-fx-border-insets: -1;
+}
