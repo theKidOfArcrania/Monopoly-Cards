@@ -62,7 +62,7 @@ public class CardTest3 extends Application
 		discardDeck.setRotateX(30); //Angle it upward
 		
 		hand = new VrtHand();
-		hand.setTranslateY(BOUNDS.getHeight() - cards.get(0).getHeight());
+		hand.setTranslateY(BOUNDS.getHeight() - cards.get(0).getHeight() / 2);
 		hand.setWidth(BOUNDS.getWidth());
 		hand.setOnSelectHand(card -> {
 			if (isAnimating())

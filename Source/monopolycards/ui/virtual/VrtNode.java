@@ -34,13 +34,6 @@ public class VrtNode
 		
 		rotateZ.angleProperty().addListener(val -> recalcAxis());
 		rotateY.angleProperty().addListener(val -> recalcAxis());
-		
-		rotateX.pivotXProperty().bind(width.divide(2));
-		rotateX.pivotYProperty().bind(height.divide(2));
-		rotateY.pivotXProperty().bind(width.divide(2));
-		rotateY.pivotYProperty().bind(height.divide(2));
-		rotateZ.pivotXProperty().bind(width.divide(2));
-		rotateZ.pivotYProperty().bind(height.divide(2));
 	}
 	
 	public double getParentRotateX()
@@ -221,6 +214,7 @@ public class VrtNode
 
 	private void recalcAxis()
 	{
+		//TODO: allow user to change rotation axis order
 		rotateY.setAxis(rotateZ.transform(Rotate.Y_AXIS));
 		rotateX.setAxis(rotateY.transform(rotateZ.transform(Rotate.X_AXIS)));
 	}

@@ -1,7 +1,9 @@
 package monopolycards.ui;
 
+import javafx.animation.Transition;
 import javafx.application.Application;
 import javafx.geometry.Insets;
+import javafx.geometry.Point3D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.*;
 import javafx.scene.image.Image;
@@ -15,6 +17,12 @@ import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.util.Duration;
+import monopolycards.ui.test.CardTest;
+import monopolycards.ui.virtual.VrtCard;
+import monopolycards.ui.virtual.VrtDeck;
+import monopolycards.ui.virtual.VrtGroup;
+import monopolycards.ui.virtual.VrtNode;
 
 public class MainUI extends StackPane
 {
@@ -26,6 +34,19 @@ public class MainUI extends StackPane
 	public static final double SCALE_X = BOUNDS.getWidth() / 1920.0;
 	public static final double SCALE_Y = BOUNDS.getHeight() / 1080.0;
 	public static final double SCALE_MIN = Math.min(SCALE_X, SCALE_Y);
+	
+	public static final double TABLE_SIZE = Math.max(BOUNDS.getHeight(), BOUNDS.getWidth()) * 3 / 4;
+	public static final double TABLE_DEFLECT = 60.0; 
+	public static final double TABLE_DEPTH = 50;
+	
+	public static final double SIN_DEFLECT = Math.sin(Math.toRadians(TABLE_DEFLECT));
+	public static final double COS_DEFLECT = Math.cos(Math.toRadians(TABLE_DEFLECT));
+	
+	public static final double CARD_FACTOR = 9;
+	public static final double CARD_WIDTH = VrtCard.CARD_WIDTH_FACTOR * CARD_FACTOR * SCALE_X;
+	public static final double CARD_HEIGHT = VrtCard.CARD_HEIGHT_FACTOR * CARD_FACTOR * SCALE_X;
+	
+	public static final double DECK_SPACING = 10;
 	
 	public static class Main extends Application
 	{
@@ -47,6 +68,8 @@ public class MainUI extends StackPane
 			primaryStage.setFullScreen(true);
 			primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
 			primaryStage.show();
+			
+			root.start();
 		}
 		
 		public static void main(String[] args)
@@ -55,8 +78,19 @@ public class MainUI extends StackPane
 		}
 	}
 	
+	private class PlayerQuadrant {
+		private VrtDeck moneyDeck;
+		private 
+	}
+	
+	Image cardBack = new Image(CardTest.class.getResourceAsStream("Card back.jpg"));
+	Image dealBreakCard = new Image(CardTest.class.getResourceAsStream("Dealbreaker.jpg"));
+	
 	private final Group tableRoot;
 	private final Pane floatingUI;
+	
+	private final VrtDeck drawDeck;
+	private final VrtDeck discardDeck;
 	
 	private final PlayerUI[] players;
 	private final StatusUI status;
@@ -66,6 +100,8 @@ public class MainUI extends StackPane
 		//Initializing some UI
 		players = new PlayerUI[4]; //TODO: change number of players.
 		status = new StatusUI();
+		drawDeck = new VrtDeck();
+		discardDeck = new VrtDeck(true);
 		
 		//Floating UI elements
 		floatingUI = initFloatingUI();
@@ -82,6 +118,33 @@ public class MainUI extends StackPane
 		tableScene.setCamera(camera);
 		
 		getChildren().addAll(tableScene, floatingUI);
+	}
+	
+	public void start()
+	{
+		double CENTER = TABLE_SIZE / 2;
+		Transition fillingDeck = new Transition()
+		{
+			{
+				setCycleDuration(Duration.millis(20));
+			}
+			@Override
+			protected void interpolate(double frac)
+			{
+				if (frac == 1)
+				{
+					VrtCard card = createCard();
+					positionOnTable(card, CENTER - DECK_SPACING / 2 - CARD_WIDTH / 2, CENTER);
+					card.setTranslateY(card.getTranslateY() - 200);
+					
+					tableRoot.getChildren().add(card.getNode());
+					drawDeck.pushCard(card);
+				}
+			}
+		};
+		fillingDeck.setDelay(Duration.seconds(.5));
+		fillingDeck.setCycleCount(100); //TODO: change this value.
+		fillingDeck.playFromStart();
 	}
 	
 	private Pane initFloatingUI()
@@ -209,25 +272,34 @@ public class MainUI extends StackPane
 	private Group initTable()
 	{
 		Group root = new Group();
+		final double CENTER = TABLE_SIZE / 2;
 		
+		/*****************
+		 * Setup the table
+		 *****************/
 		Image imgWood = Tools.createFXImage("WoodTexture.jpg");
 		PhongMaterial wood = new PhongMaterial();
 		wood.setDiffuseMap(imgWood);
 		
-		final double DEFLECT = 60.0; 
-		final double DEPTH = 50;
-		double cos = Math.cos(Math.toRadians(DEFLECT));
-		double sin = Math.sin(Math.toRadians(DEFLECT));
-		double size = Math.max(BOUNDS.getHeight(), BOUNDS.getWidth());
-		Box table = new Box(size, size, DEPTH);
+		Box table = new Box(TABLE_SIZE, TABLE_SIZE, TABLE_DEPTH);
 		table.setMaterial(wood);
-		table.setTranslateX(size / 2);
-		table.setTranslateY(BOUNDS.getHeight() - size / 2 * cos);
-		table.setTranslateZ(size / 2 * sin);
-		table.setRotate(-DEFLECT);
+		table.setTranslateX(CENTER);
+		table.setTranslateY(BOUNDS.getHeight() - CENTER * COS_DEFLECT + 7);
+		table.setTranslateZ(CENTER * SIN_DEFLECT);
+		table.setRotate(-TABLE_DEFLECT);
 		table.setRotationAxis(Rotate.X_AXIS);
 		
-		root.getChildren().add(table);
+		/*****************
+		 * Initialize center decks.
+		 *****************/
+		double offset = DECK_SPACING / 2 + CARD_WIDTH / 2;  
+		positionOnTable(drawDeck, CENTER - offset, CENTER);
+		positionOnTable(discardDeck, CENTER + offset, CENTER);
+		
+		drawDeck.setRotateX(90 - TABLE_DEFLECT);
+		discardDeck.setRotateX(90 - TABLE_DEFLECT);
+		
+		root.getChildren().addAll(table);
 		return root;
 	}
 	
@@ -238,5 +310,31 @@ public class MainUI extends StackPane
 		scale.setScalingX(SCALE_X);
 		scale.setScalingY(SCALE_Y);
 		return scale;
+	}
+	
+	private VrtCard createCard()
+	{
+		VrtCard card = new VrtCard();
+		card.setWidth(CARD_WIDTH);
+		card.setHeight(CARD_HEIGHT);
+		card.setBackImage(cardBack);
+		card.setFrontImage(dealBreakCard); //TODO: this should be a blank card.
+		return card;
+	}
+	
+	private void positionOnTable(VrtNode node, double xTable, double zTable)
+	{
+		node.setTranslateX(xTable);
+		node.setTranslateY(BOUNDS.getHeight() - TABLE_DEPTH / 2 * SIN_DEFLECT - zTable * COS_DEFLECT);
+		node.setTranslateZ(zTable * SIN_DEFLECT);
+		node.setRotateX(-TABLE_DEFLECT);
+	}
+	
+	private Point3D positionOnTable(double xTable, double zTable)
+	{
+		double y = BOUNDS.getHeight() - TABLE_DEPTH / 2 * SIN_DEFLECT - zTable * COS_DEFLECT;
+		double z = zTable * SIN_DEFLECT;
+		
+		return new Point3D(xTable, y, z);
 	}
 }

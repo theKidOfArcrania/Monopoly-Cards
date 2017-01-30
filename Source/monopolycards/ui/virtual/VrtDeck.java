@@ -174,11 +174,13 @@ public class VrtDeck extends VrtGroup
 		deck.add(ind, c);
 		
 		MovementFrame frame = new MovementFrame();
-		frame.setRotateX(-90 + getRotateX());
+		frame.setRotateX(getRotateX() - 90);
+		if (faceUp)
+			frame.setRotateX(-frame.getRotateX());
 		frame.setRotateY(getRotateY() + (faceUp ? 180 : 0));
 		frame.setRotateZ(getRotateZ());
 		frame.setTranslateX(getTranslateX() + offset);
-		frame.setTranslateY(getTranslateY() - ind);
+		frame.setTranslateY(getTranslateY() - ind * VrtCard.CARD_DEPTH);
 		frame.setTranslateZ(getTranslateZ() + offset2);
 		
 		Timeline animate = new MovementTimeline(c).addFrame(MEDIUM_TRANS, frame).generateAnimation();
@@ -207,7 +209,7 @@ public class VrtDeck extends VrtGroup
 						prevAnimate.stop();
 					
 					MovementFrame frame = new MovementFrame(Interpolator.EASE_IN);
-					frame.setTranslateY(getTranslateY() - ind);
+					frame.setTranslateY(getTranslateY() - ind * VrtCard.CARD_DEPTH);
 					Timeline shift = new MovementTimeline(node).addFrame(MEDIUM_TRANS, frame).generateAnimation();
 					shift.play();
 					prevRunning.put((VrtCard)node, shift);

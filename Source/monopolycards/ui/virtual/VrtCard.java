@@ -10,19 +10,24 @@ import javafx.scene.shape.Box;
 
 public class VrtCard extends VrtNode
 {
+	
+	public static final int CARD_WIDTH_FACTOR = 11;
+	public static final int CARD_HEIGHT_FACTOR = 17;
+	public static final double CARD_DEPTH = .5;
+	
 	private static final double PADDING = 5;
 	private static final double DELTA = .01;
 	
 	private ObjectProperty<Image> backImage = new SimpleObjectProperty<>(this, "backImage", null);
 	private ObjectProperty<Image> frontImage = new SimpleObjectProperty<>(this, "frontImage", null);
 	
+	
 	public VrtCard()
 	{
 		super(new Group());
-		Group g;
 
-		setWidth(11 * 15);
-		setHeight(17 * 15);
+		setWidth(CARD_WIDTH_FACTOR * 15);
+		setHeight(CARD_HEIGHT_FACTOR * 15);
 		
 		PhongMaterial frontMat = new PhongMaterial();
 		PhongMaterial backMat = new PhongMaterial();
@@ -38,28 +43,22 @@ public class VrtCard extends VrtNode
 		Box front = new Box();
 		front.widthProperty().bind(width);
 		front.heightProperty().bind(height);
-		front.translateXProperty().bind(width.divide(2));
-		front.translateYProperty().bind(height.divide(2));
-		front.setDepth(1);
+		front.setDepth(CARD_DEPTH / 2);
+		front.setTranslateZ(CARD_DEPTH / 2);
 		front.setMaterial(frontMat);
 		
 		Box back = new Box();
 		back.widthProperty().bind(width);
 		back.heightProperty().bind(height);
-		back.translateXProperty().bind(width.divide(2));
-		back.translateYProperty().bind(height.divide(2));
-		back.setDepth(1);
-		back.setTranslateZ(-1);
+		back.setDepth(CARD_DEPTH / 2);
+		back.setTranslateZ(-CARD_DEPTH / 2);
 		back.setMaterial(backMat);
 		
 		PhongMaterial white = new PhongMaterial(Color.WHITE);
 		Box rim = new Box();
 		rim.widthProperty().bind(width.add(PADDING));
 		rim.heightProperty().bind(height.add(PADDING));
-		rim.translateXProperty().bind(width.divide(2));
-		rim.translateYProperty().bind(height.divide(2));
-		rim.setDepth((1 - DELTA) * 2);
-		rim.setTranslateZ(-.5);
+		rim.setDepth(CARD_DEPTH - DELTA);
 		rim.setMaterial(white);
 		
 		((Group)getNode()).getChildren().addAll(rim, front, back);
@@ -91,13 +90,13 @@ public class VrtCard extends VrtNode
 	}
 	
 
-	public final javafx.scene.image.Image getFrontImage()
+	public final Image getFrontImage()
 	{
 		return this.frontImageProperty().get();
 	}
 	
 
-	public final void setFrontImage(final javafx.scene.image.Image frontImage)
+	public final void setFrontImage(final Image frontImage)
 	{
 		this.frontImageProperty().set(frontImage);
 	}
