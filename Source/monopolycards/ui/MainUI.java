@@ -1,14 +1,26 @@
 package monopolycards.ui;
 
+import java.util.ArrayList;
+
 import javafx.animation.Transition;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Point3D;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.*;
+import javafx.scene.Group;
+import javafx.scene.Node;
+import javafx.scene.PerspectiveCamera;
+import javafx.scene.Scene;
+import javafx.scene.SceneAntialiasing;
+import javafx.scene.SubScene;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCombination;
-import javafx.scene.layout.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
@@ -21,15 +33,11 @@ import javafx.util.Duration;
 import monopolycards.ui.test.CardTest;
 import monopolycards.ui.virtual.VrtCard;
 import monopolycards.ui.virtual.VrtDeck;
-import monopolycards.ui.virtual.VrtGroup;
 import monopolycards.ui.virtual.VrtNode;
 
 public class MainUI extends StackPane
 {
-	private static final Image DEFAULT_PROFILE_IMAGE = Tools.createFXImage("DefaultProfile.png");
-	private static final Image GEAR_IMAGE = Tools.createFXImage("gear.png");
-	private static final Image GEAR_PRESSED_IMAGE = Tools.createFXImage("gear_pressed.png");
-	private static final Rectangle2D BOUNDS = Screen.getPrimary().getBounds();
+	public static final Rectangle2D BOUNDS = Screen.getPrimary().getBounds();
 	
 	public static final double SCALE_X = BOUNDS.getWidth() / 1920.0;
 	public static final double SCALE_Y = BOUNDS.getHeight() / 1080.0;
@@ -47,6 +55,10 @@ public class MainUI extends StackPane
 	public static final double CARD_HEIGHT = VrtCard.CARD_HEIGHT_FACTOR * CARD_FACTOR * SCALE_X;
 	
 	public static final double DECK_SPACING = 10;
+
+	private static final Image DEFAULT_PROFILE_IMAGE = Tools.createFXImage("DefaultProfile.png");
+	private static final Image GEAR_IMAGE = Tools.createFXImage("gear.png");
+	private static final Image GEAR_PRESSED_IMAGE = Tools.createFXImage("gear_pressed.png");
 	
 	public static class Main extends Application
 	{
@@ -79,8 +91,55 @@ public class MainUI extends StackPane
 	}
 	
 	private class PlayerQuadrant {
-		private VrtDeck moneyDeck;
-		private 
+		private final VrtDeck moneyDeck;
+		private final ArrayList<VrtDeck> propDecks;
+		
+		private int pos;
+		
+		public PlayerQuadrant(int pos)
+		{
+			moneyDeck = createDeck(0, 0);
+			propDecks = new ArrayList<>();
+			this.pos = pos;
+		}
+		
+		private VrtDeck createDeck(int row, int col)
+		{
+			VrtDeck deck = new VrtDeck(true);
+			deck.setRotateX(90 - TABLE_DEFLECT);
+			layoutDeck(deck, row, col);
+			return deck;
+		}
+		
+		private void layoutDeck(VrtDeck deck, int row, int col)
+		{
+			double xStart = col * (CARD_WIDTH + DECK_SPACING) + DECK_SPACING + CARD_WIDTH / 2;
+			double yStart = -row * (CARD_HEIGHT + DECK_SPACING) - DECK_SPACING + CARD_HEIGHT / 2;
+			
+			if (col > 0)
+				xStart += DECK_SPACING;
+			
+			switch (pos)
+			{
+			case 0: 
+				yStart += TABLE_SIZE;
+				break;
+			case 1:
+				double tmp = xStart;
+				xStart = -yStart;
+				yStart = tmp;
+				break;
+			case 2:
+				yStart = -yStart;
+				xStart = TABLE_SIZE - xStart;
+				break;
+			case 3:
+				tmp = xStart;
+				xStart = yStart + TABLE_SIZE;
+				yStart = TABLE_SIZE - tmp;
+			}
+			deck.setRotateZ(pos * 90);
+		}
 	}
 	
 	Image cardBack = new Image(CardTest.class.getResourceAsStream("Card back.jpg"));
@@ -296,9 +355,9 @@ public class MainUI extends StackPane
 		positionOnTable(drawDeck, CENTER - offset, CENTER);
 		positionOnTable(discardDeck, CENTER + offset, CENTER);
 		
-		drawDeck.setRotateX(90 - TABLE_DEFLECT);
+		drawDeck.setRotateX(90);
 		discardDeck.setRotateX(90 - TABLE_DEFLECT);
-		
+		drawDeck.setRotateY(270 + 360 * 100000);
 		root.getChildren().addAll(table);
 		return root;
 	}
