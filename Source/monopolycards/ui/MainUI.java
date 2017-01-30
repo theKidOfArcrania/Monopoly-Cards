@@ -38,6 +38,7 @@ import monopolycards.card.PropertyColor;
 import monopolycards.ui.test.CardTest;
 import monopolycards.ui.virtual.VrtCard;
 import monopolycards.ui.virtual.VrtDeck;
+import monopolycards.ui.virtual.VrtHand;
 import monopolycards.ui.virtual.VrtNode;
 
 public class MainUI extends StackPane
@@ -48,7 +49,7 @@ public class MainUI extends StackPane
 	public static final double SCALE_Y = BOUNDS.getHeight() / 1080.0;
 	public static final double SCALE_MIN = Math.min(SCALE_X, SCALE_Y);
 	
-	public static final double TABLE_SIZE = Math.max(BOUNDS.getHeight(), BOUNDS.getWidth()) * 3 / 4;
+	public static final double TABLE_SIZE = BOUNDS.getWidth() * 3 / 4;
 	public static final double TABLE_DEFLECT = 60.0; 
 	public static final double TABLE_DEPTH = 50;
 	
@@ -59,11 +60,15 @@ public class MainUI extends StackPane
 	public static final double CARD_WIDTH = VrtCard.CARD_WIDTH_FACTOR * CARD_FACTOR * SCALE_X;
 	public static final double CARD_HEIGHT = VrtCard.CARD_HEIGHT_FACTOR * CARD_FACTOR * SCALE_X;
 	
+	public static final int MAX_PLAYERS = 4;
+	
 	public static final double DECK_SPACING = 10;
 
 	private static final Image DEFAULT_PROFILE_IMAGE = Tools.createFXImage("DefaultProfile.png");
 	private static final Image GEAR_IMAGE = Tools.createFXImage("gear.png");
 	private static final Image GEAR_PRESSED_IMAGE = Tools.createFXImage("gear_pressed.png");
+
+	
 	
 	public static class Main extends Application
 	{
@@ -98,16 +103,23 @@ public class MainUI extends StackPane
 	private class PlayerQuadrant {
 		private final VrtDeck moneyDeck;
 		private final ArrayList<VrtDeck> propDecks;
-		private final HashMap<PropertyColor, VrtDeck> columns;
+		private final HashMap<PropertyColor, Integer> columns;
+		private final VrtHand hand;
 		
 		private int pos;
 		
 		public PlayerQuadrant(int pos)
 		{
+			if (pos < 0 || pos >= MAX_PLAYERS)
+				throw new IllegalArgumentException("pos must be in the range [0, 3]");
+			
 			moneyDeck = createDeck(0, 0);
 			propDecks = new ArrayList<>();
 			columns = new HashMap<>();
+			hand = new VrtHand();
+			
 			this.pos = pos;
+			
 		}
 		
 		public void addCash(Cash money)
@@ -117,7 +129,32 @@ public class MainUI extends StackPane
 		
 		public void addProperty(Property prop)
 		{
-			//TODO
+			addToColumn(prop, prop.getDualColors().getPropertyColor());
+		}
+		
+		public void addToColumn(Card prop, PropertyColor color)
+		{
+			int columnInd = columns.getOrDefault(color, -1);
+			VrtDeck column;
+			if (columnInd == -1)
+			{
+				columnInd = propDecks.size();
+				column = createDeck(columnInd % 2, columnInd / 2);
+			}
+			else
+				column = propDecks.get(columnInd);
+			
+			column.pushCard(cardUI.get(prop));
+		}
+		
+		public void setPos(int pos)
+		{
+			if (pos < 0 || pos >= MAX_PLAYERS)
+				throw new IllegalArgumentException("pos must be in the range [0, 3]");
+			this.pos = pos;
+			layoutDeck(moneyDeck, 0, 0);
+			for (int i = 0; i < propDecks.size(); i++)
+				layoutDeck(propDecks.get(i), i % 2, i / 2);
 		}
 		
 		private VrtDeck createDeck(int row, int col)
@@ -126,6 +163,33 @@ public class MainUI extends StackPane
 			deck.setRotateX(90 - TABLE_DEFLECT);
 			layoutDeck(deck, row, col);
 			return deck;
+		}
+		
+		private void layoutHand()
+		{
+			int x = 0;
+			int y = 0;
+			
+			switch (pos)
+			{
+			case 1: 
+				x 
+			}
+			
+			if (pos == 0)
+			{
+				hand.setRotateX(0);
+				hand.setRotateY(0);
+				hand.setRotateZ(0);
+				hand.setTranslateX(0);
+				hand.setTranslateY(BOUNDS.getHeight() - CARD_HEIGHT / 2);
+				hand.setTranslateZ(0);
+				hand.setWidth(TABLE_SIZE);
+			}
+			else
+			{
+				
+			}
 		}
 		
 		private void layoutDeck(VrtDeck deck, int row, int col)
@@ -156,6 +220,13 @@ public class MainUI extends StackPane
 				yStart = TABLE_SIZE - tmp;
 			}
 			deck.setRotateZ(pos * 90);
+			if (!deck.isEmpty())
+				deck.updatePosition();
+		}
+
+		public int getPos()
+		{
+			return pos;
 		}
 	}
 	
@@ -171,12 +242,14 @@ public class MainUI extends StackPane
 	private final VrtDeck discardDeck;
 	
 	private final PlayerUI[] players;
+	private final PlayerQuadrant[] field;
 	private final StatusUI status;
 	
 	public MainUI()
 	{
 		//Initializing some UI
 		players = new PlayerUI[4]; //TODO: change number of players.
+		field = new PlayerQuadrant[4];
 		status = new StatusUI();
 		drawDeck = new VrtDeck();
 		discardDeck = new VrtDeck(true);
@@ -377,7 +450,33 @@ public class MainUI extends StackPane
 		drawDeck.setRotateX(90 - TABLE_DEFLECT);
 		discardDeck.setRotateX(90 - TABLE_DEFLECT);
 		root.getChildren().addAll(table);
+		
+		/*****************
+		 * Initialize player fields
+		 *****************/
+		if (field.length == 2)
+		{
+			field[0] = new PlayerQuadrant(0);
+			field[1] = new PlayerQuadrant(2);
+		}
+		else
+		{
+			for (int i = 0; i < field.length; i++)
+				field[i] = new PlayerQuadrant(i);
+		}
+			
+		
 		return root;
+	}
+	
+	private void switchPlayers(int newPlayerIndex)
+	{
+		int shift = MAX_PLAYERS - field[newPlayerIndex].getPos();
+		if (shift == MAX_PLAYERS)
+			return;
+		for (PlayerQuadrant quad : field)
+			quad.setPos((quad.getPos() + shift) % MAX_PLAYERS); 
+		//TODO: revealing/ hiding player's hand
 	}
 	
 	private ScalerParent scaleToScreen(Node node)

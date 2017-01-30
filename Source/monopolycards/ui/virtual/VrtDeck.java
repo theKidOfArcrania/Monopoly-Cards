@@ -147,6 +147,11 @@ public class VrtDeck extends VrtGroup
 		return null;
 	}
 	
+	public void updatePosition()
+	{
+		repositionCards(null);
+	}
+	
 	@Override
 	protected void removeCard(VrtCard c)
 	{
