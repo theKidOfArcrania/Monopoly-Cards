@@ -30,9 +30,9 @@ public class VrtNode
 	{
 		this.ui = ui;
 		if (ui != null)
-			ui.getTransforms().addAll(translate, rotateX, rotateY, rotateZ);
+			ui.getTransforms().addAll(translate, rotateZ, rotateX, rotateY);
 		
-		rotateZ.angleProperty().addListener(val -> recalcAxis());
+		rotateX.angleProperty().addListener(val -> recalcAxis());
 		rotateY.angleProperty().addListener(val -> recalcAxis());
 	}
 	
@@ -215,8 +215,8 @@ public class VrtNode
 	private void recalcAxis()
 	{
 		//TODO: allow user to change rotation axis order
-		rotateY.setAxis(rotateZ.transform(Rotate.Y_AXIS));
-		rotateX.setAxis(rotateY.transform(rotateZ.transform(Rotate.X_AXIS)));
+		rotateX.setAxis(rotateY.transform(Rotate.X_AXIS));
+		rotateZ.setAxis(rotateX.transform(rotateY.transform(Rotate.Z_AXIS)));
 	}
 
 	public final ReadOnlyObjectProperty<VrtGroup> parentProperty()

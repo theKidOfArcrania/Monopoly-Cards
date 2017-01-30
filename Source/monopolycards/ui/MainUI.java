@@ -1,6 +1,7 @@
 package monopolycards.ui;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javafx.animation.Transition;
 import javafx.application.Application;
@@ -30,6 +31,10 @@ import javafx.scene.transform.Scale;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import monopolycards.card.Card;
+import monopolycards.card.Cash;
+import monopolycards.card.Property;
+import monopolycards.card.PropertyColor;
 import monopolycards.ui.test.CardTest;
 import monopolycards.ui.virtual.VrtCard;
 import monopolycards.ui.virtual.VrtDeck;
@@ -93,6 +98,7 @@ public class MainUI extends StackPane
 	private class PlayerQuadrant {
 		private final VrtDeck moneyDeck;
 		private final ArrayList<VrtDeck> propDecks;
+		private final HashMap<PropertyColor, VrtDeck> columns;
 		
 		private int pos;
 		
@@ -100,7 +106,18 @@ public class MainUI extends StackPane
 		{
 			moneyDeck = createDeck(0, 0);
 			propDecks = new ArrayList<>();
+			columns = new HashMap<>();
 			this.pos = pos;
+		}
+		
+		public void addCash(Cash money)
+		{
+			moneyDeck.pushCard(cardUI.get(money));
+		}
+		
+		public void addProperty(Property prop)
+		{
+			//TODO
 		}
 		
 		private VrtDeck createDeck(int row, int col)
@@ -144,6 +161,8 @@ public class MainUI extends StackPane
 	
 	Image cardBack = new Image(CardTest.class.getResourceAsStream("Card back.jpg"));
 	Image dealBreakCard = new Image(CardTest.class.getResourceAsStream("Dealbreaker.jpg"));
+	
+	private final HashMap<Card, VrtCard> cardUI = new HashMap<>();
 	
 	private final Group tableRoot;
 	private final Pane floatingUI;
@@ -355,9 +374,8 @@ public class MainUI extends StackPane
 		positionOnTable(drawDeck, CENTER - offset, CENTER);
 		positionOnTable(discardDeck, CENTER + offset, CENTER);
 		
-		drawDeck.setRotateX(90);
+		drawDeck.setRotateX(90 - TABLE_DEFLECT);
 		discardDeck.setRotateX(90 - TABLE_DEFLECT);
-		drawDeck.setRotateY(270 + 360 * 100000);
 		root.getChildren().addAll(table);
 		return root;
 	}
