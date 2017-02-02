@@ -6,6 +6,7 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.Node;
 import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Transform;
 import javafx.scene.transform.Translate;
 
 public class VrtNode
@@ -34,6 +35,11 @@ public class VrtNode
 		
 		rotateX.angleProperty().addListener(val -> recalcAxis());
 		rotateY.angleProperty().addListener(val -> recalcAxis());
+	}
+	
+	public Transform getRotationConcated()
+	{
+		return rotateZ.createConcatenation(rotateX.createConcatenation(rotateY));
 	}
 	
 	public double getParentRotateX()

@@ -8,11 +8,15 @@ import java.util.function.Consumer;
 import javafx.animation.Animation;
 import javafx.animation.Animation.Status;
 import javafx.animation.Timeline;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.transform.Transform;
+import javafx.scene.transform.Translate;
 import javafx.util.Duration;
 
 public class VrtHand extends VrtGroup
@@ -26,6 +30,7 @@ public class VrtHand extends VrtGroup
 	private final EventHandler<MouseEvent> mouseExit;
 	private final EventHandler<MouseEvent> mouseClick;
 	private final ObjectProperty<Consumer<VrtCard>> onSelectHand;
+	private final BooleanProperty defaultShow;
 	
 	public VrtHand()
 	{
@@ -34,6 +39,7 @@ public class VrtHand extends VrtGroup
 		animating = new HashMap<>();
 		
 		onSelectHand = new SimpleObjectProperty<>(this, "onSelectHand");
+		defaultShow = new SimpleBooleanProperty(this, "defaultShow");
 		
 		mouseEnter = evt -> {
 			VrtCard c = identifyCardFrom((Node)evt.getSource());
@@ -72,6 +78,21 @@ public class VrtHand extends VrtGroup
 		};
 	}
 
+	public final boolean isDefaultShow()
+	{
+		return defaultShow.get();
+	}
+	
+	public final void setDefaultShow(boolean val)
+	{
+		defaultShow.set(val);
+	}
+	
+	public final BooleanProperty defaultShowProperty()
+	{
+		return defaultShow;
+	}
+	
 	public final Consumer<VrtCard> getOnSelectHand()
 	{
 		return onSelectHand.get();
@@ -114,6 +135,11 @@ public class VrtHand extends VrtGroup
 		runningAnimation(flip);
 	}
 	
+	public void repositionCards()
+	{
+		repositionCards(0, hand.size());
+	}
+	
 	@Override
 	protected void removeCard(VrtCard c)
 	{
@@ -130,12 +156,17 @@ public class VrtHand extends VrtGroup
 	{
 		hand.add(c);
 		
+		int flip = 0;
+		if (defaultShow.get())
+		{
+			flip = 180;
+			shown.add(c);
+		}
+		
 		MovementFrame frame = new MovementFrame();
 		frame.setRotateX(getRotateX());
-		frame.setRotateY(getRotateY());
+		frame.setRotateY(getRotateY() + flip);
 		frame.setRotateZ(getRotateZ());
-		frame.setTranslateY(getTranslateY());
-		frame.setTranslateZ(getTranslateZ());
 		
 		Timeline addToHand = new MovementTimeline(c).addFrame(MEDIUM_TRANS, frame).generateAnimation();
 		addToHand.setOnFinished(evt -> {
@@ -160,11 +191,6 @@ public class VrtHand extends VrtGroup
 		return null;
 	}
 	
-	private void repositionCards()
-	{
-		repositionCards(0, hand.size());
-	}
-	
 	private void repositionCards(int start, int end)
 	{
 		double totalWidth = 0;
@@ -172,16 +198,21 @@ public class VrtHand extends VrtGroup
 			totalWidth += c.getWidth();
 		totalWidth += PADDING * (hand.size() - 1);
 		
-		double tx = getTranslateX() + (getWidth() - totalWidth) / 2;
-		
+		double tx = (getWidth() - totalWidth) / 2;
 		for (int i = 0; i < end; i++)
 		{
 			VrtCard c = hand.get(i);
 			
 			if (i >= start)
 			{
+				Translate trans = calcRotatedTranslate(tx, 0, 0);
 				MovementFrame frame = new MovementFrame();
-				frame.setTranslateX(tx);
+				
+				System.out.println(tx);
+				
+				frame.setTranslateX(getTranslateX() + trans.getX());
+				frame.setTranslateY(getTranslateY() + trans.getY());
+				frame.setTranslateZ(getTranslateZ() + trans.getZ());
 				Timeline repos = new MovementTimeline(c).addFrame(MEDIUM_TRANS, frame).generateAnimation();
 				repos.play();
 				runningAnimation(repos);
@@ -189,5 +220,12 @@ public class VrtHand extends VrtGroup
 			
 			tx += c.getWidth() + PADDING;
 		}
+	}
+	
+	private Translate calcRotatedTranslate(double tx, double ty, double tz)
+	{
+		Translate t = new Translate();
+		Transform tAfter = t.createConcatenation(getRotationConcated());
+		return new Translate(tAfter.getTx(), tAfter.getTy(), tAfter.getTz());
 	}
 }

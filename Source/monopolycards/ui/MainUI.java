@@ -117,9 +117,9 @@ public class MainUI extends StackPane
 			propDecks = new ArrayList<>();
 			columns = new HashMap<>();
 			hand = new VrtHand();
-			
 			this.pos = pos;
 			
+			layoutHand();
 		}
 		
 		public void addCash(Cash money)
@@ -152,6 +152,7 @@ public class MainUI extends StackPane
 			if (pos < 0 || pos >= MAX_PLAYERS)
 				throw new IllegalArgumentException("pos must be in the range [0, 3]");
 			this.pos = pos;
+			layoutHand();
 			layoutDeck(moneyDeck, 0, 0);
 			for (int i = 0; i < propDecks.size(); i++)
 				layoutDeck(propDecks.get(i), i % 2, i / 2);
@@ -167,29 +168,37 @@ public class MainUI extends StackPane
 		
 		private void layoutHand()
 		{
-			int x = 0;
-			int y = 0;
+			double x = 0;
+			double y = 0;
 			
 			switch (pos)
 			{
 			case 1: 
-				x 
+				y = TABLE_SIZE; 
+				break;
+			case 2:
+				x = TABLE_SIZE;
+				y = TABLE_SIZE;
+				break;
+			case 3:
+				x = TABLE_SIZE;
 			}
 			
+			hand.setRotateX(pos * 90);
+			hand.setWidth(TABLE_SIZE);
 			if (pos == 0)
 			{
-				hand.setRotateX(0);
-				hand.setRotateY(0);
-				hand.setRotateZ(0);
 				hand.setTranslateX(0);
 				hand.setTranslateY(BOUNDS.getHeight() - CARD_HEIGHT / 2);
 				hand.setTranslateZ(0);
-				hand.setWidth(TABLE_SIZE);
 			}
 			else
 			{
-				
+				positionOnTable(hand, x, y);
 			}
+			
+			hand.repositionCards(); //TODO: also change rotation
+			hand.setDefaultShow(true);
 		}
 		
 		private void layoutDeck(VrtDeck deck, int row, int col)
